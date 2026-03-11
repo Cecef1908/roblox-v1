@@ -1,0 +1,79 @@
+{
+  "name": "Gold Rush Legacy",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Core": {
+        "$className": "Folder",
+        "$path": "ServerScriptService/Core"
+      },
+      "Systems": {
+        "$className": "Folder",
+        "$path": "ServerScriptService/Systems"
+      },
+      "Lib": {
+        "$className": "Folder",
+        "$path": "ServerScriptService/Lib"
+      },
+      "ServerPackages": {
+        "$className": "Folder",
+        "$path": "ServerPackages"
+      }
+    },
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Modules": {
+        "$className": "Folder",
+        "Config": {
+          "$className": "Folder",
+          "$path": "ReplicatedStorage/Modules/Config"
+        },
+        "Shared": {
+          "$className": "Folder",
+          "$path": "ReplicatedStorage/Modules/Shared"
+        }
+      },
+      "Packages": {
+        "$className": "Folder",
+        "$path": "Packages"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "Core": {
+          "$className": "Folder",
+          "$path": "StarterPlayerScripts/Core"
+        },
+        "Systems": {
+          "$className": "Folder",
+          "$path": "StarterPlayerScripts/Systems"
+        },
+        "Lib": {
+          "$className": "Folder",
+          "$path": "StarterPlayerScripts/Lib"
+        }
+      }
+    },
+    "Lighting": {
+      "$className": "Lighting",
+      "$properties": {
+        "Ambient": [0.53, 0.47, 0.35],
+        "Brightness": 2.5,
+        "ClockTime": 16.5,
+        "OutdoorAmbient": [0.59, 0.55, 0.43],
+        "GeographicLatitude": 35,
+        "FogEnd": 2000,
+        "FogStart": 500
+      }
+    },
+    "StarterGui": {
+      "$className": "StarterGui"
+    },
+    "SoundService": {
+      "$className": "SoundService"
+    }
+  }
+}
