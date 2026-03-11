@@ -1,0 +1,4027 @@
+<roblox version="4">
+  <Item class="Lighting" referent="0">
+    <Properties>
+      <string name="Name">Lighting</string>
+      <Color3 name="Ambient">
+        <R>0.53</R>
+        <G>0.47</G>
+        <B>0.35</B>
+      </Color3>
+      <float name="Brightness">2.5</float>
+      <float name="ClockTime">16.5</float>
+      <float name="FogEnd">2000</float>
+      <float name="FogStart">500</float>
+      <float name="GeographicLatitude">35</float>
+      <Color3 name="OutdoorAmbient">
+        <R>0.59</R>
+        <G>0.55</G>
+        <B>0.43</B>
+      </Color3>
+    </Properties>
+  </Item>
+  <Item class="ReplicatedStorage" referent="1">
+    <Properties>
+      <string name="Name">ReplicatedStorage</string>
+    </Properties>
+    <Item class="Folder" referent="2">
+      <Properties>
+        <string name="Name">Modules</string>
+      </Properties>
+      <Item class="Folder" referent="3">
+        <Properties>
+          <string name="Name">Config</string>
+        </Properties>
+        <Item class="ModuleScript" referent="4">
+          <Properties>
+            <string name="Name">CraftConfig</string>
+            <string name="Source"><![CDATA[local CraftConfig = {}
+
+CraftConfig.Recipes = {
+    {
+        Id = "REFINE_OR_PUR",
+        Name = "Raffiner de l'Or Pur",
+        Description = "5 paillettes → 1 or pur",
+        Inputs = {
+            { Item = "Paillettes", Quantity = 5 },
+        },
+        Output = { Item = "OrPur", Quantity = 1 },
+        CraftTime = 3,
+        RequiredLevel = 1,
+        XPReward = 10,
+    },
+    {
+        Id = "FORGE_LINGOT",
+        Name = "Forger un Lingot",
+        Description = "3 or pur + 2 minerai d'or → 1 lingot",
+        Inputs = {
+            { Item = "OrPur", Quantity = 3 },
+            { Item = "MineraiOr", Quantity = 2 },
+        },
+        Output = { Item = "Lingots", Quantity = 1 },
+        CraftTime = 5,
+        RequiredLevel = 2,
+        XPReward = 30,
+    },
+    {
+        Id = "REFINE_PEPITES",
+        Name = "Raffiner des Pépites",
+        Description = "2 pépites → 1 or pur",
+        Inputs = {
+            { Item = "Pepites", Quantity = 2 },
+        },
+        Output = { Item = "OrPur", Quantity = 1 },
+        CraftTime = 2,
+        RequiredLevel = 1,
+        XPReward = 8,
+    },
+}
+
+return CraftConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="5">
+          <Properties>
+            <string name="Name">EconomyConfig</string>
+            <string name="Source"><![CDATA[local EconomyConfig = {}
+
+-- ============================================================
+-- PRIX DE VENTE
+-- ============================================================
+EconomyConfig.SellPrices = {
+    MarchandLocal = {
+        Paillettes   = 2,
+        OrPur        = 10,
+        Lingots      = 50,
+        Pepites      = 15,
+        MineraiOr    = 5,
+        Quartz       = 8,
+        Amethyste    = 25,
+        Topaze       = 40,
+    },
+    Negociant = {
+        OrPur        = 13,
+        Lingots      = 65,
+        Amethyste    = 33,
+        Topaze       = 52,
+    },
+}
+
+-- ============================================================
+-- XP REWARDS
+-- ============================================================
+EconomyConfig.XPRewards = {
+    MinePaillette    = 5,
+    MinePepite       = 15,
+    MineMineraiOr    = 20,
+    MineGem          = 25,
+    MineQuartz       = 25,
+    MineAmethyste    = 25,
+    MineTopaze       = 25,
+    CraftOrPur       = 10,
+    CraftLingot      = 30,
+    SellTransaction  = 5,
+    QuestComplete    = 50,
+    BossDefeat       = 200,
+}
+
+-- ============================================================
+-- LEVEL THRESHOLDS
+-- ============================================================
+EconomyConfig.LevelThresholds = {
+    [1] = { Name = "Amateur",      MinXP = 0,    MaxXP = 499  },
+    [2] = { Name = "Orpailleur",   MinXP = 500,  MaxXP = 1999 },
+    [3] = { Name = "Prospecteur",  MinXP = 2000, MaxXP = math.huge },
+}
+
+-- ============================================================
+-- DROP RATES (%)
+-- ============================================================
+EconomyConfig.DropRates = {
+    Zone1 = {
+        Paillettes   = { Chance = 80, MinQty = 1, MaxQty = 3 },
+        Quartz       = { Chance = 15, MinQty = 1, MaxQty = 1 },
+        Pepites      = { Chance = 5,  MinQty = 1, MaxQty = 1 },
+    },
+    Zone2_Detecteur = {
+        Pepites      = { Chance = 60, MinQty = 1, MaxQty = 2 },
+        Paillettes   = { Chance = 25, MinQty = 2, MaxQty = 5 },
+        Amethyste    = { Chance = 10, MinQty = 1, MaxQty = 1 },
+        Topaze       = { Chance = 5,  MinQty = 1, MaxQty = 1 },
+    },
+    Zone2_Filon = {
+        MineraiOr    = { Chance = 50, MinQty = 2, MaxQty = 4 },
+        Pepites      = { Chance = 30, MinQty = 1, MaxQty = 2 },
+        Amethyste    = { Chance = 15, MinQty = 1, MaxQty = 1 },
+        Topaze       = { Chance = 5,  MinQty = 1, MaxQty = 1 },
+    },
+    Zone3 = {
+        MineraiOr    = { Chance = 45, MinQty = 3, MaxQty = 6 },
+        Pepites      = { Chance = 25, MinQty = 1, MaxQty = 3 },
+        Amethyste    = { Chance = 15, MinQty = 1, MaxQty = 2 },
+        Topaze       = { Chance = 10, MinQty = 1, MaxQty = 1 },
+        Quartz       = { Chance = 5,  MinQty = 2, MaxQty = 4 },
+    },
+}
+
+-- ============================================================
+-- TOOL BONUSES
+-- ============================================================
+EconomyConfig.ToolBonuses = {
+    QuantityMultiplier = {
+        [1] = 1.0,
+        [2] = 1.5,
+        [3] = 2.0,
+    },
+    SpeedMultiplier = {
+        [1] = 1.0,
+        [2] = 0.8,
+        [3] = 0.6,
+    },
+}
+
+-- ============================================================
+-- RESPAWN TIMERS (secondes)
+-- ============================================================
+EconomyConfig.RespawnTimers = {
+    Zone1_GoldSpot     = 30,
+    Zone2_DetectSpot   = 45,
+    Zone2_Filon        = 90,
+    Zone3_OreNode      = 60,
+    Zone3_GemNode      = 120,
+    Boss_Respawn       = 300,
+}
+
+return EconomyConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="6">
+          <Properties>
+            <string name="Name">GameConfig</string>
+            <string name="Source"><![CDATA[local GameConfig = {}
+
+-- ============================================================
+-- CONSTANTES GLOBALES
+-- ============================================================
+GameConfig.MAX_INVENTORY_SLOTS = 100
+GameConfig.AUTO_SAVE_INTERVAL = 60
+GameConfig.DATASTORE_NAME = "GoldRush_PlayerData_V1"
+
+-- ============================================================
+-- SALOON
+-- ============================================================
+GameConfig.Saloon = {
+    MaxDrinksPerDay = 3,
+    DrinkCost = 15,
+
+    Drinks = {
+        {
+            Id = "WHISKEY_VITESSE",
+            Name = "Whiskey du Mineur",
+            Description = "+20% vitesse de minage pendant 5 min",
+            BuffType = "SpeedBoost",
+            BuffValue = 0.20,
+            Duration = 300,
+            Cost = 15,
+        },
+        {
+            Id = "BIERE_CHANCE",
+            Name = "Bière Porte-Bonheur",
+            Description = "+15% chance de gemmes pendant 5 min",
+            BuffType = "LuckBoost",
+            BuffValue = 0.15,
+            Duration = 300,
+            Cost = 20,
+        },
+    },
+
+    DayNight = {
+        CycleDuration = 720,
+        DayRatio = 0.6,
+        NightRatio = 0.4,
+        NightDrinkDiscount = 0.20,
+    },
+}
+
+-- ============================================================
+-- BOSS
+-- ============================================================
+GameConfig.Boss = {
+    GardienMine = {
+        DisplayName = "Le Gardien de la Mine",
+        Health = 500,
+        Damage = 15,
+        AttackInterval = 2,
+        MoveSpeed = 12,
+        AggroRange = 30,
+        LeashRange = 50,
+        SpawnCooldown = 300,
+
+        Attacks = {
+            { Name = "Coup de Pioche", Damage = 15, Range = 5, Cooldown = 2 },
+            { Name = "Éboulement", Damage = 25, Range = 15, Cooldown = 10 },
+        },
+
+        Rewards = {
+            Cash = 200,
+            XP = 200,
+            Drops = {
+                { Item = "Lingots", Quantity = 2, Chance = 100 },
+                { Item = "Topaze", Quantity = 1, Chance = 50 },
+                { Item = "Amethyste", Quantity = 2, Chance = 75 },
+            },
+        },
+
+        HealthBarVisible = true,
+    },
+}
+
+return GameConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="7">
+          <Properties>
+            <string name="Name">GemConfig</string>
+            <string name="Source"><![CDATA[local GemConfig = {}
+
+GemConfig.Gems = {
+    Quartz = {
+        DisplayName = "Quartz",
+        Color = Color3.fromRGB(255, 255, 255),
+        Rarity = "Common",
+        BaseValue = 8,
+        Glow = false,
+    },
+    Amethyste = {
+        DisplayName = "Améthyste",
+        Color = Color3.fromRGB(148, 103, 189),
+        Rarity = "Uncommon",
+        BaseValue = 25,
+        Glow = true,
+    },
+    Topaze = {
+        DisplayName = "Topaze",
+        Color = Color3.fromRGB(255, 193, 37),
+        Rarity = "Rare",
+        BaseValue = 40,
+        Glow = true,
+    },
+}
+
+return GemConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="8">
+          <Properties>
+            <string name="Name">NPCConfig</string>
+            <string name="Source"><![CDATA[local NPCConfig = {}
+
+NPCConfig.NPCs = {
+    Marchand = {
+        DisplayName = "Marcel le Marchand",
+        Location = "HubCentral",
+        Type = "Buyer",
+        Dialogue = {
+            Greeting = "Bonjour voyageur ! Tu as de l'or à vendre ?",
+            NoItems = "Reviens quand tu auras quelque chose pour moi !",
+            Success = "Marché conclu ! Voici tes %d$ !",
+        },
+        BuysAll = true,
+        PriceTable = "MarchandLocal",
+        ProximityMaxDistance = 10,
+        ProximityActionText = "Vendre",
+    },
+    Negociant = {
+        DisplayName = "Pierre le Négociant",
+        Location = "HubCentral",
+        Type = "Buyer",
+        Dialogue = {
+            Greeting = "Je ne prends que la qualité. Or pur, lingots, gemmes nobles.",
+            NoItems = "Rien d'intéressant ? Reviens avec du raffiné.",
+            Success = "Excellent ! %d$ pour ces merveilles !",
+        },
+        BuysAll = false,
+        AcceptedItems = { "OrPur", "Lingots", "Amethyste", "Topaze" },
+        PriceTable = "Negociant",
+        ProximityMaxDistance = 10,
+        ProximityActionText = "Négocier",
+    },
+    Vendeur = {
+        DisplayName = "Jacques l'Outilleur",
+        Location = "HubCentral",
+        Type = "ShopKeeper",
+        Dialogue = {
+            Greeting = "Bienvenue ! J'ai les meilleurs outils de la région !",
+            NotEnoughCash = "Tu n'as pas assez d'argent, reviens plus tard.",
+            Purchase = "Bon choix ! Prends-en soin !",
+            MaxLevel = "Cet outil est déjà au maximum !",
+        },
+        ProximityMaxDistance = 10,
+        ProximityActionText = "Acheter",
+    },
+    Forgeron = {
+        DisplayName = "Gustave le Forgeron",
+        Location = "HubCentral",
+        Type = "Crafter",
+        Dialogue = {
+            Greeting = "Apporte-moi du minerai, je te ferai de l'or pur !",
+            NoMaterials = "Il te manque des matériaux.",
+            Success = "Et voilà ! Du beau travail !",
+        },
+        ProximityMaxDistance = 8,
+        ProximityActionText = "Forger",
+    },
+    Barman = {
+        DisplayName = "Bill le Barman",
+        Location = "HubCentral.Saloon",
+        Type = "Saloon",
+        Dialogue = {
+            Greeting = "Bienvenue au Saloon ! Un remontant ?",
+            MaxDrinks = "T'as assez bu pour aujourd'hui, cow-boy.",
+            BuffActive = "Tu as déjà un boost actif !",
+            Serve = "Santé ! Tu te sens %s pendant %d minutes !",
+        },
+        ProximityMaxDistance = 8,
+        ProximityActionText = "Boire un verre",
+    },
+    Guide = {
+        DisplayName = "Tom le Guide",
+        Location = "Zone1_RiviereTransquille",
+        Type = "Tutor",
+        Dialogue = {
+            Step1 = "Bienvenue, nouveau ! Je vais t'apprendre à chercher de l'or. Approche-toi de la rivière !",
+            Step2 = "Vois ces reflets dans l'eau ? Utilise ta batée là-bas. Appuie sur E !",
+            Step3 = "Bravo ! Tu as trouvé des paillettes ! Maintenant, tourne la batée pour filtrer...",
+            Step4 = "Super ! Tu peux vendre ça au marchand en ville, ou le raffiner à la forge !",
+            Step5 = "Continue à miner. Quand tu seras Orpailleur, les Collines t'ouvriront leurs secrets...",
+            Complete = "Tu te débrouilles bien ! La rivière est à toi maintenant.",
+        },
+        ProximityMaxDistance = 12,
+        ProximityActionText = "Parler",
+    },
+}
+
+return NPCConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="9">
+          <Properties>
+            <string name="Name">QuestConfig</string>
+            <string name="Source"><![CDATA[local QuestConfig = {}
+
+QuestConfig.DailyQuestPool = {
+    {
+        Id = "MINE_PAILLETTES_10",
+        Title = "L'Or de la Rivière",
+        Description = "Récupère 10 paillettes d'or",
+        Type = "Collect",
+        Target = "Paillettes",
+        Goal = 10,
+        Reward = { Cash = 30, XP = 50 },
+        MinLevel = 1,
+    },
+    {
+        Id = "MINE_PEPITES_5",
+        Title = "Chercheur de Pépites",
+        Description = "Récupère 5 pépites d'or",
+        Type = "Collect",
+        Target = "Pepites",
+        Goal = 5,
+        Reward = { Cash = 50, XP = 75 },
+        MinLevel = 2,
+    },
+    {
+        Id = "SELL_ITEMS_3",
+        Title = "Le Commerce d'Abord",
+        Description = "Effectue 3 ventes chez un marchand",
+        Type = "Sell",
+        Target = "AnyTransaction",
+        Goal = 3,
+        Reward = { Cash = 40, XP = 50 },
+        MinLevel = 1,
+    },
+    {
+        Id = "CRAFT_OR_PUR_5",
+        Title = "Apprenti Forgeron",
+        Description = "Raffine 5 lots d'or pur",
+        Type = "Craft",
+        Target = "OrPur",
+        Goal = 5,
+        Reward = { Cash = 60, XP = 80 },
+        MinLevel = 1,
+    },
+    {
+        Id = "MINE_GEMS_3",
+        Title = "Chasseur de Gemmes",
+        Description = "Trouve 3 gemmes (peu importe le type)",
+        Type = "Collect",
+        Target = "AnyGem",
+        Goal = 3,
+        Reward = { Cash = 75, XP = 100 },
+        MinLevel = 2,
+    },
+    {
+        Id = "MINE_ORE_10",
+        Title = "Mineur de Fond",
+        Description = "Récupère 10 minerais d'or dans la mine",
+        Type = "Collect",
+        Target = "MineraiOr",
+        Goal = 10,
+        Reward = { Cash = 80, XP = 100 },
+        MinLevel = 3,
+    },
+    {
+        Id = "EARN_CASH_200",
+        Title = "Millionnaire en Herbe",
+        Description = "Gagne 200$ en ventes",
+        Type = "Earn",
+        Target = "Cash",
+        Goal = 200,
+        Reward = { Cash = 50, XP = 75 },
+        MinLevel = 1,
+    },
+}
+
+QuestConfig.DAILY_QUEST_COUNT = 3
+QuestConfig.QUEST_RESET_HOUR_UTC = 0
+
+return QuestConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="10">
+          <Properties>
+            <string name="Name">ToolConfig</string>
+            <string name="Source"><![CDATA[local ToolConfig = {}
+
+ToolConfig.Tools = {
+    Batee = {
+        DisplayName = "Batée",
+        Description = "Permet de tamiser l'or dans la rivière",
+        Category = "Mining",
+        RequiredZones = { "Zone1", "Zone2" },
+        BaseActionTime = 5,
+        Levels = {
+            [1] = { Name = "Batée en Bois",   BuyPrice = 0,   UpgradePrice = nil },
+            [2] = { Name = "Batée en Cuivre",  BuyPrice = nil, UpgradePrice = 150 },
+            [3] = { Name = "Batée en Fer",     BuyPrice = nil, UpgradePrice = 500 },
+        },
+    },
+    Tapis = {
+        DisplayName = "Tapis de Prospection",
+        Description = "Tapis pour filtrer les sédiments — meilleur rendement",
+        Category = "Mining",
+        RequiredZones = { "Zone1", "Zone2" },
+        BaseActionTime = 8,
+        Levels = {
+            [1] = { Name = "Tapis Basique",   BuyPrice = 100, UpgradePrice = nil },
+            [2] = { Name = "Tapis Amélioré",  BuyPrice = nil, UpgradePrice = 300 },
+            [3] = { Name = "Tapis Pro",       BuyPrice = nil, UpgradePrice = 800 },
+        },
+    },
+    Pioche = {
+        DisplayName = "Pioche",
+        Description = "Pour miner les filons et le minerai dans la mine",
+        Category = "Mining",
+        RequiredZones = { "Zone2", "Zone3" },
+        BaseActionTime = 4,
+        Levels = {
+            [1] = { Name = "Pioche en Bois",  BuyPrice = 200, UpgradePrice = nil },
+            [2] = { Name = "Pioche en Fer",   BuyPrice = nil, UpgradePrice = 600 },
+            [3] = { Name = "Pioche en Acier", BuyPrice = nil, UpgradePrice = 1500 },
+        },
+    },
+}
+
+return ToolConfig
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="11">
+          <Properties>
+            <string name="Name">ZoneConfig</string>
+            <string name="Source"><![CDATA[local ZoneConfig = {}
+
+ZoneConfig.Zones = {
+    Zone1 = {
+        Name = "Rivière Tranquille",
+        DisplayName = "Zone 1 — Rivière Tranquille",
+        Description = "Eaux calmes, or facile à trouver. Parfait pour apprendre.",
+        RequiredLevel = 1,
+        AllowedTools = { "Batee", "Tapis" },
+        MaxActiveDeposits = 8,
+        SpawnInterval = 15,
+        IsTutorialZone = true,
+        -- Position dans le monde (centre de la zone)
+        WorldPosition = Vector3.new(0, 0, -200),
+    },
+    Zone2 = {
+        Name = "Collines Ambrées",
+        DisplayName = "Zone 2 — Collines Ambrées",
+        Description = "Terrain vallonné, pépites et premiers filons. Détecteur recommandé.",
+        RequiredLevel = 2,
+        AllowedTools = { "Batee", "Tapis", "Pioche" },
+        MaxActiveDeposits = 10,
+        SpawnInterval = 20,
+        IsTutorialZone = false,
+        WorldPosition = Vector3.new(-200, 0, 0),
+    },
+    Zone3 = {
+        Name = "Mine de Crow Creek",
+        DisplayName = "Zone 3 — Mine de Crow Creek",
+        Description = "Mine souterraine profonde. Riches filons, mais danger !",
+        RequiredLevel = 3,
+        AllowedTools = { "Pioche" },
+        MaxActiveDeposits = 12,
+        SpawnInterval = 25,
+        IsTutorialZone = false,
+        HasBoss = true,
+        BossId = "GardienMine",
+        WorldPosition = Vector3.new(0, 0, 200),
+    },
+}
+
+return ZoneConfig
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="12">
+        <Properties>
+          <string name="Name">Shared</string>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="ServerScriptService" referent="13">
+    <Properties>
+      <string name="Name">ServerScriptService</string>
+    </Properties>
+    <Item class="Folder" referent="14">
+      <Properties>
+        <string name="Name">Core</string>
+      </Properties>
+      <Item class="ModuleScript" referent="15">
+        <Properties>
+          <string name="Name">DataManager</string>
+          <string name="Source"><![CDATA[--[[
+    DataManager.lua (ModuleScript)
+    ROLE : Gere le chargement, la sauvegarde et la liberation des profils joueurs.
+    UTILISE : ProfileStore (wrapper simplifie dans Lib)
+    DONNEES : Voir DEFAULT_DATA ci-dessous
+]]
+
+local DataManager = {}
+
+local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ProfileStore = require(ServerScriptService.Lib.ProfileStore)
+
+-- CONSTANTES
+local DATASTORE_NAME = "GoldRush_PlayerData_V1"
+local SAVE_INTERVAL = 60
+
+-- État
+local ProfileStoreInstance = nil
+local Profiles = {} -- { [player] = Profile }
+
+-- ==========================================
+-- DEFAULT DATA (nouveau joueur)
+-- ==========================================
+local DEFAULT_DATA = {
+    Version = 1,
+    FirstJoin = 0,
+    LastLogin = 0,
+    TotalPlayTime = 0,
+    Cash = 50,
+    TotalCashEarned = 0,
+    XP = 0,
+    Level = 1,
+    Inventory = {
+        Paillettes = 0, OrPur = 0, Lingots = 0,
+        Pepites = 0, MineraiOr = 0,
+        Quartz = 0, Amethyste = 0, Topaze = 0,
+    },
+    Tools = {
+        Batee = { Owned = true, Level = 1 },
+        Tapis = { Owned = false, Level = 0 },
+        Pioche = { Owned = false, Level = 0 },
+    },
+    Quests = { DailyReset = 0, Active = {}, Completed = {} },
+    Zones = { Zone1_Unlocked = true, Zone2_Unlocked = false, Zone3_Unlocked = false },
+    Saloon = { LastDrinkTime = 0, DrinksToday = 0, BuffActive = nil, BuffExpiry = 0 },
+    Boss = { GardienDefeated = 0, LastBossAttempt = 0 },
+    Tutorial = { Completed = false, Step = 1 },
+}
+
+-- ==========================================
+-- INIT
+-- ==========================================
+function DataManager:Init()
+    ProfileStoreInstance = ProfileStore.New(DATASTORE_NAME, DEFAULT_DATA)
+    print("[DataManager] ProfileStore initialisé")
+end
+
+-- ==========================================
+-- CHARGER UN PROFIL
+-- ==========================================
+function DataManager:LoadProfile(player: Player)
+    local profileKey = "Player_" .. player.UserId
+
+    local profile = ProfileStoreInstance:LoadProfileAsync(profileKey, "ForceLoad")
+
+    if not profile then
+        warn("[DataManager] Échec chargement profil pour", player.Name)
+        return nil
+    end
+
+    -- Si le joueur a quitté pendant le chargement
+    if not player:IsDescendantOf(Players) then
+        profile:Release()
+        return nil
+    end
+
+    -- Setup du profil
+    profile:AddUserId(player.UserId)
+    profile:Reconcile()
+    profile:ListenToRelease(function()
+        Profiles[player] = nil
+        if player:IsDescendantOf(Players) then
+            player:Kick("Profil relâché — reconnecte-toi.")
+        end
+    end)
+
+    Profiles[player] = profile
+
+    -- Auto-save périodique
+    task.spawn(function()
+        while Profiles[player] do
+            task.wait(SAVE_INTERVAL)
+            if Profiles[player] and profile:IsActive() then
+                -- ProfileStore wrapper handles save on Release
+                -- For periodic save, we force a save
+                pcall(function()
+                    if profile._dataStore then
+                        profile._dataStore:SetAsync(profileKey, profile.Data, profile._userIds)
+                    end
+                end)
+            end
+        end
+    end)
+
+    print("[DataManager] Profil chargé pour", player.Name)
+    return profile
+end
+
+-- ==========================================
+-- OBTENIR LE PROFIL D'UN JOUEUR
+-- ==========================================
+function DataManager:GetProfile(player: Player)
+    return Profiles[player]
+end
+
+function DataManager:GetData(player: Player)
+    local profile = Profiles[player]
+    if profile then
+        return profile.Data
+    end
+    return nil
+end
+
+-- ==========================================
+-- SAUVEGARDER ET RELÂCHER
+-- ==========================================
+function DataManager:SaveAndReleaseProfile(player: Player)
+    local profile = Profiles[player]
+    if profile then
+        profile:Release()
+        Profiles[player] = nil
+        print("[DataManager] Profil sauvé et relâché pour", player.Name)
+    end
+end
+
+-- ==========================================
+-- SAUVEGARDE D'URGENCE (tous les joueurs)
+-- ==========================================
+function DataManager:SaveAllProfiles()
+    for player, profile in pairs(Profiles) do
+        if profile then
+            profile:Release()
+        end
+    end
+    Profiles = {}
+    print("[DataManager] Tous les profils sauvés et relâchés")
+end
+
+-- ==========================================
+-- UTILITAIRES DE MODIFICATION
+-- ==========================================
+function DataManager:UpdateData(player: Player, key: string, value: any)
+    local data = self:GetData(player)
+    if data then
+        data[key] = value
+    end
+end
+
+function DataManager:AddToInventory(player: Player, itemName: string, quantity: number)
+    local data = self:GetData(player)
+    if data and data.Inventory[itemName] ~= nil then
+        data.Inventory[itemName] = data.Inventory[itemName] + quantity
+        return true
+    end
+    return false
+end
+
+function DataManager:RemoveFromInventory(player: Player, itemName: string, quantity: number): boolean
+    local data = self:GetData(player)
+    if data and data.Inventory[itemName] and data.Inventory[itemName] >= quantity then
+        data.Inventory[itemName] = data.Inventory[itemName] - quantity
+        return true
+    end
+    return false
+end
+
+function DataManager:AddCash(player: Player, amount: number)
+    local data = self:GetData(player)
+    if data then
+        data.Cash = data.Cash + amount
+        data.TotalCashEarned = data.TotalCashEarned + amount
+    end
+end
+
+function DataManager:RemoveCash(player: Player, amount: number): boolean
+    local data = self:GetData(player)
+    if data and data.Cash >= amount then
+        data.Cash = data.Cash - amount
+        return true
+    end
+    return false
+end
+
+function DataManager:AddXP(player: Player, amount: number)
+    local data = self:GetData(player)
+    if data then
+        data.XP = data.XP + amount
+        -- Vérifier level up
+        local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+        for level, threshold in pairs(EconomyConfig.LevelThresholds) do
+            if data.XP >= threshold.MinXP and level > data.Level then
+                data.Level = level
+                -- Débloquer zones
+                if level == 2 then data.Zones.Zone2_Unlocked = true end
+                if level == 3 then data.Zones.Zone3_Unlocked = true end
+                -- Notifier le client
+                local event = ReplicatedStorage.Events.RemoteEvents:FindFirstChild("LevelUp")
+                if event then
+                    event:FireClient(player, level, threshold.Name)
+                end
+                print("[DataManager] Level up!", player.Name, "→", threshold.Name)
+            end
+        end
+    end
+end
+
+return DataManager
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="16">
+        <Properties>
+          <string name="Name">EconomyManager</string>
+          <string name="Source"><![CDATA[--[[
+    EconomyManager.lua (ModuleScript)
+    ROLE : Gere toutes les transactions d'achat/vente.
+    VALIDATION : Toutes les verifications sont serveur-side.
+]]
+
+local EconomyManager = {}
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+
+local DataManager = require(ServerScriptService.Core.DataManager)
+local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+local ToolConfig = require(ReplicatedStorage.Modules.Config.ToolConfig)
+
+-- ==========================================
+-- INIT
+-- ==========================================
+function EconomyManager:Init()
+    local events = ReplicatedStorage.Events.RemoteEvents
+
+    events.RequestSell.OnServerEvent:Connect(function(player, npcType, itemName, quantity)
+        self:HandleSell(player, npcType, itemName, quantity)
+    end)
+
+    events.RequestBuyTool.OnServerEvent:Connect(function(player, toolName)
+        self:HandleBuyTool(player, toolName)
+    end)
+
+    events.RequestUpgradeTool.OnServerEvent:Connect(function(player, toolName)
+        self:HandleUpgradeTool(player, toolName)
+    end)
+
+    print("[EconomyManager] Initialisé ✓")
+end
+
+-- ==========================================
+-- VENDRE DES ITEMS
+-- ==========================================
+function EconomyManager:HandleSell(player: Player, npcType: string, itemName: string, quantity: number)
+    -- VALIDATION
+    if type(quantity) ~= "number" or quantity <= 0 or quantity ~= math.floor(quantity) then
+        warn("[EconomyManager] Quantité invalide de", player.Name)
+        return
+    end
+    if quantity > 9999 then return end
+
+    local priceTable = EconomyConfig.SellPrices[npcType]
+    if not priceTable then return end
+
+    local pricePerUnit = priceTable[itemName]
+    if not pricePerUnit then
+        ReplicatedStorage.Events.RemoteEvents.SellResult:FireClient(
+            player, false, "Ce marchand n'achète pas cet item."
+        )
+        return
+    end
+
+    -- Vérifier que le joueur possède assez
+    local data = DataManager:GetData(player)
+    if not data or not data.Inventory[itemName] or data.Inventory[itemName] < quantity then
+        ReplicatedStorage.Events.RemoteEvents.SellResult:FireClient(
+            player, false, "Quantité insuffisante."
+        )
+        return
+    end
+
+    -- Effectuer la vente
+    local totalCash = pricePerUnit * quantity
+    DataManager:RemoveFromInventory(player, itemName, quantity)
+    DataManager:AddCash(player, totalCash)
+    DataManager:AddXP(player, EconomyConfig.XPRewards.SellTransaction)
+
+    -- Notifier le QuestManager
+    local QuestManager = require(ServerScriptService.Systems.QuestManager)
+    QuestManager:OnSellTransaction(player, itemName, quantity, totalCash)
+
+    -- Résultat au client
+    ReplicatedStorage.Events.RemoteEvents.SellResult:FireClient(
+        player, true, string.format("Vendu %dx %s pour %d$ !", quantity, itemName, totalCash)
+    )
+
+    -- Mettre à jour le leaderboard
+    local LeaderboardManager = require(ServerScriptService.Systems.LeaderboardManager)
+    LeaderboardManager:UpdatePlayer(player)
+
+    print("[EconomyManager]", player.Name, "a vendu", quantity, itemName, "pour", totalCash, "$")
+end
+
+-- ==========================================
+-- ACHETER UN OUTIL
+-- ==========================================
+function EconomyManager:HandleBuyTool(player: Player, toolName: string)
+    local toolData = ToolConfig.Tools[toolName]
+    if not toolData then return end
+
+    local data = DataManager:GetData(player)
+    if not data then return end
+
+    if data.Tools[toolName] and data.Tools[toolName].Owned then
+        ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+            player, false, "Tu possèdes déjà cet outil !"
+        )
+        return
+    end
+
+    local price = toolData.Levels[1].BuyPrice
+    if not price or price == 0 then return end
+
+    if not DataManager:RemoveCash(player, price) then
+        ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+            player, false, "Pas assez d'argent !"
+        )
+        return
+    end
+
+    data.Tools[toolName] = { Owned = true, Level = 1 }
+
+    local MiningSystem = require(ServerScriptService.Systems.MiningSystem)
+    MiningSystem:GiveTool(player, toolName)
+
+    ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+        player, true, string.format("%s acheté pour %d$ !", toolData.DisplayName, price)
+    )
+end
+
+-- ==========================================
+-- UPGRADE UN OUTIL
+-- ==========================================
+function EconomyManager:HandleUpgradeTool(player: Player, toolName: string)
+    local toolData = ToolConfig.Tools[toolName]
+    if not toolData then return end
+
+    local data = DataManager:GetData(player)
+    if not data then return end
+
+    local currentTool = data.Tools[toolName]
+    if not currentTool or not currentTool.Owned then
+        ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+            player, false, "Tu ne possèdes pas cet outil !"
+        )
+        return
+    end
+
+    local nextLevel = currentTool.Level + 1
+    local nextLevelData = toolData.Levels[nextLevel]
+    if not nextLevelData then
+        ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+            player, false, "Outil déjà au niveau maximum !"
+        )
+        return
+    end
+
+    local price = nextLevelData.UpgradePrice
+    if not DataManager:RemoveCash(player, price) then
+        ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+            player, false, "Pas assez d'argent !"
+        )
+        return
+    end
+
+    data.Tools[toolName].Level = nextLevel
+
+    ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
+        player, true, string.format(
+            "%s amélioré au niveau %d pour %d$ !",
+            toolData.DisplayName, nextLevel, price
+        )
+    )
+end
+
+return EconomyManager
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="Script" referent="17">
+        <Properties>
+          <string name="Name">GameManager</string>
+          <token name="RunContext">0</token>
+          <string name="Source"><![CDATA[--[[
+    GameManager.server.lua
+    ROLE : Point d'entree serveur. Initialise tous les systemes,
+           gere le cycle jour/nuit, coordonne les managers.
+    DEPENDANCES : DataManager, EconomyManager, GoldSpawner, QuestManager,
+                  CraftManager, BossManager, SaloonManager, LeaderboardManager
+]]
+
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+
+-- MapBuilder en premier (crée le monde, les events, les templates)
+local MapBuilder = require(ServerScriptService.Systems.MapBuilder)
+
+-- Modules (require les ModuleScripts)
+local DataManager = require(ServerScriptService.Core.DataManager)
+local EconomyManager = require(ServerScriptService.Core.EconomyManager)
+local GoldSpawner = require(ServerScriptService.Systems.GoldSpawner)
+local MiningSystem = require(ServerScriptService.Systems.MiningSystem)
+local CraftManager = require(ServerScriptService.Systems.CraftManager)
+local QuestManager = require(ServerScriptService.Systems.QuestManager)
+local BossManager = require(ServerScriptService.Systems.BossManager)
+local SaloonManager = require(ServerScriptService.Systems.SaloonManager)
+local LeaderboardManager = require(ServerScriptService.Systems.LeaderboardManager)
+local GameConfig = require(ReplicatedStorage.Modules.Config.GameConfig)
+
+-- État global serveur
+local GameState = {
+    TimeOfDay = "Day",
+    CycleTimer = 0,
+    ServerStartTime = os.time(),
+    ActivePlayers = {},
+}
+
+-- ==========================================
+-- INITIALISATION
+-- ==========================================
+function Initialize()
+    print("[GameManager] Initialisation du serveur...")
+
+    -- 0. Construire le monde (remote events, templates, map, NPCs)
+    MapBuilder:Init()
+
+    -- 1. Initialiser le DataManager (ProfileStore)
+    DataManager:Init()
+
+    -- 2. Initialiser les systèmes
+    EconomyManager:Init()
+    GoldSpawner:Init()
+    MiningSystem:Init()
+    CraftManager:Init()
+    QuestManager:Init()
+    BossManager:Init()
+    SaloonManager:Init()
+    LeaderboardManager:Init()
+
+    -- 3. Connecter les événements joueurs
+    Players.PlayerAdded:Connect(OnPlayerAdded)
+    Players.PlayerRemoving:Connect(OnPlayerRemoving)
+
+    -- 4. Gérer les joueurs déjà présents (en cas de script reload)
+    for _, player in Players:GetPlayers() do
+        task.spawn(OnPlayerAdded, player)
+    end
+
+    -- 5. Lancer le cycle jour/nuit
+    RunService.Heartbeat:Connect(UpdateDayNightCycle)
+
+    print("[GameManager] Serveur initialisé ✓")
+end
+
+-- ==========================================
+-- JOUEUR REJOINT
+-- ==========================================
+function OnPlayerAdded(player: Player)
+    print("[GameManager] Joueur rejoint :", player.Name)
+
+    -- 1. Charger / créer le profil
+    local profile = DataManager:LoadProfile(player)
+    if not profile then
+        player:Kick("Erreur de chargement des données. Réessaie.")
+        return
+    end
+
+    -- 2. Mettre à jour LastLogin
+    profile.Data.LastLogin = os.time()
+    if profile.Data.FirstJoin == 0 then
+        profile.Data.FirstJoin = os.time()
+    end
+
+    -- 3. Initialiser la zone du joueur
+    GameState.ActivePlayers[player.UserId] = true
+
+    -- 4. Vérifier reset quotidien des quêtes
+    QuestManager:CheckDailyReset(player)
+
+    -- 5. Donner les outils possédés
+    MiningSystem:EquipOwnedTools(player)
+
+    -- 6. Envoyer les données initiales au client
+    local initEvent = ReplicatedStorage.Events.RemoteEvents:FindFirstChild("InitPlayerData")
+    if initEvent then
+        initEvent:FireClient(player, profile.Data)
+    end
+
+    -- 7. Si tutoriel non complété, déclencher le tuto
+    if not profile.Data.Tutorial.Completed then
+        local tutEvent = ReplicatedStorage.Events.RemoteEvents:FindFirstChild("StartTutorial")
+        if tutEvent then
+            tutEvent:FireClient(player, profile.Data.Tutorial.Step)
+        end
+    end
+
+    -- 8. Mettre à jour le leaderboard
+    LeaderboardManager:UpdatePlayer(player)
+end
+
+-- ==========================================
+-- JOUEUR QUITTE
+-- ==========================================
+function OnPlayerRemoving(player: Player)
+    print("[GameManager] Joueur quitte :", player.Name)
+
+    -- 1. Sauvegarder le profil
+    DataManager:SaveAndReleaseProfile(player)
+
+    -- 2. Nettoyer
+    GameState.ActivePlayers[player.UserId] = nil
+end
+
+-- ==========================================
+-- CYCLE JOUR/NUIT
+-- ==========================================
+function UpdateDayNightCycle(deltaTime: number)
+    local config = GameConfig.Saloon.DayNight
+    GameState.CycleTimer = GameState.CycleTimer + deltaTime
+
+    if GameState.CycleTimer >= config.CycleDuration then
+        GameState.CycleTimer = 0
+    end
+
+    local dayDuration = config.CycleDuration * config.DayRatio
+    local newTimeOfDay = (GameState.CycleTimer <= dayDuration) and "Day" or "Night"
+
+    if newTimeOfDay ~= GameState.TimeOfDay then
+        GameState.TimeOfDay = newTimeOfDay
+        -- Notifier tous les clients
+        local event = ReplicatedStorage.Events.RemoteEvents:FindFirstChild("TimeOfDayChanged")
+        if event then
+            event:FireAllClients(newTimeOfDay)
+        end
+
+        -- Notifier le SaloonManager
+        SaloonManager:OnTimeOfDayChanged(newTimeOfDay)
+
+        print("[GameManager] Changement :", newTimeOfDay)
+    end
+end
+
+-- ==========================================
+-- GAME CLOSE — Sauvegarde d'urgence
+-- ==========================================
+game:BindToClose(function()
+    print("[GameManager] Serveur en fermeture — sauvegarde d'urgence")
+    DataManager:SaveAllProfiles()
+    task.wait(3)
+end)
+
+-- Lancer !
+Initialize()
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="18">
+      <Properties>
+        <string name="Name">Lib</string>
+      </Properties>
+      <Item class="ModuleScript" referent="19">
+        <Properties>
+          <string name="Name">ProfileStore</string>
+          <string name="Source"><![CDATA[--[[
+    ProfileStore.lua (Simplified Wrapper)
+    Wraps Roblox DataStoreService with a ProfileStore-like API.
+    Compatible with the DataManager spec interface.
+
+    API:
+    - ProfileStore.New(storeName, defaultData) -> ProfileStoreInstance
+    - instance:LoadProfileAsync(key, loadMode) -> Profile
+    - profile:Release()
+    - profile:AddUserId(userId)
+    - profile:Reconcile()
+    - profile:ListenToRelease(callback)
+    - profile.Data (table)
+]]
+
+local DataStoreService = game:GetService("DataStoreService")
+local RunService = game:GetService("RunService")
+
+local ProfileStore = {}
+ProfileStore.__index = ProfileStore
+
+-- Profile class
+local Profile = {}
+Profile.__index = Profile
+
+function Profile.new(data, dataStore, key, defaultData)
+    local self = setmetatable({}, Profile)
+    self.Data = data
+    self._dataStore = dataStore
+    self._key = key
+    self._defaultData = defaultData
+    self._released = false
+    self._releaseCallbacks = {}
+    self._userIds = {}
+    return self
+end
+
+function Profile:AddUserId(userId)
+    table.insert(self._userIds, userId)
+end
+
+-- Reconcile: fill in missing keys from default data (schema migration)
+function Profile:Reconcile()
+    local function reconcileTable(target, template)
+        for key, defaultValue in pairs(template) do
+            if target[key] == nil then
+                if type(defaultValue) == "table" then
+                    target[key] = {}
+                    reconcileTable(target[key], defaultValue)
+                else
+                    target[key] = defaultValue
+                end
+            elseif type(defaultValue) == "table" and type(target[key]) == "table" then
+                reconcileTable(target[key], defaultValue)
+            end
+        end
+    end
+    reconcileTable(self.Data, self._defaultData)
+end
+
+function Profile:ListenToRelease(callback)
+    table.insert(self._releaseCallbacks, callback)
+end
+
+function Profile:Release()
+    if self._released then return end
+    self._released = true
+
+    -- Save data before releasing
+    local success, err = pcall(function()
+        self._dataStore:SetAsync(self._key, self.Data, self._userIds)
+    end)
+
+    if not success then
+        warn("[ProfileStore] Failed to save on release:", err)
+    end
+
+    -- Fire release callbacks
+    for _, callback in ipairs(self._releaseCallbacks) do
+        task.spawn(callback)
+    end
+end
+
+function Profile:IsActive()
+    return not self._released
+end
+
+-- ProfileStore Instance class
+local ProfileStoreInstance = {}
+ProfileStoreInstance.__index = ProfileStoreInstance
+
+function ProfileStoreInstance.new(storeName, defaultData)
+    local self = setmetatable({}, ProfileStoreInstance)
+    self._storeName = storeName
+    self._defaultData = defaultData
+    self._dataStore = nil
+    self._profiles = {} -- key -> Profile
+
+    -- Get DataStore (only in real server, not in Studio test without API access)
+    local success, result = pcall(function()
+        return DataStoreService:GetDataStore(storeName)
+    end)
+
+    if success then
+        self._dataStore = result
+    else
+        warn("[ProfileStore] DataStore unavailable (Studio mode?):", result)
+    end
+
+    return self
+end
+
+function ProfileStoreInstance:LoadProfileAsync(key, loadMode)
+    -- Deep copy default data
+    local function deepCopy(original)
+        local copy = {}
+        for k, v in pairs(original) do
+            if type(v) == "table" then
+                copy[k] = deepCopy(v)
+            else
+                copy[k] = v
+            end
+        end
+        return copy
+    end
+
+    local data = nil
+
+    if self._dataStore then
+        -- Try to load from DataStore
+        local success, result = pcall(function()
+            return self._dataStore:GetAsync(key)
+        end)
+
+        if success and result then
+            data = result
+        elseif not success then
+            warn("[ProfileStore] GetAsync failed for", key, ":", result)
+            -- On ForceLoad, we still create a profile with defaults
+            if loadMode ~= "ForceLoad" then
+                return nil
+            end
+        end
+    end
+
+    -- Use default data if nothing loaded
+    if not data then
+        data = deepCopy(self._defaultData)
+    end
+
+    -- Release existing profile for same key if any
+    if self._profiles[key] then
+        self._profiles[key]:Release()
+    end
+
+    local profile = Profile.new(data, self._dataStore, key, self._defaultData)
+    self._profiles[key] = profile
+
+    return profile
+end
+
+-- Module interface
+function ProfileStore.New(storeName, defaultData)
+    return ProfileStoreInstance.new(storeName, defaultData)
+end
+
+return ProfileStore
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="20">
+      <Properties>
+        <string name="Name">Systems</string>
+      </Properties>
+      <Item class="ModuleScript" referent="21">
+        <Properties>
+          <string name="Name">BossManager</string>
+          <string name="Source"><![CDATA[--[[
+    BossManager.lua (ModuleScript — STUB)
+    ROLE : Gere le spawn et le combat du boss Gardien de la Mine.
+    STATUS : Stub bootable. Implementation complete → Sprint 22.
+]]
+
+local BossManager = {}
+
+function BossManager:Init()
+    print("[BossManager] Initialisé (stub) ✓")
+end
+
+return BossManager
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="22">
+        <Properties>
+          <string name="Name">CraftManager</string>
+          <string name="Source"><![CDATA[--[[
+    CraftManager.lua (ModuleScript — STUB)
+    ROLE : Gere le craft/raffinage a la forge.
+    STATUS : Stub bootable. Implementation complete → Sprint 19.
+]]
+
+local CraftManager = {}
+
+function CraftManager:Init()
+    print("[CraftManager] Initialisé (stub) ✓")
+end
+
+return CraftManager
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="23">
+        <Properties>
+          <string name="Name">GoldSpawner</string>
+          <string name="Source"><![CDATA[--[[
+    GoldSpawner.lua (ModuleScript)
+    ROLE : Gere le spawn/respawn de gisements d'or et de gemmes dans les 3 zones.
+    MECANIQUE : Chaque zone a des SpawnPoints. Le spawner cree des instances
+                a partir de templates (ServerStorage) sur ces points.
+]]
+
+local GoldSpawner = {}
+
+local ServerStorage = game:GetService("ServerStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+local ZoneConfig = require(ReplicatedStorage.Modules.Config.ZoneConfig)
+
+-- État
+local ActiveDeposits = {} -- { [zone] = { [spawnPointName] = depositInstance } }
+
+-- ==========================================
+-- INIT
+-- ==========================================
+function GoldSpawner:Init()
+    for zoneId, zoneData in pairs(ZoneConfig.Zones) do
+        ActiveDeposits[zoneId] = {}
+        self:StartZoneSpawner(zoneId, zoneData)
+    end
+
+    print("[GoldSpawner] Initialisé ✓")
+end
+
+-- ==========================================
+-- SPAWNER PAR ZONE
+-- ==========================================
+function GoldSpawner:StartZoneSpawner(zoneId: string, zoneData)
+    task.spawn(function()
+        while true do
+            local zoneFolder = self:GetZoneFolder(zoneId)
+            if zoneFolder then
+                local spawnPoints = self:GetSpawnPoints(zoneFolder)
+                local activeCount = self:CountActiveDeposits(zoneId)
+
+                if activeCount < zoneData.MaxActiveDeposits then
+                    for _, spawnPoint in ipairs(spawnPoints) do
+                        if not ActiveDeposits[zoneId][spawnPoint.Name] then
+                            self:SpawnDeposit(zoneId, spawnPoint)
+                            break
+                        end
+                    end
+                end
+            end
+
+            task.wait(zoneData.SpawnInterval)
+        end
+    end)
+end
+
+-- ==========================================
+-- SPAWN UN GISEMENT
+-- ==========================================
+function GoldSpawner:SpawnDeposit(zoneId: string, spawnPoint: BasePart)
+    local template = self:PickTemplate(zoneId)
+    if not template then return end
+
+    local deposit = template:Clone()
+    deposit.Name = "Deposit_" .. spawnPoint.Name
+    deposit:SetAttribute("ZoneId", zoneId)
+    deposit:SetAttribute("SpawnPointName", spawnPoint.Name)
+    deposit:SetAttribute("IsActive", true)
+    deposit:SetAttribute("SpawnTime", os.time())
+
+    -- Déterminer le DisplayName depuis le template name
+    local displayNames = {
+        GoldDeposit_Paillette = "Paillettes d'Or",
+        GoldDeposit_Pepite = "Pépite d'Or",
+        GoldDeposit_Filon = "Filon d'Or",
+        Gem_Quartz = "Quartz",
+        Gem_Amethyste = "Améthyste",
+        Gem_Topaze = "Topaze",
+    }
+    deposit:SetAttribute("DisplayName", displayNames[template.Name] or "Gisement")
+
+    deposit.Parent = Workspace.ActiveGoldDeposits
+
+    -- Positionner
+    if deposit:IsA("Model") then
+        deposit:PivotTo(spawnPoint.CFrame)
+    else
+        deposit.CFrame = spawnPoint.CFrame
+    end
+
+    -- Ajouter ProximityPrompt
+    local prompt = Instance.new("ProximityPrompt")
+    prompt.ActionText = "Miner"
+    prompt.ObjectText = deposit:GetAttribute("DisplayName") or "Gisement"
+    prompt.MaxActivationDistance = 12
+    prompt.HoldDuration = 0
+    prompt.KeyboardKeyCode = Enum.KeyCode.E
+    prompt.RequiresLineOfSight = false
+    prompt.Parent = deposit:IsA("Model") and deposit.PrimaryPart or deposit
+
+    ActiveDeposits[zoneId][spawnPoint.Name] = deposit
+    print("[GoldSpawner] Spawned", deposit.Name, "in", zoneId)
+end
+
+-- ==========================================
+-- CHOISIR UN TEMPLATE
+-- ==========================================
+function GoldSpawner:PickTemplate(zoneId: string): Instance?
+    local templates = ServerStorage.Templates
+    if zoneId == "Zone1" then
+        return templates.GoldDeposit_Paillette
+    elseif zoneId == "Zone2" then
+        return math.random() < 0.7
+            and templates.GoldDeposit_Pepite
+            or templates.GoldDeposit_Filon
+    elseif zoneId == "Zone3" then
+        local roll = math.random()
+        if roll < 0.6 then
+            return templates.GoldDeposit_Filon
+        elseif roll < 0.9 then
+            return templates.GoldDeposit_Pepite
+        else
+            local gems = {"Gem_Quartz", "Gem_Amethyste", "Gem_Topaze"}
+            return templates[gems[math.random(#gems)]]
+        end
+    end
+    return nil
+end
+
+-- ==========================================
+-- DÉTRUIRE UN GISEMENT (après minage)
+-- ==========================================
+function GoldSpawner:DestroyDeposit(deposit: Instance)
+    local zoneId = deposit:GetAttribute("ZoneId")
+    local spawnPointName = deposit:GetAttribute("SpawnPointName")
+
+    if zoneId and spawnPointName then
+        ActiveDeposits[zoneId][spawnPointName] = nil
+    end
+
+    deposit:Destroy()
+end
+
+-- ==========================================
+-- HELPERS
+-- ==========================================
+function GoldSpawner:GetZoneFolder(zoneId: string): Folder?
+    local map = {
+        Zone1 = Workspace.Map.Zone1_RiviereTransquille,
+        Zone2 = Workspace.Map.Zone2_CollinesAmbrees,
+        Zone3 = Workspace.Map.Zone3_MineCrowCreek,
+    }
+    return map[zoneId]
+end
+
+function GoldSpawner:GetSpawnPoints(zoneFolder: Folder): { BasePart }
+    local points = {}
+    for _, subfolder in zoneFolder:GetChildren() do
+        if subfolder.Name:match("Spawn") or subfolder.Name:match("Filon")
+            or subfolder.Name:match("Ore") or subfolder.Name:match("Gem") then
+            for _, point in subfolder:GetChildren() do
+                if point:IsA("BasePart") then
+                    table.insert(points, point)
+                end
+            end
+        end
+    end
+    return points
+end
+
+function GoldSpawner:CountActiveDeposits(zoneId: string): number
+    local count = 0
+    for _ in pairs(ActiveDeposits[zoneId] or {}) do
+        count = count + 1
+    end
+    return count
+end
+
+return GoldSpawner
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="24">
+        <Properties>
+          <string name="Name">LeaderboardManager</string>
+          <string name="Source"><![CDATA[--[[
+    LeaderboardManager.lua (ModuleScript — STUB)
+    ROLE : Gere le leaderboard des joueurs (OrderedDataStore).
+    STATUS : Stub bootable. Implementation complete → Sprint 17.
+]]
+
+local LeaderboardManager = {}
+
+function LeaderboardManager:Init()
+    print("[LeaderboardManager] Initialisé (stub) ✓")
+end
+
+function LeaderboardManager:UpdatePlayer(player: Player)
+    -- TODO Sprint 17: mettre à jour le score du joueur dans le leaderboard
+end
+
+return LeaderboardManager
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="25">
+        <Properties>
+          <string name="Name">MapBuilder</string>
+          <string name="Source"><![CDATA[--[[
+    MapBuilder.lua (ModuleScript)
+    ROLE : Génère le monde au runtime : terrain, ville, zones de minage,
+           NPCs marchands, templates de gisements, remote events.
+    APPELÉ PAR : GameManager:Init() en tout premier.
+]]
+
+local MapBuilder = {}
+
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+
+local ZoneConfig = require(ReplicatedStorage.Modules.Config.ZoneConfig)
+
+-- ═══════════════════════════════════════════
+-- COULEURS
+-- ═══════════════════════════════════════════
+local C = {
+    grass      = Color3.fromRGB(76, 140, 53),
+    dirt       = Color3.fromRGB(120, 85, 50),
+    road       = Color3.fromRGB(75, 70, 60),
+    water      = Color3.fromRGB(50, 120, 180),
+    waterDeep  = Color3.fromRGB(30, 80, 140),
+    sand       = Color3.fromRGB(210, 190, 140),
+    wood       = Color3.fromRGB(130, 85, 45),
+    woodDark   = Color3.fromRGB(90, 60, 30),
+    stone      = Color3.fromRGB(140, 135, 125),
+    stoneDark  = Color3.fromRGB(100, 95, 85),
+    roof       = Color3.fromRGB(160, 80, 40),
+    gold       = Color3.fromRGB(255, 215, 0),
+    sign       = Color3.fromRGB(180, 140, 60),
+    tent       = Color3.fromRGB(200, 180, 140),
+}
+
+-- ═══════════════════════════════════════════
+-- HELPERS
+-- ═══════════════════════════════════════════
+local function makePart(props)
+    local p = Instance.new("Part")
+    p.Anchored = true
+    p.TopSurface = Enum.SurfaceType.Smooth
+    p.BottomSurface = Enum.SurfaceType.Smooth
+    for k, v in pairs(props) do
+        if k ~= "Parent" then
+            p[k] = v
+        end
+    end
+    p.Parent = props.Parent or Workspace
+    return p
+end
+
+local function makeWall(name, size, position, color, parent)
+    return makePart({
+        Name = name,
+        Size = size,
+        Position = position,
+        Color = color,
+        Material = Enum.Material.SmoothPlastic,
+        Parent = parent,
+    })
+end
+
+local function addBillboard(parent, text, color, offset)
+    local gui = Instance.new("BillboardGui")
+    gui.Size = UDim2.new(0, 250, 0, 50)
+    gui.StudsOffset = offset or Vector3.new(0, 4, 0)
+    gui.AlwaysOnTop = true
+    gui.Parent = parent
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = color or Color3.new(1, 1, 1)
+    label.TextStrokeTransparency = 0.5
+    label.TextScaled = true
+    label.Font = Enum.Font.GothamBold
+    label.Parent = gui
+    return gui
+end
+
+-- ═══════════════════════════════════════════
+-- INIT
+-- ═══════════════════════════════════════════
+function MapBuilder:Init()
+    print("[MapBuilder] Construction du monde...")
+    self:CreateRemoteEvents()
+    self:CreateFolders()
+    self:CreateTemplates()
+    self:CreateItemModels()
+    self:CreateWorld()
+    print("[MapBuilder] Monde construit ✓")
+end
+
+-- ═══════════════════════════════════════════
+-- REMOTE EVENTS
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateRemoteEvents()
+    local eventsFolder = Instance.new("Folder")
+    eventsFolder.Name = "Events"
+    eventsFolder.Parent = ReplicatedStorage
+
+    local remoteEvents = Instance.new("Folder")
+    remoteEvents.Name = "RemoteEvents"
+    remoteEvents.Parent = eventsFolder
+
+    local eventNames = {
+        -- Mining
+        "RequestMine", "MineResult",
+        "StartBateeMinigame", "BateeMinigameResult",
+        -- Player data
+        "InitPlayerData", "PlayerDataUpdated",
+        -- Notifications
+        "NotifyPlayer", "LevelUp",
+        -- Day/Night
+        "TimeOfDayChanged",
+        -- Tutorial
+        "StartTutorial",
+        -- Economy
+        "RequestSell", "SellResult",
+        "RequestBuyTool", "RequestUpgradeTool", "ShopResult",
+    }
+
+    for _, name in ipairs(eventNames) do
+        local event = Instance.new("RemoteEvent")
+        event.Name = name
+        event.Parent = remoteEvents
+    end
+
+    print("[MapBuilder] " .. #eventNames .. " RemoteEvents créés")
+end
+
+-- ═══════════════════════════════════════════
+-- DOSSIERS WORKSPACE
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateFolders()
+    -- ActiveGoldDeposits — où les gisements spawnent
+    local deposits = Instance.new("Folder")
+    deposits.Name = "ActiveGoldDeposits"
+    deposits.Parent = Workspace
+
+    -- Map — contient les zones avec spawn points
+    local map = Instance.new("Folder")
+    map.Name = "Map"
+    map.Parent = Workspace
+
+    -- Zone 1
+    local z1 = Instance.new("Folder")
+    z1.Name = "Zone1_RiviereTransquille"
+    z1.Parent = map
+
+    local z1sp = Instance.new("Folder")
+    z1sp.Name = "SpawnPoints"
+    z1sp.Parent = z1
+
+    -- Zone 2
+    local z2 = Instance.new("Folder")
+    z2.Name = "Zone2_CollinesAmbrees"
+    z2.Parent = map
+
+    local z2sp = Instance.new("Folder")
+    z2sp.Name = "SpawnPoints"
+    z2sp.Parent = z2
+
+    -- Zone 3
+    local z3 = Instance.new("Folder")
+    z3.Name = "Zone3_MineCrowCreek"
+    z3.Parent = map
+
+    local z3sp = Instance.new("Folder")
+    z3sp.Name = "SpawnPoints"
+    z3sp.Parent = z3
+
+    -- Créer les spawn points dans chaque zone
+    self:CreateSpawnPoints("Zone1", z1sp, ZoneConfig.Zones.Zone1)
+    self:CreateSpawnPoints("Zone2", z2sp, ZoneConfig.Zones.Zone2)
+    self:CreateSpawnPoints("Zone3", z3sp, ZoneConfig.Zones.Zone3)
+end
+
+function MapBuilder:CreateSpawnPoints(zoneId, parentFolder, zoneData)
+    local center = zoneData.WorldPosition
+    local count = zoneData.MaxActiveDeposits + 4 -- quelques extras
+
+    for i = 1, count do
+        local angle = (i / count) * math.pi * 2 + math.random() * 0.5
+        local radius = 15 + math.random() * 25
+        local x = center.X + math.cos(angle) * radius
+        local z = center.Z + math.sin(angle) * radius
+
+        local pt = makePart({
+            Name = "SP_" .. i,
+            Size = Vector3.new(3, 0.1, 3),
+            Position = Vector3.new(x, 1.5, z),
+            Transparency = 1,
+            CanCollide = false,
+            Anchored = true,
+            Parent = parentFolder,
+        })
+        pt:SetAttribute("ZoneId", zoneId)
+    end
+
+    print("[MapBuilder] " .. count .. " spawn points dans " .. zoneId)
+end
+
+-- ═══════════════════════════════════════════
+-- TEMPLATES (ServerStorage)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateTemplates()
+    local templates = Instance.new("Folder")
+    templates.Name = "Templates"
+    templates.Parent = ServerStorage
+
+    -- GoldDeposit_Paillette (Zone 1 — petit éclat doré)
+    local paillette = makePart({
+        Name = "GoldDeposit_Paillette",
+        Size = Vector3.new(3, 0.5, 3),
+        Color = C.gold,
+        Material = Enum.Material.Neon,
+        Transparency = 0.2,
+        Shape = Enum.PartType.Block,
+        CanCollide = false,
+        Parent = templates,
+    })
+    self:AddGoldParticles(paillette, 5, 0.2)
+
+    -- Beacon lumineux pour Paillette
+    local beaconP = Instance.new("Part")
+    beaconP.Name = "Beacon"
+    beaconP.Anchored = true
+    beaconP.CanCollide = false
+    beaconP.Size = Vector3.new(0.3, 10, 0.3)
+    beaconP.CFrame = CFrame.new(0, 5, 0)
+    beaconP.Color = C.gold
+    beaconP.Material = Enum.Material.Neon
+    beaconP.Transparency = 0.6
+    beaconP.Parent = paillette
+
+    -- GoldDeposit_Pepite (Zone 2 — nugget moyen)
+    local pepite = makePart({
+        Name = "GoldDeposit_Pepite",
+        Size = Vector3.new(2.5, 1.5, 2),
+        Color = Color3.fromRGB(218, 165, 32),
+        Material = Enum.Material.Metal,
+        Shape = Enum.PartType.Block,
+        CanCollide = false,
+        Parent = templates,
+    })
+    self:AddGoldParticles(pepite, 8, 0.3)
+
+    -- GoldDeposit_Filon (Zone 2-3 — veine dans la roche)
+    local filon = makePart({
+        Name = "GoldDeposit_Filon",
+        Size = Vector3.new(4, 3, 2),
+        Color = Color3.fromRGB(160, 140, 60),
+        Material = Enum.Material.Rock,
+        Shape = Enum.PartType.Block,
+        CanCollide = false,
+        Parent = templates,
+    })
+    -- Veine dorée intégrée
+    local vein = Instance.new("Part")
+    vein.Name = "GoldVein"
+    vein.Anchored = true
+    vein.CanCollide = false
+    vein.Size = Vector3.new(3.5, 0.5, 2.1)
+    vein.CFrame = CFrame.new(0, 0.5, 0)
+    vein.Color = C.gold
+    vein.Material = Enum.Material.Neon
+    vein.Transparency = 0.3
+    vein.Parent = filon
+    self:AddGoldParticles(filon, 10, 0.4)
+
+    -- Gem_Quartz
+    local quartz = makePart({
+        Name = "Gem_Quartz",
+        Size = Vector3.new(1.5, 2.5, 1.5),
+        Color = Color3.fromRGB(240, 240, 255),
+        Material = Enum.Material.Neon,
+        Transparency = 0.3,
+        CanCollide = false,
+        Parent = templates,
+    })
+
+    -- Gem_Amethyste
+    local amethyste = makePart({
+        Name = "Gem_Amethyste",
+        Size = Vector3.new(1.5, 2.5, 1.5),
+        Color = Color3.fromRGB(150, 50, 200),
+        Material = Enum.Material.Neon,
+        Transparency = 0.3,
+        CanCollide = false,
+        Parent = templates,
+    })
+
+    -- Gem_Topaze
+    local topaze = makePart({
+        Name = "Gem_Topaze",
+        Size = Vector3.new(1.5, 2.5, 1.5),
+        Color = Color3.fromRGB(255, 180, 0),
+        Material = Enum.Material.Neon,
+        Transparency = 0.3,
+        CanCollide = false,
+        Parent = templates,
+    })
+
+    print("[MapBuilder] 6 templates créés")
+end
+
+function MapBuilder:AddGoldParticles(parent, rate, size)
+    local particles = Instance.new("ParticleEmitter")
+    particles.Color = ColorSequence.new(C.gold)
+    particles.Size = NumberSequence.new(size, 0)
+    particles.Lifetime = NumberRange.new(0.5, 1.5)
+    particles.Rate = rate
+    particles.Speed = NumberRange.new(1, 3)
+    particles.SpreadAngle = Vector2.new(180, 180)
+    particles.Parent = parent
+end
+
+-- ═══════════════════════════════════════════
+-- ITEM MODELS (outils dans ServerStorage)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateItemModels()
+    local models = Instance.new("Folder")
+    models.Name = "ItemModels"
+    models.Parent = ServerStorage
+
+    -- Tool_Batee
+    local batee = Instance.new("Tool")
+    batee.Name = "Tool_Batee"
+    batee.CanBeDropped = false
+    batee.Parent = models
+    local bateeHandle = Instance.new("Part")
+    bateeHandle.Name = "Handle"
+    bateeHandle.Size = Vector3.new(2, 0.3, 2)
+    bateeHandle.Color = C.wood
+    bateeHandle.Material = Enum.Material.Wood
+    bateeHandle.Parent = batee
+
+    -- Tool_Tapis
+    local tapis = Instance.new("Tool")
+    tapis.Name = "Tool_Tapis"
+    tapis.CanBeDropped = false
+    tapis.Parent = models
+    local tapisHandle = Instance.new("Part")
+    tapisHandle.Name = "Handle"
+    tapisHandle.Size = Vector3.new(3, 0.1, 2)
+    tapisHandle.Color = Color3.fromRGB(180, 160, 120)
+    tapisHandle.Material = Enum.Material.Fabric
+    tapisHandle.Parent = tapis
+
+    -- Tool_Pioche
+    local pioche = Instance.new("Tool")
+    pioche.Name = "Tool_Pioche"
+    pioche.CanBeDropped = false
+    pioche.Parent = models
+    local piocheHandle = Instance.new("Part")
+    piocheHandle.Name = "Handle"
+    piocheHandle.Size = Vector3.new(0.5, 0.5, 4)
+    piocheHandle.Color = C.woodDark
+    piocheHandle.Material = Enum.Material.Wood
+    piocheHandle.Parent = pioche
+
+    print("[MapBuilder] 3 outils créés")
+end
+
+-- ═══════════════════════════════════════════
+-- MONDE (terrain, ville, zones, NPCs)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateWorld()
+    local worldFolder = Instance.new("Folder")
+    worldFolder.Name = "World"
+    worldFolder.Parent = Workspace
+
+    -- Sol principal
+    local existingGround = Workspace:FindFirstChild("Baseplate")
+    if existingGround then
+        existingGround.Name = "Ground"
+        existingGround.Size = Vector3.new(800, 1, 800)
+        existingGround.Position = Vector3.new(0, -0.5, 0)
+        existingGround.Color = C.grass
+        existingGround.Material = Enum.Material.Grass
+        existingGround.Parent = worldFolder
+    else
+        makePart({
+            Name = "Ground",
+            Size = Vector3.new(800, 1, 800),
+            Position = Vector3.new(0, -0.5, 0),
+            Color = C.grass,
+            Material = Enum.Material.Grass,
+            Parent = worldFolder,
+        })
+    end
+
+    -- Spawn location
+    local spawnLoc = Instance.new("SpawnLocation")
+    spawnLoc.Name = "SpawnLocation"
+    spawnLoc.Size = Vector3.new(8, 1, 8)
+    spawnLoc.Position = Vector3.new(0, 0.5, 0)
+    spawnLoc.Anchored = true
+    spawnLoc.Transparency = 1
+    spawnLoc.CanCollide = false
+    spawnLoc.Parent = worldFolder
+
+    -- Chemin hub → Zone 1 (sud)
+    makePart({
+        Name = "PathToZone1",
+        Size = Vector3.new(10, 0.1, 200),
+        Position = Vector3.new(0, 0.05, -100),
+        Color = C.dirt,
+        Material = Enum.Material.Ground,
+        Parent = worldFolder,
+    })
+
+    -- Chemin hub → Zone 2 (ouest)
+    makePart({
+        Name = "PathToZone2",
+        Size = Vector3.new(200, 0.1, 10),
+        Position = Vector3.new(-100, 0.05, 0),
+        Color = C.dirt,
+        Material = Enum.Material.Ground,
+        Parent = worldFolder,
+    })
+
+    -- Chemin hub → Zone 3 (nord)
+    makePart({
+        Name = "PathToZone3",
+        Size = Vector3.new(10, 0.1, 200),
+        Position = Vector3.new(0, 0.05, 100),
+        Color = C.dirt,
+        Material = Enum.Material.Ground,
+        Parent = worldFolder,
+    })
+
+    self:CreateTown(worldFolder)
+    self:CreateZone1(worldFolder)
+    self:CreateZone2(worldFolder)
+    self:CreateZone3(worldFolder)
+end
+
+-- ═══════════════════════════════════════════
+-- VILLE (HUB CENTRAL à 0,0,0)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateTown(worldFolder)
+    local townFolder = Instance.new("Folder")
+    townFolder.Name = "Town"
+    townFolder.Parent = worldFolder
+
+    local TC = Vector3.new(0, 0, 0) -- Town Center
+
+    -- Place centrale (plancher bois)
+    makePart({
+        Name = "TownSquare",
+        Size = Vector3.new(50, 0.3, 50),
+        Position = TC + Vector3.new(0, 0.15, 0),
+        Color = C.wood,
+        Material = Enum.Material.Wood,
+        Parent = townFolder,
+    })
+
+    -- Panneau de bienvenue
+    local welcomeSign = makePart({
+        Name = "WelcomeSign",
+        Size = Vector3.new(10, 3, 0.5),
+        Position = TC + Vector3.new(0, 5, 24),
+        Color = C.sign,
+        Material = Enum.Material.Wood,
+        Parent = townFolder,
+    })
+    addBillboard(welcomeSign, "GOLD RUSH LEGACY", C.gold, Vector3.new(0, 2, 0))
+
+    -- Poteau du panneau
+    makePart({
+        Name = "WelcomePost",
+        Size = Vector3.new(0.5, 6, 0.5),
+        Position = TC + Vector3.new(0, 3, 24),
+        Color = C.woodDark,
+        Material = Enum.Material.Wood,
+        Parent = townFolder,
+    })
+
+    -- ── MAGASIN D'OUTILS (Jake) ──
+    self:CreateToolShop(townFolder, TC + Vector3.new(-18, 0, -10))
+
+    -- ── MARCHAND D'OR (Marcel) ──
+    self:CreateMerchant(townFolder, TC + Vector3.new(18, 0, -10))
+
+    -- Lampadaires
+    for _, offset in ipairs({
+        Vector3.new(-22, 0, 22),
+        Vector3.new(22, 0, 22),
+        Vector3.new(-22, 0, -22),
+        Vector3.new(22, 0, -22),
+    }) do
+        makePart({
+            Name = "LampPost",
+            Size = Vector3.new(0.5, 10, 0.5),
+            Position = TC + offset + Vector3.new(0, 5, 0),
+            Color = C.stoneDark,
+            Material = Enum.Material.Metal,
+            Parent = townFolder,
+        })
+        makePart({
+            Name = "LampLight",
+            Size = Vector3.new(2, 1, 2),
+            Position = TC + offset + Vector3.new(0, 10.5, 0),
+            Color = Color3.fromRGB(255, 230, 150),
+            Material = Enum.Material.Neon,
+            Parent = townFolder,
+        })
+    end
+
+    -- Panneaux directionnels
+    self:CreateDirectionSign(townFolder, TC + Vector3.new(0, 0, -24),
+        "→ Zone 1: Rivière (Sud)", Color3.fromRGB(100, 200, 255))
+    self:CreateDirectionSign(townFolder, TC + Vector3.new(-24, 0, 0),
+        "→ Zone 2: Collines (Ouest)", Color3.fromRGB(200, 180, 100))
+    self:CreateDirectionSign(townFolder, TC + Vector3.new(0, 0, 24),
+        "→ Zone 3: Mine (Nord)", Color3.fromRGB(200, 100, 100))
+end
+
+function MapBuilder:CreateDirectionSign(parent, position, text, color)
+    local post = makePart({
+        Name = "SignPost",
+        Size = Vector3.new(0.3, 4, 0.3),
+        Position = position + Vector3.new(0, 2, 0),
+        Color = C.woodDark,
+        Material = Enum.Material.Wood,
+        Parent = parent,
+    })
+    local board = makePart({
+        Name = "SignBoard",
+        Size = Vector3.new(8, 2, 0.3),
+        Position = position + Vector3.new(0, 4.5, 0),
+        Color = C.sign,
+        Material = Enum.Material.Wood,
+        Parent = parent,
+    })
+    addBillboard(board, text, color, Vector3.new(0, 1.5, 0))
+end
+
+-- ═══════════════════════════════════════════
+-- TOOL SHOP (Jake le Forgeron)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateToolShop(parent, pos)
+    local shopFolder = Instance.new("Folder")
+    shopFolder.Name = "ToolShop"
+    shopFolder.Parent = parent
+
+    local SW, SD, SH = 14, 10, 8
+
+    -- Sol
+    makePart({
+        Name = "ShopFloor",
+        Size = Vector3.new(SW, 0.5, SD),
+        Position = pos + Vector3.new(0, 0.25, 0),
+        Color = C.wood,
+        Material = Enum.Material.Wood,
+        Parent = shopFolder,
+    })
+
+    -- Murs
+    makeWall("WallBack", Vector3.new(SW, SH, 0.5), pos + Vector3.new(0, SH/2, -SD/2), C.woodDark, shopFolder)
+    makeWall("WallLeft", Vector3.new(0.5, SH, SD), pos + Vector3.new(-SW/2, SH/2, 0), C.woodDark, shopFolder)
+    makeWall("WallRight", Vector3.new(0.5, SH, SD), pos + Vector3.new(SW/2, SH/2, 0), C.woodDark, shopFolder)
+    makeWall("FrontLeft", Vector3.new(4, SH, 0.5), pos + Vector3.new(-5, SH/2, SD/2), C.woodDark, shopFolder)
+    makeWall("FrontRight", Vector3.new(4, SH, 0.5), pos + Vector3.new(5, SH/2, SD/2), C.woodDark, shopFolder)
+
+    -- Toit
+    makePart({
+        Name = "Roof",
+        Size = Vector3.new(SW + 2, 0.5, SD + 2),
+        Position = pos + Vector3.new(0, SH + 0.25, 0),
+        Color = C.roof,
+        Material = Enum.Material.Wood,
+        Parent = shopFolder,
+    })
+
+    -- Enseigne
+    local shopSign = makePart({
+        Name = "ShopSign",
+        Size = Vector3.new(10, 2.5, 0.5),
+        Position = pos + Vector3.new(0, SH + 2, SD/2 + 1),
+        Color = C.sign,
+        Material = Enum.Material.Wood,
+        Parent = shopFolder,
+    })
+    addBillboard(shopSign, "OUTILS & ÉQUIPEMENT", Color3.fromRGB(50, 30, 10), Vector3.new(0, 2, 0))
+
+    -- Comptoir
+    makePart({
+        Name = "Counter",
+        Size = Vector3.new(10, 3, 2),
+        Position = pos + Vector3.new(0, 1.75, -2),
+        Color = C.woodDark,
+        Material = Enum.Material.Wood,
+        Parent = shopFolder,
+    })
+
+    -- NPC Jake
+    self:CreateNPC(shopFolder, pos + Vector3.new(0, 0.5, -3),
+        "ToolVendor", "Jake le Forgeron",
+        Color3.fromRGB(139, 90, 43),
+        "ToolShop", "Acheter des outils")
+end
+
+-- ═══════════════════════════════════════════
+-- MARCHAND D'OR (Marcel le Marchand)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateMerchant(parent, pos)
+    local merchFolder = Instance.new("Folder")
+    merchFolder.Name = "GoldMerchant"
+    merchFolder.Parent = parent
+
+    -- Comptoir
+    makePart({
+        Name = "Counter",
+        Size = Vector3.new(10, 3, 2),
+        Position = pos + Vector3.new(0, 1.5, 0),
+        Color = C.woodDark,
+        Material = Enum.Material.Wood,
+        Parent = merchFolder,
+    })
+
+    -- Auvent
+    makePart({
+        Name = "Awning",
+        Size = Vector3.new(14, 0.3, 8),
+        Position = pos + Vector3.new(0, 7, -1),
+        Color = C.tent,
+        Material = Enum.Material.Fabric,
+        Parent = merchFolder,
+    })
+
+    -- Poteaux
+    for _, xOff in ipairs({-6, 6}) do
+        makePart({
+            Name = "Pole",
+            Size = Vector3.new(0.5, 7, 0.5),
+            Position = pos + Vector3.new(xOff, 3.5, -4),
+            Color = C.wood,
+            Material = Enum.Material.Wood,
+            Parent = merchFolder,
+        })
+    end
+
+    -- Balance dorée
+    makePart({
+        Name = "GoldBalance",
+        Size = Vector3.new(2, 1.5, 1),
+        Position = pos + Vector3.new(-3, 3.7, 0),
+        Color = C.gold,
+        Material = Enum.Material.Metal,
+        Parent = merchFolder,
+    })
+
+    -- NPC Marcel
+    self:CreateNPC(merchFolder, pos + Vector3.new(0, 0.3, -2),
+        "Marcel", "Marcel le Marchand",
+        Color3.fromRGB(50, 100, 50),
+        "Merchant", "Vendre de l'or")
+end
+
+-- ═══════════════════════════════════════════
+-- NPC GENERIC
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateNPC(parent, pos, npcName, displayName, torsoColor, npcType, actionText)
+    local npc = Instance.new("Model")
+    npc.Name = npcName
+    npc.Parent = parent
+
+    local torso = Instance.new("Part")
+    torso.Name = "HumanoidRootPart"
+    torso.Anchored = true
+    torso.Size = Vector3.new(2, 3, 1)
+    torso.Position = pos + Vector3.new(0, 2.5, 0)
+    torso.Color = torsoColor
+    torso.Material = Enum.Material.SmoothPlastic
+    torso.Parent = npc
+
+    local head = Instance.new("Part")
+    head.Name = "Head"
+    head.Anchored = true
+    head.Shape = Enum.PartType.Ball
+    head.Size = Vector3.new(2, 2, 2)
+    head.Position = pos + Vector3.new(0, 4.5, 0)
+    head.Color = Color3.fromRGB(200, 160, 110)
+    head.Material = Enum.Material.SmoothPlastic
+    head.Parent = npc
+
+    -- Chapeau
+    local hat = Instance.new("Part")
+    hat.Name = "Hat"
+    hat.Anchored = true
+    hat.Size = Vector3.new(2.8, 0.3, 2.8)
+    hat.Position = pos + Vector3.new(0, 5.7, 0)
+    hat.Color = Color3.fromRGB(100, 65, 25)
+    hat.Material = Enum.Material.Leather
+    hat.Parent = npc
+
+    -- Jambes
+    for i, xOff in ipairs({-0.5, 0.5}) do
+        local leg = Instance.new("Part")
+        leg.Name = "Leg" .. i
+        leg.Anchored = true
+        leg.Size = Vector3.new(0.8, 2, 0.8)
+        leg.Position = pos + Vector3.new(xOff, 1, 0)
+        leg.Color = Color3.fromRGB(70, 50, 30)
+        leg.Material = Enum.Material.SmoothPlastic
+        leg.Parent = npc
+    end
+
+    npc.PrimaryPart = torso
+    addBillboard(head, displayName, C.gold, Vector3.new(0, 3, 0))
+
+    -- ProximityPrompt
+    local prompt = Instance.new("ProximityPrompt")
+    prompt.ObjectText = displayName
+    prompt.ActionText = actionText
+    prompt.HoldDuration = 0
+    prompt.MaxActivationDistance = 10
+    prompt.KeyboardKeyCode = Enum.KeyCode.E
+    prompt.RequiresLineOfSight = false
+    prompt.Parent = torso
+
+    torso:SetAttribute("NPCType", npcType)
+    torso:SetAttribute("NPCName", displayName)
+end
+
+-- ═══════════════════════════════════════════
+-- ZONE 1 — RIVIÈRE TRANQUILLE (Sud, z=-200)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateZone1(worldFolder)
+    local z1 = Instance.new("Folder")
+    z1.Name = "Zone1_Riviere"
+    z1.Parent = worldFolder
+
+    local center = ZoneConfig.Zones.Zone1.WorldPosition -- (0, 0, -200)
+
+    -- Panneau de zone
+    local sign = makePart({
+        Name = "ZoneSign",
+        Size = Vector3.new(10, 3, 0.5),
+        Position = center + Vector3.new(0, 5, 50),
+        Color = C.sign,
+        Material = Enum.Material.Wood,
+        Parent = z1,
+    })
+    addBillboard(sign, "Zone 1 — Rivière Tranquille", Color3.fromRGB(100, 200, 255), Vector3.new(0, 2, 0))
+
+    -- Eau de rivière
+    for i = 1, 6 do
+        local zOff = (i - 3.5) * 20
+        local xWobble = math.sin(i * 0.8) * 8
+        makePart({
+            Name = "Water_" .. i,
+            Size = Vector3.new(18, 0.8, 22),
+            Position = center + Vector3.new(xWobble, -0.4, zOff),
+            Color = C.water,
+            Material = Enum.Material.Glass,
+            Transparency = 0.3,
+            Parent = z1,
+        })
+    end
+
+    -- Berges (sable)
+    for i = 1, 6 do
+        local zOff = (i - 3.5) * 20
+        local xWobble = math.sin(i * 0.8) * 8
+        makePart({
+            Name = "BankLeft_" .. i,
+            Size = Vector3.new(8, 0.4, 22),
+            Position = center + Vector3.new(-12 + xWobble, -0.2, zOff),
+            Color = C.sand,
+            Material = Enum.Material.Sand,
+            Parent = z1,
+        })
+        makePart({
+            Name = "BankRight_" .. i,
+            Size = Vector3.new(8, 0.4, 22),
+            Position = center + Vector3.new(12 + xWobble, -0.2, zOff),
+            Color = C.sand,
+            Material = Enum.Material.Sand,
+            Parent = z1,
+        })
+    end
+
+    -- Rochers
+    for i = 1, 5 do
+        makePart({
+            Name = "Rock_" .. i,
+            Size = Vector3.new(
+                math.random(2, 5), math.random(1, 3), math.random(2, 5)
+            ),
+            Position = center + Vector3.new(
+                math.random(-8, 8), math.random(0, 1), math.random(-40, 40)
+            ),
+            Color = C.stoneDark,
+            Material = Enum.Material.Slate,
+            Parent = z1,
+        })
+    end
+end
+
+-- ═══════════════════════════════════════════
+-- ZONE 2 — COLLINES AMBRÉES (Ouest, x=-200)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateZone2(worldFolder)
+    local z2 = Instance.new("Folder")
+    z2.Name = "Zone2_Collines"
+    z2.Parent = worldFolder
+
+    local center = ZoneConfig.Zones.Zone2.WorldPosition -- (-200, 0, 0)
+
+    -- Terrain surélevé
+    makePart({
+        Name = "Ground",
+        Size = Vector3.new(120, 2, 120),
+        Position = center + Vector3.new(0, 1, 0),
+        Color = Color3.fromRGB(100, 80, 45),
+        Material = Enum.Material.Ground,
+        Parent = z2,
+    })
+
+    -- Panneau
+    local sign = makePart({
+        Name = "ZoneSign",
+        Size = Vector3.new(10, 3, 0.5),
+        Position = center + Vector3.new(60, 5, 0),
+        Color = C.sign,
+        Material = Enum.Material.Wood,
+        Parent = z2,
+    })
+    addBillboard(sign, "Zone 2 — Collines Ambrées [Niv.2]",
+        Color3.fromRGB(200, 180, 100), Vector3.new(0, 2, 0))
+
+    -- Collines
+    for i = 1, 5 do
+        local hillSize = Vector3.new(
+            25 + math.random(0, 15), 8 + math.random(0, 10), 25 + math.random(0, 15)
+        )
+        makePart({
+            Name = "Hill_" .. i,
+            Size = hillSize,
+            Position = center + Vector3.new(
+                math.random(-40, 40), hillSize.Y / 2 + 2, math.random(-40, 40)
+            ),
+            Color = Color3.fromRGB(140 + math.random(-20, 20), 100 + math.random(-20, 20), 50),
+            Material = Enum.Material.Rock,
+            Parent = z2,
+        })
+    end
+end
+
+-- ═══════════════════════════════════════════
+-- ZONE 3 — MINE DE CROW CREEK (Nord, z=200)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateZone3(worldFolder)
+    local z3 = Instance.new("Folder")
+    z3.Name = "Zone3_Mine"
+    z3.Parent = worldFolder
+
+    local center = ZoneConfig.Zones.Zone3.WorldPosition -- (0, 0, 200)
+
+    -- Entrée de la mine
+    makePart({
+        Name = "MineEntrance",
+        Size = Vector3.new(15, 12, 3),
+        Position = center + Vector3.new(0, 6, -40),
+        Color = C.stoneDark,
+        Material = Enum.Material.Slate,
+        Parent = z3,
+    })
+    makePart({
+        Name = "MineArch",
+        Size = Vector3.new(8, 2, 3),
+        Position = center + Vector3.new(0, 11, -40),
+        Color = C.stone,
+        Material = Enum.Material.Slate,
+        Parent = z3,
+    })
+
+    -- Panneau
+    local sign = makePart({
+        Name = "ZoneSign",
+        Size = Vector3.new(10, 3, 0.5),
+        Position = center + Vector3.new(0, 5, -50),
+        Color = C.sign,
+        Material = Enum.Material.Wood,
+        Parent = z3,
+    })
+    addBillboard(sign, "Zone 3 — Mine de Crow Creek [Niv.3]",
+        Color3.fromRGB(200, 100, 100), Vector3.new(0, 2, 0))
+
+    -- Sol intérieur mine
+    makePart({
+        Name = "MineFloor",
+        Size = Vector3.new(100, 1, 100),
+        Position = center + Vector3.new(0, -0.5, 0),
+        Color = Color3.fromRGB(60, 55, 50),
+        Material = Enum.Material.Slate,
+        Parent = z3,
+    })
+
+    -- Rails décoratifs
+    for i = 1, 3 do
+        makePart({
+            Name = "Rail_" .. i,
+            Size = Vector3.new(80, 0.2, 0.5),
+            Position = center + Vector3.new(0, 0.1, -20 + i * 15),
+            Color = C.stoneDark,
+            Material = Enum.Material.Metal,
+            Parent = z3,
+        })
+    end
+
+    -- Cristaux décoratifs
+    for i = 1, 6 do
+        makePart({
+            Name = "Crystal_" .. i,
+            Size = Vector3.new(1, math.random(3, 7), 1),
+            Position = center + Vector3.new(
+                math.random(-35, 35), math.random(1, 3), math.random(-30, 30)
+            ),
+            Color = Color3.fromRGB(
+                math.random(100, 200), math.random(50, 150), math.random(150, 255)
+            ),
+            Material = Enum.Material.Neon,
+            Transparency = 0.3,
+            Parent = z3,
+        })
+    end
+end
+
+return MapBuilder
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="26">
+        <Properties>
+          <string name="Name">MiningSystem</string>
+          <string name="Source"><![CDATA[--[[
+    MiningSystem.lua (ModuleScript)
+    ROLE : Gere la logique de minage cote serveur.
+           Recoit les requetes du client, valide, calcule les drops, distribue.
+]]
+
+local MiningSystem = {}
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
+local ServerStorage = game:GetService("ServerStorage")
+
+local DataManager = require(ServerScriptService.Core.DataManager)
+local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+local ToolConfig = require(ReplicatedStorage.Modules.Config.ToolConfig)
+
+-- Cooldowns anti-spam
+local MiningCooldowns = {} -- { [userId] = lastMineTime }
+local MIN_MINE_INTERVAL = 1
+
+-- ==========================================
+-- INIT
+-- ==========================================
+function MiningSystem:Init()
+    local events = ReplicatedStorage.Events.RemoteEvents
+
+    events.RequestMine.OnServerEvent:Connect(function(player, depositId)
+        self:HandleMineRequest(player, depositId)
+    end)
+
+    events.BateeMinigameResult.OnServerEvent:Connect(function(player, depositId, score)
+        self:HandleBateeResult(player, depositId, score)
+    end)
+
+    print("[MiningSystem] Initialisé ✓")
+end
+
+-- ==========================================
+-- TRAITER UNE REQUÊTE DE MINAGE
+-- ==========================================
+function MiningSystem:HandleMineRequest(player: Player, depositId: string)
+    -- Anti-spam
+    local now = os.clock()
+    if MiningCooldowns[player.UserId] and (now - MiningCooldowns[player.UserId]) < MIN_MINE_INTERVAL then
+        return
+    end
+    MiningCooldowns[player.UserId] = now
+
+    -- Trouver le gisement
+    local deposit = game.Workspace.ActiveGoldDeposits:FindFirstChild(depositId)
+    if not deposit then return end
+    if not deposit:GetAttribute("IsActive") then return end
+
+    -- Vérifier la distance (anti-exploit)
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+    local distance = (character.HumanoidRootPart.Position - self:GetDepositPosition(deposit)).Magnitude
+    if distance > 15 then
+        warn("[MiningSystem] Distance exploit détecté :", player.Name, distance)
+        return
+    end
+
+    -- Vérifier la zone et le niveau requis
+    local zoneId = deposit:GetAttribute("ZoneId")
+    local data = DataManager:GetData(player)
+    if not data then return end
+
+    local ZoneConfig = require(ReplicatedStorage.Modules.Config.ZoneConfig)
+    local zoneData = ZoneConfig.Zones[zoneId]
+    if data.Level < zoneData.RequiredLevel then
+        ReplicatedStorage.Events.RemoteEvents.MineResult:FireClient(
+            player, false, "Niveau insuffisant pour cette zone !"
+        )
+        return
+    end
+
+    -- Vérifier que le joueur a un outil adapté
+    local hasTool = self:HasValidTool(player, zoneId)
+    if not hasTool then
+        ReplicatedStorage.Events.RemoteEvents.MineResult:FireClient(
+            player, false, "Tu n'as pas l'outil requis !"
+        )
+        return
+    end
+
+    -- Zone 1 : déclencher le mini-jeu de batée côté client
+    if zoneId == "Zone1" then
+        deposit:SetAttribute("IsActive", false)
+        ReplicatedStorage.Events.RemoteEvents.StartBateeMinigame:FireClient(player, depositId)
+        return
+    end
+
+    -- Zones 2 et 3 : minage direct
+    self:ProcessMining(player, deposit, zoneId, 1.0)
+end
+
+-- ==========================================
+-- RÉSULTAT DU MINI-JEU DE BATÉE
+-- ==========================================
+function MiningSystem:HandleBateeResult(player: Player, depositId: string, score: number)
+    if type(score) ~= "number" then return end
+    score = math.clamp(score, 0, 1)
+
+    local deposit = game.Workspace.ActiveGoldDeposits:FindFirstChild(depositId)
+    if not deposit then return end
+
+    local zoneId = deposit:GetAttribute("ZoneId")
+    self:ProcessMining(player, deposit, zoneId, score)
+end
+
+-- ==========================================
+-- TRAITEMENT DU MINAGE (calcul des drops)
+-- ==========================================
+function MiningSystem:ProcessMining(player: Player, deposit: Instance, zoneId: string, score: number)
+    local data = DataManager:GetData(player)
+    if not data then return end
+
+    -- Déterminer la table de drops
+    local dropTable = self:GetDropTable(zoneId, deposit)
+    if not dropTable then return end
+
+    -- Déterminer le bonus d'outil
+    local toolLevel = self:GetBestToolLevel(player, zoneId)
+    local qtyMultiplier = EconomyConfig.ToolBonuses.QuantityMultiplier[toolLevel] or 1.0
+
+    -- Vérifier buff Saloon
+    if data.Saloon.BuffActive == "LuckBoost" and os.time() < data.Saloon.BuffExpiry then
+        qtyMultiplier = qtyMultiplier * 1.15
+    end
+
+    -- Appliquer le score du mini-jeu
+    qtyMultiplier = qtyMultiplier * math.max(0.3, score)
+
+    -- Calculer les drops
+    local drops = {}
+    for itemName, dropData in pairs(dropTable) do
+        local roll = math.random(1, 100)
+        if roll <= dropData.Chance then
+            local baseQty = math.random(dropData.MinQty, dropData.MaxQty)
+            local finalQty = math.max(1, math.floor(baseQty * qtyMultiplier))
+            drops[itemName] = finalQty
+
+            DataManager:AddToInventory(player, itemName, finalQty)
+
+            local xpKey = "Mine" .. itemName
+            local xp = EconomyConfig.XPRewards[xpKey] or 5
+            DataManager:AddXP(player, xp)
+        end
+    end
+
+    -- Si aucun drop, donner au moins 1 paillette
+    if next(drops) == nil then
+        drops["Paillettes"] = 1
+        DataManager:AddToInventory(player, "Paillettes", 1)
+        DataManager:AddXP(player, EconomyConfig.XPRewards.MinePaillette or 5)
+    end
+
+    -- Notifier le QuestManager
+    local QuestManager = require(ServerScriptService.Systems.QuestManager)
+    for itemName, qty in pairs(drops) do
+        QuestManager:OnMineGold(player, itemName, qty)
+    end
+
+    -- Envoyer le résultat au client
+    ReplicatedStorage.Events.RemoteEvents.MineResult:FireClient(player, true, drops)
+
+    -- Mettre à jour les données client
+    local updatedData = DataManager:GetData(player)
+    if updatedData then
+        local updateEvent = ReplicatedStorage.Events.RemoteEvents:FindFirstChild("PlayerDataUpdated")
+        if updateEvent then
+            updateEvent:FireClient(player, updatedData)
+        end
+    end
+
+    -- Détruire le gisement
+    local GoldSpawner = require(ServerScriptService.Systems.GoldSpawner)
+    GoldSpawner:DestroyDeposit(deposit)
+end
+
+-- ==========================================
+-- HELPERS
+-- ==========================================
+function MiningSystem:GetDropTable(zoneId: string, deposit: Instance)
+    if zoneId == "Zone1" then
+        return EconomyConfig.DropRates.Zone1
+    elseif zoneId == "Zone2" then
+        if deposit.Name:match("Filon") then
+            return EconomyConfig.DropRates.Zone2_Filon
+        end
+        return EconomyConfig.DropRates.Zone2_Detecteur
+    elseif zoneId == "Zone3" then
+        return EconomyConfig.DropRates.Zone3
+    end
+    return nil
+end
+
+function MiningSystem:HasValidTool(player: Player, zoneId: string): boolean
+    local data = DataManager:GetData(player)
+    if not data then return false end
+
+    local ZoneConfig = require(ReplicatedStorage.Modules.Config.ZoneConfig)
+    local zoneData = ZoneConfig.Zones[zoneId]
+
+    for _, toolName in ipairs(zoneData.AllowedTools) do
+        if data.Tools[toolName] and data.Tools[toolName].Owned then
+            return true
+        end
+    end
+    return false
+end
+
+function MiningSystem:GetBestToolLevel(player: Player, zoneId: string): number
+    local data = DataManager:GetData(player)
+    if not data then return 1 end
+
+    local ZoneConfig = require(ReplicatedStorage.Modules.Config.ZoneConfig)
+    local zoneData = ZoneConfig.Zones[zoneId]
+    local bestLevel = 1
+
+    for _, toolName in ipairs(zoneData.AllowedTools) do
+        if data.Tools[toolName] and data.Tools[toolName].Owned then
+            bestLevel = math.max(bestLevel, data.Tools[toolName].Level)
+        end
+    end
+    return bestLevel
+end
+
+function MiningSystem:GetDepositPosition(deposit: Instance): Vector3
+    if deposit:IsA("Model") and deposit.PrimaryPart then
+        return deposit.PrimaryPart.Position
+    elseif deposit:IsA("BasePart") then
+        return deposit.Position
+    end
+    return Vector3.zero
+end
+
+function MiningSystem:EquipOwnedTools(player: Player)
+    local data = DataManager:GetData(player)
+    if not data then return end
+
+    for toolName, toolData in pairs(data.Tools) do
+        if toolData.Owned then
+            self:GiveTool(player, toolName)
+        end
+    end
+end
+
+function MiningSystem:GiveTool(player: Player, toolName: string)
+    local template = ServerStorage.ItemModels:FindFirstChild("Tool_" .. toolName)
+    if template then
+        -- Ne pas donner en doublon
+        if player.Backpack:FindFirstChild(toolName) then return end
+        local character = player.Character
+        if character and character:FindFirstChild(toolName) then return end
+
+        local tool = template:Clone()
+        tool.Name = toolName
+        tool.Parent = player.Backpack
+    end
+end
+
+return MiningSystem
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="27">
+        <Properties>
+          <string name="Name">QuestManager</string>
+          <string name="Source"><![CDATA[--[[
+    QuestManager.lua (ModuleScript — STUB)
+    ROLE : Gere les quetes quotidiennes et la progression.
+    STATUS : Stub bootable. Implementation complete → Sprint 15.
+]]
+
+local QuestManager = {}
+
+function QuestManager:Init()
+    print("[QuestManager] Initialisé (stub) ✓")
+end
+
+function QuestManager:CheckDailyReset(player: Player)
+    -- TODO Sprint 15: vérifier si les quêtes quotidiennes doivent être reset
+end
+
+function QuestManager:OnMineGold(player: Player, itemName: string, quantity: number)
+    -- TODO Sprint 15: progression des quêtes de minage
+end
+
+function QuestManager:OnSellTransaction(player: Player, itemName: string, quantity: number, totalCash: number)
+    -- TODO Sprint 15: progression des quêtes de vente
+end
+
+return QuestManager
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="28">
+        <Properties>
+          <string name="Name">SaloonManager</string>
+          <string name="Source"><![CDATA[--[[
+    SaloonManager.lua (ModuleScript — STUB)
+    ROLE : Gere le saloon, les boissons et les buffs temporaires.
+    STATUS : Stub bootable. Implementation complete → Sprint 23.
+]]
+
+local SaloonManager = {}
+
+function SaloonManager:Init()
+    print("[SaloonManager] Initialisé (stub) ✓")
+end
+
+function SaloonManager:OnTimeOfDayChanged(timeOfDay: string)
+    -- TODO Sprint 23: gérer la transition jour/nuit pour le saloon
+end
+
+return SaloonManager
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="SoundService" referent="29">
+    <Properties>
+      <string name="Name">SoundService</string>
+    </Properties>
+  </Item>
+  <Item class="StarterGui" referent="30">
+    <Properties>
+      <string name="Name">StarterGui</string>
+    </Properties>
+  </Item>
+  <Item class="StarterPlayer" referent="31">
+    <Properties>
+      <string name="Name">StarterPlayer</string>
+    </Properties>
+    <Item class="StarterPlayerScripts" referent="32">
+      <Properties>
+        <string name="Name">StarterPlayerScripts</string>
+      </Properties>
+      <Item class="Folder" referent="33">
+        <Properties>
+          <string name="Name">Core</string>
+        </Properties>
+        <Item class="LocalScript" referent="34">
+          <Properties>
+            <string name="Name">InteractionClient</string>
+            <string name="Source"><![CDATA[--[[
+    InteractionClient.client.lua (LocalScript)
+    ROLE : Gère les interactions avec les NPCs (achat d'outils, vente d'or).
+    Crée le UI de shop/vente quand le joueur interagit avec un NPC.
+]]
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local Events = ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteEvents")
+
+local UIManager = require(script.Parent.UIManager)
+
+-- ==========================================
+-- ÉCOUTER LES NPC ProximityPrompts
+-- ==========================================
+local function OnPromptTriggered(prompt)
+    local part = prompt.Parent
+    if not part then return end
+
+    local npcType = part:GetAttribute("NPCType")
+    if not npcType then return end
+
+    if npcType == "ToolShop" then
+        ShowToolShop()
+    elseif npcType == "Merchant" then
+        ShowSellMenu()
+    end
+end
+
+-- Connecter tous les ProximityPrompts dans le monde
+workspace.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("ProximityPrompt") then
+        local part = descendant.Parent
+        if part and part:GetAttribute("NPCType") then
+            descendant.Triggered:Connect(function()
+                OnPromptTriggered(descendant)
+            end)
+        end
+    end
+end)
+
+-- Connecter ceux déjà présents
+for _, desc in workspace:GetDescendants() do
+    if desc:IsA("ProximityPrompt") then
+        local part = desc.Parent
+        if part and part:GetAttribute("NPCType") then
+            desc.Triggered:Connect(function()
+                OnPromptTriggered(desc)
+            end)
+        end
+    end
+end
+
+-- ==========================================
+-- TOOL SHOP UI
+-- ==========================================
+function ShowToolShop()
+    -- Fermer si déjà ouvert
+    local existing = playerGui:FindFirstChild("ShopUI")
+    if existing then existing:Destroy() end
+
+    local data = UIManager:GetPlayerData()
+    if not data then return end
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "ShopUI"
+    gui.ResetOnSpawn = false
+    gui.Parent = playerGui
+
+    -- Background
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(0, 400, 0, 350)
+    bg.Position = UDim2.new(0.5, -200, 0.5, -175)
+    bg.BackgroundColor3 = Color3.fromRGB(30, 25, 20)
+    bg.BackgroundTransparency = 0.1
+    bg.Parent = gui
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = bg
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 215, 0)
+    stroke.Thickness = 2
+    stroke.Parent = bg
+
+    -- Title
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.fromRGB(255, 215, 0)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 20
+    title.Text = "Jake le Forgeron — Outils"
+    title.Parent = bg
+
+    -- Close button
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Size = UDim2.new(0, 30, 0, 30)
+    closeBtn.Position = UDim2.new(1, -35, 0, 5)
+    closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    closeBtn.TextColor3 = Color3.new(1, 1, 1)
+    closeBtn.Font = Enum.Font.GothamBold
+    closeBtn.TextSize = 16
+    closeBtn.Text = "X"
+    closeBtn.Parent = bg
+    local closeBtnCorner = Instance.new("UICorner")
+    closeBtnCorner.CornerRadius = UDim.new(0, 6)
+    closeBtnCorner.Parent = closeBtn
+    closeBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
+
+    -- Tool list
+    local ToolConfig = require(ReplicatedStorage.Modules.Config.ToolConfig)
+    local yOffset = 50
+
+    for toolName, toolData in pairs(ToolConfig.Tools) do
+        local owned = data.Tools[toolName] and data.Tools[toolName].Owned
+        local level = owned and data.Tools[toolName].Level or 0
+
+        local row = Instance.new("Frame")
+        row.Size = UDim2.new(1, -20, 0, 55)
+        row.Position = UDim2.new(0, 10, 0, yOffset)
+        row.BackgroundColor3 = Color3.fromRGB(50, 45, 35)
+        row.BackgroundTransparency = 0.3
+        row.Parent = bg
+
+        local rowCorner = Instance.new("UICorner")
+        rowCorner.CornerRadius = UDim.new(0, 6)
+        rowCorner.Parent = row
+
+        -- Tool name + level
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Size = UDim2.new(0.55, 0, 1, 0)
+        nameLabel.Position = UDim2.new(0, 10, 0, 0)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+        nameLabel.Font = Enum.Font.GothamBold
+        nameLabel.TextSize = 14
+        nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+        nameLabel.Parent = row
+
+        if owned then
+            local levelName = toolData.Levels[level] and toolData.Levels[level].Name or toolData.DisplayName
+            nameLabel.Text = levelName .. " (Niv." .. level .. ")"
+        else
+            nameLabel.Text = toolData.DisplayName
+        end
+
+        -- Action button
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0, 120, 0, 35)
+        btn.Position = UDim2.new(1, -130, 0.5, -17)
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 13
+        btn.Parent = row
+
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 6)
+        btnCorner.Parent = btn
+
+        if not owned then
+            local price = toolData.Levels[1].BuyPrice
+            if price and price > 0 then
+                btn.Text = "Acheter " .. price .. "$"
+                btn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+                btn.TextColor3 = Color3.new(1, 1, 1)
+                btn.MouseButton1Click:Connect(function()
+                    Events.RequestBuyTool:FireServer(toolName)
+                    gui:Destroy()
+                end)
+            else
+                btn.Text = "Gratuit"
+                btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+                btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            end
+        else
+            local nextLevel = level + 1
+            local nextData = toolData.Levels[nextLevel]
+            if nextData then
+                btn.Text = "Améliorer " .. nextData.UpgradePrice .. "$"
+                btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+                btn.TextColor3 = Color3.new(1, 1, 1)
+                btn.MouseButton1Click:Connect(function()
+                    Events.RequestUpgradeTool:FireServer(toolName)
+                    gui:Destroy()
+                end)
+            else
+                btn.Text = "MAX"
+                btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+                btn.TextColor3 = Color3.fromRGB(150, 150, 150)
+            end
+        end
+
+        yOffset = yOffset + 65
+    end
+end
+
+-- ==========================================
+-- SELL MENU UI
+-- ==========================================
+function ShowSellMenu()
+    local existing = playerGui:FindFirstChild("SellUI")
+    if existing then existing:Destroy() end
+
+    local data = UIManager:GetPlayerData()
+    if not data then return end
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "SellUI"
+    gui.ResetOnSpawn = false
+    gui.Parent = playerGui
+
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(0, 400, 0, 400)
+    bg.Position = UDim2.new(0.5, -200, 0.5, -200)
+    bg.BackgroundColor3 = Color3.fromRGB(30, 25, 20)
+    bg.BackgroundTransparency = 0.1
+    bg.Parent = gui
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = bg
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 215, 0)
+    stroke.Thickness = 2
+    stroke.Parent = bg
+
+    -- Title
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.fromRGB(255, 215, 0)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 20
+    title.Text = "Marcel le Marchand — Vendre"
+    title.Parent = bg
+
+    -- Close button
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Size = UDim2.new(0, 30, 0, 30)
+    closeBtn.Position = UDim2.new(1, -35, 0, 5)
+    closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    closeBtn.TextColor3 = Color3.new(1, 1, 1)
+    closeBtn.Font = Enum.Font.GothamBold
+    closeBtn.TextSize = 16
+    closeBtn.Text = "X"
+    closeBtn.Parent = bg
+    local closeBtnCorner = Instance.new("UICorner")
+    closeBtnCorner.CornerRadius = UDim.new(0, 6)
+    closeBtnCorner.Parent = closeBtn
+    closeBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
+
+    -- Item list
+    local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+    local prices = EconomyConfig.SellPrices.MarchandLocal
+    local yOffset = 50
+
+    local displayNames = {
+        Paillettes = "Paillettes",
+        OrPur = "Or Pur",
+        Lingots = "Lingots",
+        Pepites = "Pépites",
+        MineraiOr = "Minerai d'Or",
+        Quartz = "Quartz",
+        Amethyste = "Améthyste",
+        Topaze = "Topaze",
+    }
+
+    for itemName, price in pairs(prices) do
+        local qty = data.Inventory[itemName] or 0
+        if qty > 0 then
+            local row = Instance.new("Frame")
+            row.Size = UDim2.new(1, -20, 0, 45)
+            row.Position = UDim2.new(0, 10, 0, yOffset)
+            row.BackgroundColor3 = Color3.fromRGB(50, 45, 35)
+            row.BackgroundTransparency = 0.3
+            row.Parent = bg
+
+            local rowCorner = Instance.new("UICorner")
+            rowCorner.CornerRadius = UDim.new(0, 6)
+            rowCorner.Parent = row
+
+            local nameLabel = Instance.new("TextLabel")
+            nameLabel.Size = UDim2.new(0.5, 0, 1, 0)
+            nameLabel.Position = UDim2.new(0, 10, 0, 0)
+            nameLabel.BackgroundTransparency = 1
+            nameLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+            nameLabel.Font = Enum.Font.Gotham
+            nameLabel.TextSize = 13
+            nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+            nameLabel.Text = string.format("%s x%d (%d$/u)", displayNames[itemName] or itemName, qty, price)
+            nameLabel.Parent = row
+
+            local sellBtn = Instance.new("TextButton")
+            sellBtn.Size = UDim2.new(0, 110, 0, 30)
+            sellBtn.Position = UDim2.new(1, -120, 0.5, -15)
+            sellBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+            sellBtn.TextColor3 = Color3.new(1, 1, 1)
+            sellBtn.Font = Enum.Font.GothamBold
+            sellBtn.TextSize = 13
+            sellBtn.Text = "Vendre tout (" .. (qty * price) .. "$)"
+            sellBtn.Parent = row
+
+            local sellBtnCorner = Instance.new("UICorner")
+            sellBtnCorner.CornerRadius = UDim.new(0, 6)
+            sellBtnCorner.Parent = sellBtn
+
+            sellBtn.MouseButton1Click:Connect(function()
+                Events.RequestSell:FireServer("MarchandLocal", itemName, qty)
+                gui:Destroy()
+            end)
+
+            yOffset = yOffset + 52
+        end
+    end
+
+    -- Message si inventaire vide
+    if yOffset == 50 then
+        local emptyLabel = Instance.new("TextLabel")
+        emptyLabel.Size = UDim2.new(1, -20, 0, 40)
+        emptyLabel.Position = UDim2.new(0, 10, 0, 60)
+        emptyLabel.BackgroundTransparency = 1
+        emptyLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+        emptyLabel.Font = Enum.Font.Gotham
+        emptyLabel.TextSize = 14
+        emptyLabel.Text = "Tu n'as rien à vendre pour le moment !"
+        emptyLabel.Parent = bg
+    end
+end
+
+-- ==========================================
+-- RÉSULTATS SERVEUR
+-- ==========================================
+Events.ShopResult.OnClientEvent:Connect(function(success, message)
+    UIManager:ShowNotification(message, success and "Success" or "Error")
+    UIManager:RefreshHUD()
+end)
+
+Events.SellResult.OnClientEvent:Connect(function(success, message)
+    UIManager:ShowNotification(message, success and "Success" or "Error")
+    UIManager:RefreshHUD()
+end)
+
+print("[InteractionClient] Initialisé ✓")
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="LocalScript" referent="35">
+          <Properties>
+            <string name="Name">MiningClient</string>
+            <string name="Source"><![CDATA[--[[
+    MiningClient.client.lua (LocalScript)
+    ROLE : Gère les interactions de minage côté client.
+           Détecte les ProximityPrompt, envoie les requêtes au serveur,
+           affiche les résultats (particules, sons, notifications).
+]]
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local Events = ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteEvents")
+
+-- Charger le UIManager
+local UIManager = require(script.Parent.UIManager)
+UIManager:Init()
+
+-- ==========================================
+-- ÉCOUTER LES ProximityPrompts SUR LES GISEMENTS
+-- ==========================================
+local ActiveGoldDeposits = workspace:WaitForChild("ActiveGoldDeposits")
+
+local function ConnectPrompt(prompt)
+    prompt.Triggered:Connect(function()
+        local deposit = prompt.Parent
+        Events.RequestMine:FireServer(deposit.Name)
+    end)
+end
+
+-- Écouter les nouveaux gisements
+ActiveGoldDeposits.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("ProximityPrompt") then
+        ConnectPrompt(descendant)
+    end
+end)
+
+-- Connecter les prompts déjà présents
+for _, deposit in ActiveGoldDeposits:GetChildren() do
+    local prompt = deposit:FindFirstChildWhichIsA("ProximityPrompt", true)
+    if prompt then
+        ConnectPrompt(prompt)
+    end
+end
+
+-- ==========================================
+-- RÉSULTAT DE MINAGE
+-- ==========================================
+Events.MineResult.OnClientEvent:Connect(function(success, data)
+    if success then
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local pos = character.HumanoidRootPart.Position
+
+            local offsetY = 0
+            for itemName, qty in pairs(data) do
+                UIManager:ShowFloatingText(
+                    pos + Vector3.new(0, 3 + offsetY, 0),
+                    string.format("+%d %s", qty, itemName),
+                    Color3.fromRGB(255, 215, 0)
+                )
+                offsetY = offsetY + 1.5
+            end
+
+            UIManager:PlayMineEffect(pos)
+            UIManager:PlaySound("MineSuccess")
+        end
+
+        UIManager:RefreshHUD()
+    else
+        UIManager:ShowNotification(tostring(data), "Error")
+    end
+end)
+
+print("[MiningClient] Initialisé ✓")
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="36">
+          <Properties>
+            <string name="Name">UIManager</string>
+            <string name="Source"><![CDATA[--[[
+    UIManager.lua (ModuleScript)
+    ROLE : Module partage pour l'UI client.
+    Gere le HUD, notifications, textes flottants, effets visuels et sons.
+]]
+
+local UIManager = {}
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local Events = ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteEvents")
+
+-- État joueur local
+local PlayerData = nil
+
+-- ==========================================
+-- INIT — appelé par MiningClient ou autre
+-- ==========================================
+function UIManager:Init()
+    -- Écouter les données initiales du serveur
+    Events.InitPlayerData.OnClientEvent:Connect(function(data)
+        PlayerData = data
+        self:RefreshHUD()
+        print("[UIManager] Données initiales reçues")
+    end)
+
+    -- Écouter les mises à jour
+    Events.PlayerDataUpdated.OnClientEvent:Connect(function(data)
+        PlayerData = data
+        self:RefreshHUD()
+    end)
+
+    -- Écouter les notifications du serveur
+    local notifyEvent = Events:FindFirstChild("NotifyPlayer")
+    if notifyEvent then
+        notifyEvent.OnClientEvent:Connect(function(message, notifType)
+            self:ShowNotification(message, notifType or "Info")
+        end)
+    end
+
+    -- Écouter les level up
+    Events.LevelUp.OnClientEvent:Connect(function(level, levelName)
+        self:ShowNotification("LEVEL UP ! Niveau " .. level .. " — " .. levelName, "LevelUp")
+    end)
+
+    -- Créer le HUD
+    self:CreateHUD()
+
+    print("[UIManager] Initialisé ✓")
+end
+
+-- ==========================================
+-- HUD PRINCIPAL
+-- ==========================================
+function UIManager:CreateHUD()
+    local mainHUD = playerGui:FindFirstChild("MainHUD")
+    if not mainHUD then
+        mainHUD = Instance.new("ScreenGui")
+        mainHUD.Name = "MainHUD"
+        mainHUD.ResetOnSpawn = false
+        mainHUD.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        mainHUD.Parent = playerGui
+    end
+
+    -- Cash display (top right)
+    local cashFrame = mainHUD:FindFirstChild("CashFrame")
+    if not cashFrame then
+        cashFrame = Instance.new("Frame")
+        cashFrame.Name = "CashFrame"
+        cashFrame.Size = UDim2.new(0, 200, 0, 40)
+        cashFrame.Position = UDim2.new(1, -210, 0, 10)
+        cashFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        cashFrame.BackgroundTransparency = 0.3
+        cashFrame.Parent = mainHUD
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = cashFrame
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(255, 215, 0)
+        stroke.Thickness = 1
+        stroke.Parent = cashFrame
+
+        local cashLabel = Instance.new("TextLabel")
+        cashLabel.Name = "CashLabel"
+        cashLabel.Size = UDim2.new(1, -10, 1, 0)
+        cashLabel.Position = UDim2.new(0, 10, 0, 0)
+        cashLabel.BackgroundTransparency = 1
+        cashLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+        cashLabel.Font = Enum.Font.GothamBold
+        cashLabel.TextSize = 18
+        cashLabel.TextXAlignment = Enum.TextXAlignment.Right
+        cashLabel.Text = "$ 50"
+        cashLabel.Parent = cashFrame
+    end
+
+    -- Level + XP display (top right, below cash)
+    local levelFrame = mainHUD:FindFirstChild("LevelFrame")
+    if not levelFrame then
+        levelFrame = Instance.new("Frame")
+        levelFrame.Name = "LevelFrame"
+        levelFrame.Size = UDim2.new(0, 200, 0, 30)
+        levelFrame.Position = UDim2.new(1, -210, 0, 55)
+        levelFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        levelFrame.BackgroundTransparency = 0.3
+        levelFrame.Parent = mainHUD
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = levelFrame
+
+        local levelLabel = Instance.new("TextLabel")
+        levelLabel.Name = "LevelLabel"
+        levelLabel.Size = UDim2.new(1, -10, 1, 0)
+        levelLabel.Position = UDim2.new(0, 10, 0, 0)
+        levelLabel.BackgroundTransparency = 1
+        levelLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+        levelLabel.Font = Enum.Font.Gotham
+        levelLabel.TextSize = 14
+        levelLabel.TextXAlignment = Enum.TextXAlignment.Right
+        levelLabel.Text = "Niv.1 | XP: 0"
+        levelLabel.Parent = levelFrame
+    end
+
+    -- Inventory display (left side)
+    local invFrame = mainHUD:FindFirstChild("InventoryFrame")
+    if not invFrame then
+        invFrame = Instance.new("Frame")
+        invFrame.Name = "InventoryFrame"
+        invFrame.Size = UDim2.new(0, 200, 0, 260)
+        invFrame.Position = UDim2.new(0, 10, 0.5, -130)
+        invFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        invFrame.BackgroundTransparency = 0.15
+        invFrame.Parent = mainHUD
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = invFrame
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(255, 215, 0)
+        stroke.Thickness = 1
+        stroke.Transparency = 0.5
+        stroke.Parent = invFrame
+
+        local title = Instance.new("TextLabel")
+        title.Name = "Title"
+        title.Size = UDim2.new(1, 0, 0, 25)
+        title.BackgroundTransparency = 1
+        title.TextColor3 = Color3.fromRGB(255, 215, 0)
+        title.Font = Enum.Font.GothamBold
+        title.TextSize = 14
+        title.Text = "INVENTAIRE"
+        title.Parent = invFrame
+
+        local listFrame = Instance.new("Frame")
+        listFrame.Name = "ItemList"
+        listFrame.Size = UDim2.new(1, -10, 1, -30)
+        listFrame.Position = UDim2.new(0, 5, 0, 28)
+        listFrame.BackgroundTransparency = 1
+        listFrame.Parent = invFrame
+
+        local layout = Instance.new("UIListLayout")
+        layout.SortOrder = Enum.SortOrder.LayoutOrder
+        layout.Padding = UDim.new(0, 2)
+        layout.Parent = listFrame
+    end
+end
+
+-- ==========================================
+-- REFRESH HUD
+-- ==========================================
+function UIManager:RefreshHUD()
+    if not PlayerData then return end
+
+    local mainHUD = playerGui:FindFirstChild("MainHUD")
+    if not mainHUD then return end
+
+    -- Cash
+    local cashLabel = mainHUD.CashFrame:FindFirstChild("CashLabel")
+    if cashLabel then
+        cashLabel.Text = "$ " .. tostring(PlayerData.Cash or 0)
+    end
+
+    -- Level + XP
+    local levelLabel = mainHUD.LevelFrame:FindFirstChild("LevelLabel")
+    if levelLabel then
+        levelLabel.Text = string.format("Niv.%d | XP: %d", PlayerData.Level or 1, PlayerData.XP or 0)
+    end
+
+    -- Inventory
+    local itemList = mainHUD.InventoryFrame:FindFirstChild("ItemList")
+    if itemList and PlayerData.Inventory then
+        -- Clear existing
+        for _, child in itemList:GetChildren() do
+            if child:IsA("TextLabel") then child:Destroy() end
+        end
+
+        local displayNames = {
+            Paillettes = "Paillettes",
+            OrPur = "Or Pur",
+            Lingots = "Lingots",
+            Pepites = "Pépites",
+            MineraiOr = "Minerai d'Or",
+            Quartz = "Quartz",
+            Amethyste = "Améthyste",
+            Topaze = "Topaze",
+        }
+
+        local order = {"Paillettes", "Pepites", "OrPur", "MineraiOr", "Lingots", "Quartz", "Amethyste", "Topaze"}
+        for i, key in ipairs(order) do
+            local qty = PlayerData.Inventory[key] or 0
+            if qty > 0 then
+                local label = Instance.new("TextLabel")
+                label.Name = key
+                label.Size = UDim2.new(1, 0, 0, 22)
+                label.BackgroundTransparency = 1
+                label.TextColor3 = Color3.fromRGB(220, 220, 220)
+                label.Font = Enum.Font.Gotham
+                label.TextSize = 13
+                label.TextXAlignment = Enum.TextXAlignment.Left
+                label.Text = string.format("  %s: %d", displayNames[key] or key, qty)
+                label.LayoutOrder = i
+                label.Parent = itemList
+            end
+        end
+    end
+end
+
+-- ==========================================
+-- TEXTE FLOTTANT (drops)
+-- ==========================================
+function UIManager:ShowFloatingText(worldPos: Vector3, text: string, color: Color3)
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+    billboardGui.StudsOffset = Vector3.new(0, 2, 0)
+    billboardGui.Adornee = nil
+    billboardGui.AlwaysOnTop = true
+    billboardGui.Parent = playerGui
+
+    -- Create anchor part
+    local anchor = Instance.new("Part")
+    anchor.Size = Vector3.new(0.1, 0.1, 0.1)
+    anchor.Position = worldPos
+    anchor.Anchored = true
+    anchor.CanCollide = false
+    anchor.Transparency = 1
+    anchor.Parent = workspace
+
+    billboardGui.Adornee = anchor
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = color or Color3.fromRGB(255, 215, 0)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 20
+    label.TextStrokeTransparency = 0.5
+    label.Text = text
+    label.Parent = billboardGui
+
+    -- Animate upward + fade
+    task.spawn(function()
+        for i = 1, 30 do
+            anchor.Position = anchor.Position + Vector3.new(0, 0.05, 0)
+            label.TextTransparency = i / 30
+            label.TextStrokeTransparency = 0.5 + (i / 30) * 0.5
+            task.wait(0.03)
+        end
+        billboardGui:Destroy()
+        anchor:Destroy()
+    end)
+end
+
+-- ==========================================
+-- NOTIFICATION
+-- ==========================================
+function UIManager:ShowNotification(message: string, notifType: string)
+    local colors = {
+        Info = Color3.fromRGB(100, 180, 255),
+        Error = Color3.fromRGB(255, 80, 80),
+        Success = Color3.fromRGB(80, 255, 80),
+        LevelUp = Color3.fromRGB(180, 100, 255),
+    }
+
+    local mainHUD = playerGui:FindFirstChild("MainHUD")
+    if not mainHUD then return end
+
+    local notif = Instance.new("TextLabel")
+    notif.Size = UDim2.new(0, 400, 0, 40)
+    notif.Position = UDim2.new(0.5, -200, 0, 120)
+    notif.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    notif.BackgroundTransparency = 0.2
+    notif.TextColor3 = colors[notifType] or colors.Info
+    notif.Font = Enum.Font.GothamBold
+    notif.TextSize = 16
+    notif.Text = message
+    notif.Parent = mainHUD
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = notif
+
+    -- Fade out after 3 seconds
+    task.spawn(function()
+        task.wait(3)
+        for i = 1, 20 do
+            notif.BackgroundTransparency = 0.2 + (i / 20) * 0.8
+            notif.TextTransparency = i / 20
+            task.wait(0.02)
+        end
+        notif:Destroy()
+    end)
+end
+
+-- ==========================================
+-- EFFETS
+-- ==========================================
+function UIManager:PlayMineEffect(position: Vector3)
+    -- Particules dorées à la position du minage
+    local part = Instance.new("Part")
+    part.Size = Vector3.new(1, 1, 1)
+    part.Position = position
+    part.Anchored = true
+    part.CanCollide = false
+    part.Transparency = 1
+    part.Parent = workspace
+
+    local emitter = Instance.new("ParticleEmitter")
+    emitter.Color = ColorSequence.new(Color3.fromRGB(255, 215, 0))
+    emitter.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.5),
+        NumberSequenceKeypoint.new(1, 0),
+    })
+    emitter.Lifetime = NumberRange.new(0.5, 1)
+    emitter.Speed = NumberRange.new(5, 10)
+    emitter.SpreadAngle = Vector2.new(360, 360)
+    emitter.Rate = 0
+    emitter.Parent = part
+
+    emitter:Emit(20)
+
+    task.delay(2, function()
+        part:Destroy()
+    end)
+end
+
+function UIManager:PlaySound(soundName: string)
+    -- Simple sound feedback
+    local soundIds = {
+        MineSuccess = "rbxasset://sounds/impact_explosion_03.mp3",
+    }
+
+    local id = soundIds[soundName]
+    if id then
+        local sound = Instance.new("Sound")
+        sound.SoundId = id
+        sound.Volume = 0.5
+        sound.Parent = player.PlayerGui
+        sound:Play()
+        sound.Ended:Connect(function()
+            sound:Destroy()
+        end)
+    end
+end
+
+-- ==========================================
+-- GETTER
+-- ==========================================
+function UIManager:GetPlayerData()
+    return PlayerData
+end
+
+return UIManager
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="37">
+        <Properties>
+          <string name="Name">Lib</string>
+        </Properties>
+        <Item class="ModuleScript" referent="38">
+          <Properties>
+            <string name="Name">ClientUtils</string>
+            <string name="Source"><![CDATA[local ClientUtils = {}
+return ClientUtils
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="39">
+        <Properties>
+          <string name="Name">Systems</string>
+        </Properties>
+        <Item class="LocalScript" referent="40">
+          <Properties>
+            <string name="Name">BateeMinigame</string>
+            <string name="Source"><![CDATA[--[[
+    BateeMinigame.client.lua (LocalScript)
+    ROLE : Mini-jeu de la batee (Zone 1).
+    MECANIQUE :
+      - Un cercle apparait avec un indicateur rotatif
+      - Le joueur doit cliquer/appuyer quand l'indicateur est dans la "zone verte"
+      - Plus le timing est bon, plus le score (0-1) est eleve
+      - Le score est envoye au serveur pour calculer les drops
+]]
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local Events = ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteEvents")
+
+-- État
+local isPlaying = false
+local currentDepositId = nil
+local rotationSpeed = 200
+local currentAngle = 0
+local greenZoneCenter = 0
+local greenZoneWidth = 60
+
+-- ==========================================
+-- CRÉER LE UI DU MINI-JEU
+-- ==========================================
+local function CreateMinigameUI()
+    local gui = playerGui:FindFirstChild("BateeMinigameUI")
+    if gui then return gui end
+
+    gui = Instance.new("ScreenGui")
+    gui.Name = "BateeMinigameUI"
+    gui.Enabled = false
+    gui.ResetOnSpawn = false
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    gui.Parent = playerGui
+
+    -- Background overlay
+    local overlay = Instance.new("Frame")
+    overlay.Name = "Overlay"
+    overlay.Size = UDim2.new(1, 0, 1, 0)
+    overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    overlay.BackgroundTransparency = 0.5
+    overlay.Parent = gui
+
+    -- Circle container (center)
+    local container = Instance.new("Frame")
+    container.Name = "Container"
+    container.Size = UDim2.new(0, 300, 0, 300)
+    container.Position = UDim2.new(0.5, -150, 0.5, -150)
+    container.BackgroundTransparency = 1
+    container.Parent = gui
+
+    -- Circle background
+    local circle = Instance.new("Frame")
+    circle.Name = "Circle"
+    circle.Size = UDim2.new(1, 0, 1, 0)
+    circle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    circle.Parent = container
+
+    local circleCorner = Instance.new("UICorner")
+    circleCorner.CornerRadius = UDim.new(0.5, 0)
+    circleCorner.Parent = circle
+
+    local circleStroke = Instance.new("UIStroke")
+    circleStroke.Color = Color3.fromRGB(150, 150, 150)
+    circleStroke.Thickness = 3
+    circleStroke.Parent = circle
+
+    -- Green zone (arc indicator)
+    local greenZone = Instance.new("Frame")
+    greenZone.Name = "GreenZone"
+    greenZone.Size = UDim2.new(0, 8, 0.5, 0)
+    greenZone.Position = UDim2.new(0.5, -4, 0, 0)
+    greenZone.AnchorPoint = Vector2.new(0.5, 1)
+    greenZone.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+    greenZone.BackgroundTransparency = 0.3
+    greenZone.Parent = container
+
+    -- Indicator (the moving needle)
+    local indicator = Instance.new("Frame")
+    indicator.Name = "Indicator"
+    indicator.Size = UDim2.new(0, 4, 0.45, 0)
+    indicator.Position = UDim2.new(0.5, -2, 0.05, 0)
+    indicator.AnchorPoint = Vector2.new(0.5, 0)
+    indicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    indicator.Parent = container
+
+    -- Center dot
+    local centerDot = Instance.new("Frame")
+    centerDot.Name = "CenterDot"
+    centerDot.Size = UDim2.new(0, 20, 0, 20)
+    centerDot.Position = UDim2.new(0.5, -10, 0.5, -10)
+    centerDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    centerDot.Parent = container
+
+    local dotCorner = Instance.new("UICorner")
+    dotCorner.CornerRadius = UDim.new(0.5, 0)
+    dotCorner.Parent = centerDot
+
+    -- Instruction text
+    local instruction = Instance.new("TextLabel")
+    instruction.Name = "InstructionText"
+    instruction.Size = UDim2.new(0, 400, 0, 50)
+    instruction.Position = UDim2.new(0.5, -200, 0.5, 180)
+    instruction.BackgroundTransparency = 1
+    instruction.TextColor3 = Color3.fromRGB(255, 255, 255)
+    instruction.Font = Enum.Font.GothamBold
+    instruction.TextSize = 18
+    instruction.Text = "Appuie sur ESPACE quand l'aiguille est dans la zone verte !"
+    instruction.Parent = gui
+
+    -- Score text (hidden by default)
+    local scoreText = Instance.new("TextLabel")
+    scoreText.Name = "ScoreText"
+    scoreText.Size = UDim2.new(0, 300, 0, 60)
+    scoreText.Position = UDim2.new(0.5, -150, 0.5, -200)
+    scoreText.BackgroundTransparency = 1
+    scoreText.TextColor3 = Color3.fromRGB(255, 215, 0)
+    scoreText.Font = Enum.Font.GothamBold
+    scoreText.TextSize = 28
+    scoreText.Text = ""
+    scoreText.Visible = false
+    scoreText.Parent = gui
+
+    return gui
+end
+
+-- ==========================================
+-- DÉMARRER LE MINI-JEU
+-- ==========================================
+Events.StartBateeMinigame.OnClientEvent:Connect(function(depositId)
+    if isPlaying then return end
+
+    currentDepositId = depositId
+    isPlaying = true
+
+    local gui = CreateMinigameUI()
+
+    -- Randomiser la zone verte
+    greenZoneCenter = math.random(0, 359)
+
+    local container = gui:FindFirstChild("Container")
+    if container then
+        local greenZone = container:FindFirstChild("GreenZone")
+        if greenZone then
+            greenZone.Rotation = greenZoneCenter
+        end
+    end
+
+    -- Reset
+    currentAngle = 0
+    gui:FindFirstChild("InstructionText").Text = "Appuie sur ESPACE quand l'aiguille est dans la zone verte !"
+    gui:FindFirstChild("ScoreText").Visible = false
+    gui.Enabled = true
+
+    -- Animation de rotation
+    task.spawn(function()
+        while isPlaying do
+            local dt = task.wait()
+            currentAngle = (currentAngle + rotationSpeed * dt) % 360
+            if container then
+                local indicator = container:FindFirstChild("Indicator")
+                if indicator then
+                    indicator.Rotation = currentAngle
+                end
+            end
+        end
+    end)
+
+    -- Timeout (10 secondes max)
+    task.spawn(function()
+        task.wait(10)
+        if isPlaying and currentDepositId == depositId then
+            isPlaying = false
+            gui.Enabled = false
+            Events.BateeMinigameResult:FireServer(depositId, 0.1)
+        end
+    end)
+end)
+
+-- ==========================================
+-- INPUT — APPUYER POUR VALIDER
+-- ==========================================
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if not isPlaying then return end
+
+    if input.KeyCode == Enum.KeyCode.Space or input.UserInputType == Enum.UserInputType.Touch then
+        local angleDiff = math.abs(currentAngle - greenZoneCenter)
+        if angleDiff > 180 then
+            angleDiff = 360 - angleDiff
+        end
+
+        local score = 0
+        local halfWidth = greenZoneWidth / 2
+        local resultText = ""
+        local resultColor = Color3.fromRGB(255, 255, 255)
+
+        if angleDiff <= halfWidth * 0.3 then
+            score = 1.0
+            resultText = "PARFAIT !"
+            resultColor = Color3.fromRGB(255, 215, 0)
+        elseif angleDiff <= halfWidth then
+            score = 0.7
+            resultText = "Bon !"
+            resultColor = Color3.fromRGB(0, 200, 0)
+        elseif angleDiff <= halfWidth * 1.5 then
+            score = 0.4
+            resultText = "Moyen..."
+            resultColor = Color3.fromRGB(200, 200, 0)
+        else
+            score = 0.1
+            resultText = "Raté !"
+            resultColor = Color3.fromRGB(255, 80, 80)
+        end
+
+        isPlaying = false
+
+        -- Feedback visuel
+        local gui = playerGui:FindFirstChild("BateeMinigameUI")
+        if gui then
+            local scoreLabel = gui:FindFirstChild("ScoreText")
+            if scoreLabel then
+                scoreLabel.Text = resultText
+                scoreLabel.TextColor3 = resultColor
+                scoreLabel.Visible = true
+            end
+
+            local instruction = gui:FindFirstChild("InstructionText")
+            if instruction then
+                instruction.Text = string.format("Score: %d%%", math.floor(score * 100))
+            end
+        end
+
+        -- Attendre un moment pour le feedback, puis fermer
+        task.spawn(function()
+            task.wait(1.2)
+            if gui then
+                gui.Enabled = false
+            end
+
+            -- Envoyer le résultat au serveur
+            Events.BateeMinigameResult:FireServer(currentDepositId, score)
+        end)
+    end
+end)
+
+print("[BateeMinigame] Initialisé ✓")
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="LocalScript" referent="41">
+          <Properties>
+            <string name="Name">DayNightClient</string>
+            <string name="Source"><![CDATA[-- DayNightClient.client.lua
+-- TODO: Sprint implementation
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="LocalScript" referent="42">
+          <Properties>
+            <string name="Name">DetecteurSystem</string>
+            <string name="Source"><![CDATA[-- DetecteurSystem.client.lua
+-- TODO: Sprint implementation
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+</roblox>

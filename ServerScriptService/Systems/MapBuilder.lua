@@ -755,18 +755,32 @@ function MapBuilder:CreateWorld()
     worldFolder.Name = "World"
     worldFolder.Parent = Workspace
 
-    -- Nettoyer les éléments par défaut
+    -- Nettoyer TOUT ce qui traîne
     for _, child in Workspace:GetChildren() do
         if child:IsA("SpawnLocation") then child:Destroy() end
         if child.Name == "Baseplate" then child:Destroy() end
+        if child.Name == "Vegetation" then child:Destroy() end
+        if child.Name == "PathMarkers" then child:Destroy() end
     end
 
-    -- Spawn location — au bord de la rivière, sur le terrain
-    local spawnY = getTerrainHeight(0, -55) + 2
+    -- Vider le terrain (supprimer toute la géométrie terrain existante)
+    Workspace.Terrain:Clear()
+
+    -- Sol plat simple
+    makePart({
+        Name = "Ground",
+        Size = Vector3.new(500, 1, 500),
+        Position = Vector3.new(0, -0.5, 0),
+        Color = Color3.fromRGB(90, 140, 60),
+        Material = Enum.Material.Fabric,
+        Parent = worldFolder,
+    })
+
+    -- Spawn au centre
     local spawnLoc = Instance.new("SpawnLocation")
     spawnLoc.Name = "SpawnLocation"
-    spawnLoc.Size = Vector3.new(12, 1, 12)
-    spawnLoc.Position = Vector3.new(0, spawnY, -55)
+    spawnLoc.Size = Vector3.new(10, 1, 10)
+    spawnLoc.Position = Vector3.new(0, 0.5, 0)
     spawnLoc.Anchored = true
     spawnLoc.Transparency = 1
     spawnLoc.CanCollide = false
@@ -775,7 +789,7 @@ function MapBuilder:CreateWorld()
     -- Skybox
     self:SetupSkybox()
 
-    -- NPCs au bord de la rivière (Y auto par raycast)
+    -- NPCs au centre (Y = 0 = sol plat)
     self:CreateTownNPCs(worldFolder)
 end
 
@@ -1142,10 +1156,10 @@ end
 -- ═══════════════════════════════════════════
 -- NPCs DE LA VILLE (R15 animés)
 -- ═══════════════════════════════════════════
--- Positions XZ près de la rivière — Y sera calculé par raycast
+-- NPCs rassemblés au centre de la map
 local NPC_DATA = {
     {
-        pos = Vector3.new(-20, 0, -55), facing = 160,
+        pos = Vector3.new(-6, 0, -5), facing = 135,
         name = "ToolVendor", displayName = "Jake l'Outilleur",
         npcType = "ToolShop", actionText = "Acheter des outils",
         skin = Color3.fromRGB(180, 140, 100),
@@ -1155,7 +1169,7 @@ local NPC_DATA = {
         hat = "425117435",
     },
     {
-        pos = Vector3.new(15, 0, -55), facing = -160,
+        pos = Vector3.new(6, 0, -5), facing = -135,
         name = "Marcel", displayName = "Marcel le Marchand",
         npcType = "Merchant", actionText = "Vendre de l'or",
         skin = Color3.fromRGB(210, 170, 130),
@@ -1165,7 +1179,7 @@ local NPC_DATA = {
         hat = "30385423",
     },
     {
-        pos = Vector3.new(-30, 0, -48), facing = 120,
+        pos = Vector3.new(-8, 0, 3), facing = 90,
         name = "Gustave", displayName = "Gustave le Forgeron",
         npcType = "Crafter", actionText = "Forger",
         skin = Color3.fromRGB(170, 130, 90),
@@ -1174,7 +1188,7 @@ local NPC_DATA = {
         shirt = 2789617463, pants = 2789619169,
     },
     {
-        pos = Vector3.new(25, 0, -48), facing = -120,
+        pos = Vector3.new(8, 0, 3), facing = -90,
         name = "Bill", displayName = "Bill le Barman",
         npcType = "Saloon", actionText = "Boire un verre",
         skin = Color3.fromRGB(200, 160, 120),
@@ -1184,7 +1198,7 @@ local NPC_DATA = {
         hat = "425117435",
     },
     {
-        pos = Vector3.new(0, 0, -60), facing = 180,
+        pos = Vector3.new(0, 0, -9), facing = 180,
         name = "Guide", displayName = "Tom le Guide",
         npcType = "Tutor", actionText = "Parler",
         skin = Color3.fromRGB(190, 150, 110),
@@ -1201,13 +1215,10 @@ function MapBuilder:CreateTownNPCs(worldFolder)
     npcFolder.Parent = worldFolder
 
     for _, data in ipairs(NPC_DATA) do
-        -- Calculer Y à partir du terrain
-        local groundY = getTerrainHeight(data.pos.X, data.pos.Z)
-        data.pos = Vector3.new(data.pos.X, groundY, data.pos.Z)
         self:CreateNPC(npcFolder, data)
     end
 
-    print("[MapBuilder] " .. #NPC_DATA .. " NPCs créés dans la ville")
+    print("[MapBuilder] " .. #NPC_DATA .. " NPCs créés")
 end
 
 -- ═══════════════════════════════════════════
