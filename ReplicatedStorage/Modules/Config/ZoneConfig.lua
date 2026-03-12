@@ -10,8 +10,8 @@ ZoneConfig.Zones = {
         MaxActiveDeposits = 8,
         SpawnInterval = 15,
         IsTutorialZone = true,
-        -- Position dans le monde (centre de la zone)
-        WorldPosition = Vector3.new(0, 0, -350),
+        -- Position dans le monde (centre des 3 batée stations)
+        WorldPosition = Vector3.new(-270, 0, -170),
     },
     Zone2 = {
         Name = "Collines Ambrées",

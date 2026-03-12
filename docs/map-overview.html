@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gold Rush Legacy — Vue d'ensemble</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f0e8; font-family: 'Courier New', monospace; color: #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  h1 { font-size: 1.2em; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3px; }
+  .sub { font-size: 0.65em; color: #999; margin-bottom: 20px; letter-spacing: 1px; }
+  .map { position: relative; width: 800px; height: 800px; border: 2px solid #1a1a1a; background: #f5f0e8; }
+  .svg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .legend { margin-top: 15px; display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.6em; letter-spacing: 0.5px; }
+  .parcours { margin-top: 12px; font-size: 0.62em; color: #555; text-align: center; max-width: 800px; line-height: 1.8; }
+  .parcours strong { color: #1a1a1a; }
+  .notes { margin-top: 18px; max-width: 800px; width: 100%; border-top: 1.5px solid #1a1a1a; padding-top: 12px; }
+  .notes h3 { font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .notes ul { list-style: none; padding: 0; }
+  .notes li { font-size: 0.6em; color: #555; line-height: 1.8; padding-left: 12px; position: relative; margin-bottom: 2px; }
+  .notes li:before { content: "—"; position: absolute; left: 0; }
+  .notes li strong { color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<h1>Gold Rush Legacy</h1>
+<p class="sub">vue d'ensemble — v3</p>
+
+<div class="map">
+<svg class="svg-layer" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#1a1a1a" opacity="0.35" />
+    </marker>
+    <pattern id="hatch-z3" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#1a1a1a" stroke-width="0.4" opacity="0.07" />
+    </pattern>
+    <pattern id="hatch-z4" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(135)">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#1a1a1a" stroke-width="0.5" opacity="0.1" />
+    </pattern>
+  </defs>
+
+  <!-- ============================================ -->
+  <!-- 4 ZONES — filling entire square              -->
+  <!--                                              -->
+  <!--   Z1 (top-left)    |   Z4 (top-right)       -->
+  <!--                     |   future / hachure     -->
+  <!--   -----------------   -------------------    -->
+  <!--   Z2 (bottom-left)  |   Z3 (bottom-right)   -->
+  <!--                     |   acces par grotte     -->
+  <!--                                              -->
+  <!-- Border between top/bottom = irregular        -->
+  <!-- Border between left/right = irregular        -->
+  <!-- ============================================ -->
+
+  <!-- Vertical divider (Z1/Z4 and Z2/Z3) — irregular -->
+  <path d="M 430,0
+    C 440,60 445,120 435,180
+    C 425,240 430,300 440,360
+    C 450,420 445,480 435,540
+    C 425,600 430,660 440,720
+    C 445,760 442,780 440,800"
+    fill="none" stroke="#1a1a1a" stroke-width="1.2" />
+
+  <!-- Horizontal divider (Z1/Z2 and Z4/Z3) — irregular -->
+  <path d="M 0,420
+    C 60,415 120,425 180,418
+    C 240,410 300,420 360,415
+    C 390,413 410,415 435,418
+    C 460,420 520,410 580,418
+    C 640,425 720,415 800,420"
+    fill="none" stroke="#1a1a1a" stroke-width="1.2" />
+
+  <!-- Z1 fill — top left -->
+  <path d="M 0,0 L 430,0 C 440,60 445,120 435,180 C 425,240 430,300 440,360 C 445,395 443,410 435,418 C 410,415 390,413 360,415 C 300,420 240,410 180,418 C 120,425 60,415 0,420 Z"
+    fill="#1a1a1a" opacity="0.015" />
+
+  <!-- Z4 fill — top right (hachure, future) -->
+  <path d="M 430,0 L 800,0 L 800,420 C 720,415 640,425 580,418 C 520,410 460,420 435,418 C 443,410 445,395 440,360 C 430,300 425,240 435,180 C 445,120 440,60 430,0 Z"
+    fill="url(#hatch-z4)" />
+
+  <!-- Z2 fill — bottom left -->
+  <path d="M 0,420 C 60,415 120,425 180,418 C 240,410 300,420 360,415 C 390,413 410,415 435,418 C 443,425 445,440 440,460 C 450,480 445,540 435,600 C 425,660 430,720 440,780 C 442,790 440,800 440,800 L 0,800 Z"
+    fill="#1a1a1a" opacity="0.035" />
+
+  <!-- Z3 fill — bottom right (hachure underground) -->
+  <path d="M 435,418 C 460,420 520,410 580,418 C 640,425 720,415 800,420 L 800,800 L 440,800 C 440,800 442,790 440,780 C 430,720 425,660 435,600 C 445,540 450,480 440,460 C 445,440 443,425 435,418 Z"
+    fill="url(#hatch-z3)" />
+  <path d="M 435,418 C 460,420 520,410 580,418 C 640,425 720,415 800,420 L 800,800 L 440,800 C 440,800 442,790 440,780 C 430,720 425,660 435,600 C 445,540 450,480 440,460 C 445,440 443,425 435,418 Z"
+    fill="#1a1a1a" opacity="0.018" />
+
+  <!-- ============================================ -->
+  <!-- ELEVATION HINTS                              -->
+  <!-- ============================================ -->
+  <path d="M 0,30 C 20,27 45,33 65,28" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.1" />
+  <path d="M 0,45 C 25,41 50,47 78,42" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.08" />
+  <path d="M 0,58 C 28,54 56,60 88,55" fill="none" stroke="#1a1a1a" stroke-width="0.35" opacity="0.06" />
+  <!-- Canyon walls Z2/Z3 -->
+  <path d="M 425,440 C 428,470 430,500 428,530" fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.1" />
+  <path d="M 445,445 C 447,475 449,505 447,535" fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.08" />
+
+  <!-- ============================================ -->
+  <!-- RIVIERE — big sinuous meanders               -->
+  <!-- Starts top-left Z1, flows down through Z2    -->
+  <!-- 6 big bends, ends in lac bottom of Z2        -->
+  <!-- ============================================ -->
+
+  <!-- River ambient glow -->
+  <path d="M 60,0
+    C 65,20 100,50 160,75
+    C 230,105 260,140 240,185
+    C 215,235 120,245 65,270
+    C 15,295 20,340 80,370
+    C 140,400 120,430 100,460
+    C 75,495 30,520 35,560
+    C 42,605 100,630 170,650
+    C 240,670 290,690 330,710
+    C 360,725 375,732 385,738"
+    fill="none" stroke="#4a90c4" stroke-width="30" stroke-linecap="round" opacity="0.07" />
+
+  <!-- River main -->
+  <path d="M 60,0
+    C 65,20 100,50 160,75
+    C 230,105 260,140 240,185
+    C 215,235 120,245 65,270
+    C 15,295 20,340 80,370
+    C 140,400 120,430 100,460
+    C 75,495 30,520 35,560
+    C 42,605 100,630 170,650
+    C 240,670 290,690 330,710
+    C 360,725 375,732 385,738"
+    fill="none" stroke="#4a90c4" stroke-width="8" stroke-linecap="round" opacity="0.45" />
+
+  <!-- River highlight -->
+  <path d="M 60,0
+    C 65,20 100,50 160,75
+    C 230,105 260,140 240,185
+    C 215,235 120,245 65,270
+    C 15,295 20,340 80,370
+    C 140,400 120,430 100,460
+    C 75,495 30,520 35,560
+    C 42,605 100,630 170,650
+    C 240,670 290,690 330,710
+    C 360,725 375,732 385,738"
+    fill="none" stroke="#7ab8e0" stroke-width="2.5" stroke-linecap="round" opacity="0.35" />
+
+  <!-- ============================================ -->
+  <!-- CLIFF MARKS — outer banks of bends           -->
+  <!-- ============================================ -->
+  <!-- Bend 1 right (river curves right) -->
+  <line x1="260" y1="150" x2="272" y2="145" stroke="#1a1a1a" stroke-width="0.7" opacity="0.18" />
+  <line x1="255" y1="168" x2="267" y2="164" stroke="#1a1a1a" stroke-width="0.7" opacity="0.16" />
+  <line x1="248" y1="185" x2="259" y2="182" stroke="#1a1a1a" stroke-width="0.7" opacity="0.14" />
+  <!-- Bend 2 left -->
+  <line x1="50" y1="262" x2="40" y2="258" stroke="#1a1a1a" stroke-width="0.7" opacity="0.18" />
+  <line x1="32" y1="278" x2="22" y2="275" stroke="#1a1a1a" stroke-width="0.7" opacity="0.16" />
+  <line x1="22" y1="295" x2="12" y2="292" stroke="#1a1a1a" stroke-width="0.7" opacity="0.14" />
+  <!-- Bend 3 right -->
+  <line x1="142" y1="392" x2="153" y2="388" stroke="#1a1a1a" stroke-width="0.7" opacity="0.15" />
+  <line x1="130" y1="408" x2="140" y2="404" stroke="#1a1a1a" stroke-width="0.7" opacity="0.13" />
+  <!-- Bend 4 left -->
+  <line x1="30" y1="518" x2="20" y2="515" stroke="#1a1a1a" stroke-width="0.7" opacity="0.15" />
+  <line x1="28" y1="538" x2="18" y2="536" stroke="#1a1a1a" stroke-width="0.7" opacity="0.13" />
+  <line x1="30" y1="555" x2="20" y2="553" stroke="#1a1a1a" stroke-width="0.7" opacity="0.11" />
+
+  <!-- ============================================ -->
+  <!-- LAC — river terminus, bottom of Z2           -->
+  <!-- Near Z2/Z3 border                            -->
+  <!-- ============================================ -->
+  <ellipse cx="395" cy="748" rx="50" ry="32" fill="#4a90c4" opacity="0.1" />
+  <ellipse cx="395" cy="748" rx="50" ry="32" fill="none" stroke="#4a90c4" stroke-width="1.8" opacity="0.35" />
+  <ellipse cx="395" cy="748" rx="34" ry="20" fill="none" stroke="#4a90c4" stroke-width="0.5" opacity="0.2" />
+
+  <!-- ============================================ -->
+  <!-- CABANE DU GRAND-PERE — spawn point           -->
+  <!-- Between river and Dusthaven path             -->
+  <!-- Triangle of gameplay: cabane-riviere-hub     -->
+  <!-- ============================================ -->
+  <rect x="175" y="130" width="45" height="32" rx="3" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" />
+  <!-- Roof -->
+  <polygon points="173,132 197,115 222,132" fill="none" stroke="#1a1a1a" stroke-width="1.2" />
+  <!-- Door -->
+  <rect x="192" y="146" width="10" height="16" fill="none" stroke="#1a1a1a" stroke-width="0.6" />
+
+  <!-- ============================================ -->
+  <!-- DUSTHAVEN — hub village                      -->
+  <!-- On the other side of river (right of Z1)     -->
+  <!-- ============================================ -->
+  <rect x="290" y="200" width="120" height="80" rx="5" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" />
+  <!-- 5 buildings -->
+  <rect x="302" y="212" width="20" height="14" fill="none" stroke="#1a1a1a" stroke-width="0.8" />
+  <rect x="330" y="210" width="20" height="14" fill="none" stroke="#1a1a1a" stroke-width="0.8" />
+  <rect x="358" y="214" width="20" height="14" fill="none" stroke="#1a1a1a" stroke-width="0.8" />
+  <rect x="310" y="238" width="20" height="14" fill="none" stroke="#1a1a1a" stroke-width="0.8" />
+  <rect x="345" y="238" width="20" height="14" fill="none" stroke="#1a1a1a" stroke-width="0.8" />
+  <text x="309" y="222" font-family="Courier New" font-size="5.5" fill="#888">1</text>
+  <text x="337" y="220" font-family="Courier New" font-size="5.5" fill="#888">2</text>
+  <text x="365" y="224" font-family="Courier New" font-size="5.5" fill="#888">3</text>
+  <text x="317" y="248" font-family="Courier New" font-size="5.5" fill="#888">4</text>
+  <text x="352" y="248" font-family="Courier New" font-size="5.5" fill="#888">5</text>
+
+  <!-- ============================================ -->
+  <!-- CHEMINS COHERENTS                            -->
+  <!-- Triangle: Cabane ↔ Riviere ↔ Dusthaven      -->
+  <!-- Then main trail descends along river to Z2   -->
+  <!-- ============================================ -->
+
+  <!-- === CHEMIN A: Cabane → Riviere (short, direct) === -->
+  <path d="M 178,155 C 160,165 140,175 120,185"
+    fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" opacity="0.06" />
+  <path d="M 178,155 C 160,165 140,175 120,185"
+    fill="none" stroke="#1a1a1a" stroke-width="1.3" stroke-dasharray="5,3" opacity="0.3" />
+
+  <!-- === CHEMIN B: Cabane → Pont → Dusthaven === -->
+  <!-- Cabane to pont -->
+  <path d="M 218,150 C 238,150 255,148 270,145"
+    fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" opacity="0.06" />
+  <path d="M 218,150 C 238,150 255,148 270,145"
+    fill="none" stroke="#1a1a1a" stroke-width="1.3" stroke-dasharray="5,3" opacity="0.3" />
+
+  <!-- PONT — crossing river between cabane and Dusthaven -->
+  <g transform="translate(283,148) rotate(-15)">
+    <rect x="-20" y="-6" width="40" height="12" rx="1.5" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.3" />
+    <line x1="-12" y1="-6" x2="-12" y2="6" stroke="#1a1a1a" stroke-width="0.6" />
+    <line x1="-4" y1="-6" x2="-4" y2="6" stroke="#1a1a1a" stroke-width="0.6" />
+    <line x1="4" y1="-6" x2="4" y2="6" stroke="#1a1a1a" stroke-width="0.6" />
+    <line x1="12" y1="-6" x2="12" y2="6" stroke="#1a1a1a" stroke-width="0.6" />
+  </g>
+
+  <!-- Pont to Dusthaven -->
+  <path d="M 298,145 C 305,160 308,180 305,200"
+    fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" opacity="0.06" />
+  <path d="M 298,145 C 305,160 308,180 305,200"
+    fill="none" stroke="#1a1a1a" stroke-width="1.3" stroke-dasharray="5,3" opacity="0.3" />
+
+  <!-- === CHEMIN PRINCIPAL: descends along river from cabane area === -->
+  <!-- Follows river left bank, big curves matching meanders -->
+  <path d="M 120,185
+    C 100,210 80,235 75,265
+    C 68,300 70,330 90,360
+    C 110,390 120,415 110,445
+    C 98,475 70,500 60,535
+    C 50,570 58,600 85,630
+    C 120,658 180,680 250,700
+    C 310,715 355,730 380,740"
+    fill="none" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round" opacity="0.06" />
+  <path d="M 120,185
+    C 100,210 80,235 75,265
+    C 68,300 70,330 90,360
+    C 110,390 120,415 110,445
+    C 98,475 70,500 60,535
+    C 50,570 58,600 85,630
+    C 120,658 180,680 250,700
+    C 310,715 355,730 380,740"
+    fill="none" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="6,4" opacity="0.25" />
+
+  <!-- === CHEMIN GROTTE: branches off main trail near lac === -->
+  <path d="M 380,740 C 395,738 410,735 425,725 C 438,715 448,700 455,685"
+    fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="5,3" opacity="0.22" marker-end="url(#arr)" />
+
+  <!-- ============================================ -->
+  <!-- BATEE STATIONS Z1 — inner bends of river     -->
+  <!-- Close to the main trail (accessible)         -->
+  <!-- ============================================ -->
+  <!-- Batee 1: inside bend 1 (left side — river curves right) -->
+  <circle cx="165" cy="118" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.1" />
+  <!-- Batee 2: inside bend 2 (right side — river curves left) -->
+  <circle cx="115" cy="300" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.1" />
+  <!-- Batee 3: inside bend 3 (left side — river curves right) -->
+  <circle cx="130" cy="385" r="5" fill="none" stroke="#1a1a1a" stroke-width="1.1" />
+
+  <!-- ============================================ -->
+  <!-- CAMP RATTLER Z2                              -->
+  <!-- ============================================ -->
+  <polygon points="200,580 215,560 230,580" fill="none" stroke="#1a1a1a" stroke-width="1" />
+  <circle cx="190" cy="588" r="3" fill="none" stroke="#1a1a1a" stroke-width="0.6" opacity="0.5" />
+
+  <!-- ============================================ -->
+  <!-- GROTTE — passage to Z3                       -->
+  <!-- At Z2/Z3 border, near lac                    -->
+  <!-- ============================================ -->
+  <ellipse cx="458" cy="678" rx="18" ry="14" fill="#1a1a1a" opacity="0.85" />
+  <!-- Tunnel to Z3 -->
+  <line x1="474" y1="672" x2="510" y2="645" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.3" marker-end="url(#arr)" />
+
+  <!-- ============================================ -->
+  <!-- Z3 STRUCTURES                                -->
+  <!-- ============================================ -->
+  <!-- Entree grotte Z3 side -->
+  <rect x="515" y="625" width="35" height="22" rx="2" fill="none" stroke="#1a1a1a" stroke-width="0.9" />
+  <!-- Rails -->
+  <line x1="560" y1="610" x2="650" y2="555" stroke="#1a1a1a" stroke-width="0.8" />
+  <line x1="563" y1="607" x2="653" y2="552" stroke="#1a1a1a" stroke-width="0.8" />
+  <line x1="580" y1="602" x2="582" y2="594" stroke="#1a1a1a" stroke-width="0.5" />
+  <line x1="600" y1="590" x2="602" y2="582" stroke="#1a1a1a" stroke-width="0.5" />
+  <line x1="620" y1="578" x2="622" y2="570" stroke="#1a1a1a" stroke-width="0.5" />
+  <line x1="640" y1="566" x2="642" y2="558" stroke="#1a1a1a" stroke-width="0.5" />
+  <!-- Boss Arena -->
+  <rect x="610" y="640" width="65" height="50" rx="4" fill="none" stroke="#1a1a1a" stroke-width="1.5" />
+  <!-- Salle du Filon -->
+  <rect x="640" y="730" width="55" height="35" rx="3" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="4,3" />
+
+  <!-- ============================================ -->
+  <!-- LABELS                                       -->
+  <!-- ============================================ -->
+
+  <!-- Cabane -->
+  <text x="172" y="122" font-family="Courier New" font-size="7" font-weight="bold" fill="#1a1a1a">CABANE</text>
+  <text x="170" y="175" font-family="Courier New" font-size="5.5" fill="#888">grand-pere</text>
+  <text x="170" y="184" font-family="Courier New" font-size="5.5" fill="#888">mot + batee</text>
+
+  <!-- Pont -->
+  <text x="275" y="130" font-family="Courier New" font-size="6.5" fill="#888">pont</text>
+
+  <!-- Dusthaven -->
+  <text x="310" y="196" font-family="Courier New" font-size="9" font-weight="bold" fill="#1a1a1a" letter-spacing="1">DUSTHAVEN</text>
+
+  <!-- Chemin labels -->
+  <text x="130" y="195" font-family="Courier New" font-size="5.5" fill="#999">vers riviere</text>
+  <text x="230" y="140" font-family="Courier New" font-size="5.5" fill="#999">vers hub</text>
+
+  <!-- Zone 1 -->
+  <text x="60" y="90" font-family="Courier New" font-size="14" font-weight="bold" fill="#1a1a1a" opacity="0.5" letter-spacing="3">ZONE 1</text>
+  <text x="60" y="107" font-family="Courier New" font-size="7.5" fill="#999">Dead Man's Shallows</text>
+
+  <!-- Zone 4 -->
+  <text x="560" y="170" font-family="Courier New" font-size="14" font-weight="bold" fill="#1a1a1a" opacity="0.25" letter-spacing="3">ZONE 4</text>
+  <text x="560" y="187" font-family="Courier New" font-size="7.5" fill="#bbb">future extension</text>
+
+  <!-- Zone 2 -->
+  <text x="120" y="520" font-family="Courier New" font-size="14" font-weight="bold" fill="#1a1a1a" opacity="0.5" letter-spacing="3">ZONE 2</text>
+  <text x="120" y="537" font-family="Courier New" font-size="7.5" fill="#999">Copper Canyon</text>
+
+  <!-- Zone 3 -->
+  <text x="590" y="480" font-family="Courier New" font-size="14" font-weight="bold" fill="#1a1a1a" opacity="0.5" letter-spacing="3">ZONE 3</text>
+  <text x="590" y="497" font-family="Courier New" font-size="7.5" fill="#999">Crow Creek Mine</text>
+
+  <!-- Batee labels -->
+  <text x="174" y="122" font-family="Courier New" font-size="5.5" fill="#888"></text>
+  <text x="125" y="304" font-family="Courier New" font-size="5.5" fill="#888">batee</text>
+  <text x="140" y="389" font-family="Courier New" font-size="5.5" fill="#888">batee</text>
+  <text x="145" y="108" font-family="Courier New" font-size="5.5" fill="#888">batee</text>
+
+  <!-- Camp -->
+  <text x="192" y="598" font-family="Courier New" font-size="6" fill="#888">camp rattler</text>
+
+  <!-- Lac -->
+  <text x="378" y="752" font-family="Courier New" font-size="8.5" fill="#4a90c4" opacity="0.6">LAC</text>
+
+  <!-- Grotte -->
+  <text x="440" y="705" font-family="Courier New" font-size="7.5" font-weight="bold" fill="#1a1a1a">GROTTE</text>
+
+  <!-- Z3 labels -->
+  <text x="518" y="640" font-family="Courier New" font-size="5.5" fill="#888">entree</text>
+  <text x="575" y="620" font-family="Courier New" font-size="6" fill="#888">rails</text>
+  <text x="622" y="670" font-family="Courier New" font-size="7.5" fill="#1a1a1a">BOSS</text>
+  <text x="648" y="752" font-family="Courier New" font-size="6.5" fill="#888">filon</text>
+
+  <!-- Riviere labels -->
+  <text x="35" y="330" font-family="Courier New" font-size="7" fill="#4a90c4" opacity="0.4">riviere</text>
+  <text x="68" y="570" font-family="Courier New" font-size="7" fill="#4a90c4" opacity="0.4">riviere</text>
+
+  <!-- Elevation -->
+  <text x="4" y="75" font-family="Courier New" font-size="5.5" fill="#bbb" transform="rotate(-90,4,75)">altitude ↑</text>
+
+  <!-- ============================================ -->
+  <!-- GAME LOOP ARROWS — showing the triangle      -->
+  <!-- Cabane ↔ Riviere ↔ Dusthaven                -->
+  <!-- ============================================ -->
+  <path d="M 195,168 C 195,195 180,215 165,230 C 150,245 140,260 280,260 C 290,260 295,250 298,240"
+    fill="none" stroke="#1a1a1a" stroke-width="0.6" stroke-dasharray="2,2" opacity="0.15" />
+  <text x="180" y="245" font-family="Courier New" font-size="5" fill="#bbb" letter-spacing="1">GAME LOOP</text>
+
+</svg>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="#1a1a1a" stroke-width="1.2" /></svg> frontiere</div>
+  <div class="legend-item"><svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="#4a90c4" stroke-width="5" opacity="0.45" /></svg> riviere</div>
+  <div class="legend-item"><svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="#1a1a1a" stroke-width="1.3" stroke-dasharray="5,3" opacity="0.25" /></svg> sentier</div>
+  <div class="legend-item"><svg width="14" height="14"><rect x="1" y="1" width="12" height="12" rx="2" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.2" /><polygon points="2,12 7,4 12,12" fill="none" stroke="#1a1a1a" stroke-width="0.7" /></svg> cabane</div>
+  <div class="legend-item"><svg width="14" height="14"><ellipse cx="7" cy="7" rx="6" ry="5" fill="#1a1a1a" opacity="0.85" /></svg> grotte</div>
+  <div class="legend-item"><svg width="14" height="14"><rect x="1" y="3" width="12" height="8" rx="1" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1" /></svg> batiment</div>
+  <div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="none" stroke="#1a1a1a" stroke-width="1" /></svg> batee</div>
+  <div class="legend-item"><svg width="20" height="14"><rect x="0" y="0" width="20" height="14" fill="url(#hatch-z4)" stroke="#1a1a1a" stroke-width="0.5" /></svg> future</div>
+</div>
+
+<div class="parcours">
+  <strong>Cabane</strong> (spawn, mot + batee) → riviere (collecter) ↔ pont ↔ <strong>Dusthaven</strong> (vendre) — game loop — puis descendre le sentier → <strong>Z1</strong> batees → <strong>Z2</strong> canyon → lac → grotte → <strong>Z3</strong> mine, boss, filon
+</div>
+
+<div class="notes">
+  <h3>Game design</h3>
+  <ul>
+    <li><strong>Triangle initial.</strong> Cabane (spawn) — Riviere (collecter) — Dusthaven (vendre). Tout est a moins de 15 secondes de marche. Le joueur comprend la loop en 2 minutes.</li>
+    <li><strong>Cabane = tutoriel narratif.</strong> Le mot du grand-pere explique les bases sans UI intrusif. La batee est posee sur la table. Le joueur prend et sort.</li>
+    <li><strong>Pont = lien hub.</strong> Le pont connecte le monde d'exploration (rive gauche) au hub commercial (rive droite). Aller-retour naturel.</li>
+    <li><strong>Descente progressive.</strong> Le joueur suit la riviere vers le sud. Chaque meandre decouvre un nouveau coude avec une batee station. Curiosite recompensee.</li>
+    <li><strong>Z4 reservee.</strong> Haut-droite, hachure. Pas de contenu. Laisse de la place pour expansion (foret, marais, etc.).</li>
+    <li><strong>Retour rapide.</strong> Chariot-mine en Z3 (rails) ramene au lac. De la, remonter le sentier ou teleport bivouac. A definir.</li>
+    <li><strong>Grotte sens unique ?</strong> Suggestion : bidirectionnelle mais avec un raccourci de sortie (echelle de mine) qui debouche pres du lac. Le joueur peut revenir sans retraverser le boss.</li>
+  </ul>
+</div>
+
+</body>
+</html>

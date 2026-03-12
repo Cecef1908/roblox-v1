@@ -151,11 +151,20 @@ remoteEvent:FireServer(...)
 
 ### Workflow obligatoire après chaque changement de code
 1. **Écrire le code** sur le filesystem (les fichiers .lua)
-2. **Lancer le playtest** via MCP : `start_playtest`
-3. **Monitorer la console** via MCP : `get_playtest_output` — lire les prints, erreurs, warnings
-4. **Diagnostiquer** les problèmes à partir de l'output console
-5. **Itérer** : fixer le code → relancer le playtest → re-monitorer
-6. Ne JAMAIS dire "tu peux tester" — c'est MOI qui teste et qui débug
+2. **Rebuild la map en edit mode** via MCP : `execute_luau` avec `require(game.ServerScriptService.Systems.MapBuilder):Init()` — le joueur DOIT voir sa map dans l'éditeur sans playtest
+3. **Lancer le playtest** via MCP : `start_playtest`
+4. **Monitorer la console** via MCP : `get_playtest_output` — lire les prints, erreurs, warnings
+5. **Diagnostiquer** les problèmes à partir de l'output console
+6. **Itérer** : fixer le code → relancer le playtest → re-monitorer
+7. Ne JAMAIS dire "tu peux tester" — c'est MOI qui teste et qui débug
+
+### IMPORTANT — Map visible en edit mode
+La map est générée par code (MapBuilder.lua). Elle n'existe PAS dans le fichier .rbxlx.
+**À chaque début de session ou après modification du MapBuilder**, exécuter :
+```
+execute_luau: require(game.ServerScriptService.Systems.MapBuilder):Init()
+```
+Cela construit la map dans Workspace en edit mode → visible dans le viewport sans playtest.
 
 ### Outils MCP à utiliser
 - `get_file_tree` — explorer la structure du jeu dans Studio

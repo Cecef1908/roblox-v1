@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gold Rush Legacy — Dusthaven</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f0e8; font-family: 'Courier New', monospace; color: #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  h1 { font-size: 1.2em; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3px; }
+  .sub { font-size: 0.65em; color: #999; margin-bottom: 25px; letter-spacing: 1px; }
+  .schema { position: relative; width: 860px; border: 1.5px solid #1a1a1a; background: #f5f0e8; }
+  .svg-layer { width: 100%; height: 100%; display: block; }
+  table { width: 860px; border-collapse: collapse; font-size: 0.6em; margin-top: 12px; }
+  th { text-align: left; border-bottom: 1.5px solid #1a1a1a; padding: 4px 6px; text-transform: uppercase; letter-spacing: 1px; }
+  td { border-bottom: 1px solid #ddd; padding: 4px 6px; }
+  td:first-child { font-weight: bold; width: 30px; text-align: center; }
+  .note { width: 860px; font-size: 0.6em; color: #666; line-height: 1.7; margin-top: 8px; }
+  .note strong { color: #1a1a1a; }
+  .ref { font-size: 0.55em; color: #aaa; margin-top: 4px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Dusthaven — Plan technique</h1>
+<p class="sub">4 batiments, dimensions reelles (1 stud = 3.5px)</p>
+
+<div class="schema" style="height:720px;">
+<svg class="svg-layer" viewBox="0 0 860 720" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ============================================ -->
+  <!-- FALAISES — steep cliff walls around town     -->
+  <!-- Two massive rock formations create a narrow  -->
+  <!-- passage that opens into the town clearing    -->
+  <!-- ============================================ -->
+
+  <!-- FALAISE OUEST (left cliff mass) -->
+  <!-- Main body -->
+  <path d="M 0,200
+    C 20,180 60,140 120,100
+    C 180,60 250,30 330,25
+    C 390,20 430,40 450,70
+    C 475,105 460,150 440,190
+    C 420,235 385,270 355,300
+    C 330,330 310,370 305,410
+    C 302,435 305,455 315,470"
+    fill="#1a1a1a" opacity="0.06" stroke="#1a1a1a" stroke-width="2" opacity="0.4" />
+  <!-- Cliff face hatch marks (shows steepness) -->
+  <line x1="440" y1="195" x2="450" y2="185" stroke="#1a1a1a" stroke-width="0.8" opacity="0.2" />
+  <line x1="425" y1="220" x2="435" y2="210" stroke="#1a1a1a" stroke-width="0.8" opacity="0.18" />
+  <line x1="405" y1="245" x2="415" y2="235" stroke="#1a1a1a" stroke-width="0.8" opacity="0.16" />
+  <line x1="380" y1="270" x2="390" y2="260" stroke="#1a1a1a" stroke-width="0.8" opacity="0.15" />
+  <line x1="358" y1="295" x2="368" y2="285" stroke="#1a1a1a" stroke-width="0.8" opacity="0.14" />
+  <line x1="340" y1="320" x2="350" y2="310" stroke="#1a1a1a" stroke-width="0.8" opacity="0.13" />
+  <line x1="320" y1="350" x2="330" y2="340" stroke="#1a1a1a" stroke-width="0.7" opacity="0.12" />
+  <line x1="310" y1="380" x2="320" y2="370" stroke="#1a1a1a" stroke-width="0.7" opacity="0.11" />
+  <line x1="308" y1="410" x2="318" y2="400" stroke="#1a1a1a" stroke-width="0.7" opacity="0.1" />
+  <!-- Contour lines (elevation) -->
+  <path d="M 160,100 C 220,75 290,60 350,58 C 400,57 430,68 440,90"
+    fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.1" />
+  <path d="M 190,125 C 240,105 310,88 360,87 C 400,86 425,95 430,115"
+    fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.07" />
+
+  <!-- FALAISE EST (right cliff mass) -->
+  <!-- Main body -->
+  <path d="M 860,180
+    C 840,160 800,120 740,85
+    C 680,50 620,30 560,28
+    C 510,26 480,45 465,75
+    C 448,108 455,155 470,195
+    C 488,240 510,275 530,305
+    C 548,335 558,370 560,410
+    C 561,435 558,455 548,470"
+    fill="#1a1a1a" opacity="0.06" stroke="#1a1a1a" stroke-width="2" opacity="0.4" />
+  <!-- Cliff face hatch marks -->
+  <line x1="468" y1="200" x2="458" y2="190" stroke="#1a1a1a" stroke-width="0.8" opacity="0.2" />
+  <line x1="483" y1="225" x2="473" y2="215" stroke="#1a1a1a" stroke-width="0.8" opacity="0.18" />
+  <line x1="500" y1="250" x2="490" y2="240" stroke="#1a1a1a" stroke-width="0.8" opacity="0.16" />
+  <line x1="520" y1="275" x2="510" y2="265" stroke="#1a1a1a" stroke-width="0.8" opacity="0.15" />
+  <line x1="535" y1="300" x2="525" y2="290" stroke="#1a1a1a" stroke-width="0.8" opacity="0.14" />
+  <line x1="548" y1="325" x2="538" y2="315" stroke="#1a1a1a" stroke-width="0.7" opacity="0.13" />
+  <line x1="555" y1="355" x2="545" y2="345" stroke="#1a1a1a" stroke-width="0.7" opacity="0.12" />
+  <line x1="560" y1="385" x2="550" y2="375" stroke="#1a1a1a" stroke-width="0.7" opacity="0.11" />
+  <line x1="558" y1="415" x2="548" y2="405" stroke="#1a1a1a" stroke-width="0.7" opacity="0.1" />
+  <!-- Contour lines -->
+  <path d="M 700,85 C 650,68 590,58 545,57 C 510,57 488,68 478,92"
+    fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.1" />
+  <path d="M 680,108 C 635,92 580,82 545,82 C 515,83 495,93 488,112"
+    fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.07" />
+
+  <!-- FALAISE SUD / RIDGE (subtle rear wall behind Saloon) -->
+  <path d="M 200,140 C 250,125 320,115 400,110 C 430,108 460,108 470,110"
+    fill="none" stroke="#1a1a1a" stroke-width="1" opacity="0.08" />
+
+  <!-- ============================================ -->
+  <!-- LE PASSAGE — narrow gap between cliffs       -->
+  <!-- ~15 studs wide (~52px) = tight squeeze       -->
+  <!-- This is the "moment de revelation"           -->
+  <!-- ============================================ -->
+
+  <!-- Passage walls (inner cliff edges facing each other) -->
+  <!-- Left wall of passage -->
+  <path d="M 315,470
+    C 318,490 330,510 345,530
+    C 365,555 385,575 400,600
+    C 412,620 418,645 420,670"
+    fill="none" stroke="#1a1a1a" stroke-width="2.5" opacity="0.35" />
+  <!-- Right wall of passage -->
+  <path d="M 548,470
+    C 545,490 535,510 520,530
+    C 500,555 480,575 465,600
+    C 453,620 447,645 445,670"
+    fill="none" stroke="#1a1a1a" stroke-width="2.5" opacity="0.35" />
+
+  <!-- Cliff face marks along passage walls -->
+  <line x1="320" y1="485" x2="330" y2="480" stroke="#1a1a1a" stroke-width="0.6" opacity="0.15" />
+  <line x1="335" y1="515" x2="345" y2="508" stroke="#1a1a1a" stroke-width="0.6" opacity="0.13" />
+  <line x1="358" y1="545" x2="368" y2="538" stroke="#1a1a1a" stroke-width="0.6" opacity="0.12" />
+  <line x1="390" y1="580" x2="398" y2="572" stroke="#1a1a1a" stroke-width="0.6" opacity="0.11" />
+
+  <line x1="542" y1="485" x2="532" y2="480" stroke="#1a1a1a" stroke-width="0.6" opacity="0.15" />
+  <line x1="530" y1="515" x2="520" y2="508" stroke="#1a1a1a" stroke-width="0.6" opacity="0.13" />
+  <line x1="508" y1="545" x2="498" y2="538" stroke="#1a1a1a" stroke-width="0.6" opacity="0.12" />
+  <line x1="475" y1="580" x2="467" y2="572" stroke="#1a1a1a" stroke-width="0.6" opacity="0.11" />
+
+  <!-- Passage width annotation -->
+  <line x1="370" y1="555" x2="500" y2="555" stroke="#1a1a1a" stroke-width="0.4" opacity="0.25" />
+  <line x1="370" y1="551" x2="370" y2="559" stroke="#1a1a1a" stroke-width="0.4" opacity="0.25" />
+  <line x1="500" y1="551" x2="500" y2="559" stroke="#1a1a1a" stroke-width="0.4" opacity="0.25" />
+  <text x="412" y="552" font-family="Courier New" font-size="6" fill="#1a1a1a" opacity="0.4">~35s</text>
+
+  <!-- ============================================ -->
+  <!-- SENTIER — path through the passage           -->
+  <!-- Clear, bold, comes from bottom up through    -->
+  <!-- the cliff gap into the town center           -->
+  <!-- ============================================ -->
+
+  <!-- Path ground (wide, faded) -->
+  <path d="M 432,715
+    C 432,690 430,665 432,640
+    C 435,615 435,590 432,565
+    C 428,540 428,515 430,490
+    C 432,465 432,445 432,425"
+    fill="none" stroke="#1a1a1a" stroke-width="14" stroke-linecap="round" opacity="0.04" />
+
+  <!-- Path dashes (visible trail) -->
+  <path d="M 432,715
+    C 432,690 430,665 432,640
+    C 435,615 435,590 432,565
+    C 428,540 428,515 430,490
+    C 432,465 432,445 432,425"
+    fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="10,6" opacity="0.3" />
+
+  <!-- ============================================ -->
+  <!-- CLAIRIERE — the open clearing                -->
+  <!-- Where the town sits, between the cliffs      -->
+  <!-- ============================================ -->
+  <ellipse cx="432" cy="310" rx="120" ry="110" fill="#1a1a1a" opacity="0.008" stroke="#8B6914" stroke-width="0.6" stroke-dasharray="5,4" opacity="0.1" />
+
+  <!-- ============================================ -->
+  <!-- 4 BATIMENTS — TO SCALE                       -->
+  <!-- Scale: 1 stud = 3.5px                        -->
+  <!--                                               -->
+  <!-- Saloon:  22x20 → 77x70 px (BIGGEST)          -->
+  <!-- Sheriff: 18x16 → 63x57 px                    -->
+  <!-- Magasin: 14x14 → 49x49 px                    -->
+  <!-- Forge:   18x16 → 63x56 px                    -->
+  <!--                                               -->
+  <!-- Arc opens SOUTH toward the passage            -->
+  <!-- Saloon at back = focal point when entering    -->
+  <!-- ============================================ -->
+
+  <!-- #2 SALOON DE BELLE — center back, BIGGEST -->
+  <!-- 22 x 20 studs = 77 x 70 px -->
+  <g transform="translate(432,215)">
+    <rect x="-38.5" y="-35" width="77" height="70" rx="4" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="2" />
+    <!-- double swinging door (faces south toward entry) -->
+    <rect x="-6" y="22" width="12" height="13" fill="none" stroke="#1a1a1a" stroke-width="0.6" />
+    <line x1="0" y1="22" x2="0" y2="35" stroke="#1a1a1a" stroke-width="0.3" />
+    <!-- balcony -->
+    <line x1="-30" y1="-5" x2="30" y2="-5" stroke="#1a1a1a" stroke-width="0.4" opacity="0.3" />
+  </g>
+
+  <!-- #1 MAGASIN DE SILAS — left of arc -->
+  <!-- 14 x 14 studs = 49 x 49 px -->
+  <g transform="translate(355,295) rotate(-8)">
+    <rect x="-24.5" y="-24.5" width="49" height="49" rx="3" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" />
+    <!-- door -->
+    <rect x="-5" y="14" width="10" height="11" fill="none" stroke="#1a1a1a" stroke-width="0.5" />
+    <!-- awning -->
+    <line x1="-18" y1="10" x2="18" y2="10" stroke="#1a1a1a" stroke-width="0.4" opacity="0.3" />
+  </g>
+
+  <!-- #4 BUREAU DU SHERIFF — right of arc -->
+  <!-- 18 x 16.3 studs = 63 x 57 px -->
+  <g transform="translate(515,290) rotate(8)">
+    <rect x="-31.5" y="-28.5" width="63" height="57" rx="3" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" />
+    <!-- door -->
+    <rect x="-5" y="16" width="10" height="12" fill="none" stroke="#1a1a1a" stroke-width="0.5" />
+  </g>
+
+  <!-- #3 FORGE DE GUSTAVE — right front of arc, near passage -->
+  <!-- 18 x 16 studs = 63 x 56 px -->
+  <g transform="translate(505,385) rotate(5)">
+    <rect x="-31.5" y="-28" width="63" height="56" rx="3" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" />
+    <!-- door -->
+    <rect x="-5" y="15" width="10" height="13" fill="none" stroke="#1a1a1a" stroke-width="0.5" />
+  </g>
+
+  <!-- ============================================ -->
+  <!-- ARC GUIDE — semi-circle logic                -->
+  <!-- ============================================ -->
+  <path d="M 355,340 C 370,270 395,225 432,205 C 470,188 520,220 540,330"
+    fill="none" stroke="#1a1a1a" stroke-width="0.5" stroke-dasharray="3,4" opacity="0.07" />
+
+  <!-- ============================================ -->
+  <!-- DIMENSIONS                                   -->
+  <!-- ============================================ -->
+
+  <!-- Saloon width -->
+  <line x1="393" y1="175" x2="471" y2="175" stroke="#1a1a1a" stroke-width="0.4" opacity="0.35" />
+  <line x1="393" y1="172" x2="393" y2="178" stroke="#1a1a1a" stroke-width="0.4" opacity="0.35" />
+  <line x1="471" y1="172" x2="471" y2="178" stroke="#1a1a1a" stroke-width="0.4" opacity="0.35" />
+  <text x="415" y="172" font-family="Courier New" font-size="6.5" fill="#1a1a1a" opacity="0.45">22s</text>
+
+  <!-- Saloon depth -->
+  <line x1="475" y1="180" x2="475" y2="250" stroke="#1a1a1a" stroke-width="0.4" opacity="0.35" />
+  <line x1="472" y1="180" x2="478" y2="180" stroke="#1a1a1a" stroke-width="0.4" opacity="0.35" />
+  <line x1="472" y1="250" x2="478" y2="250" stroke="#1a1a1a" stroke-width="0.4" opacity="0.35" />
+  <text x="480" y="220" font-family="Courier New" font-size="6.5" fill="#1a1a1a" opacity="0.45">20s</text>
+
+  <!-- Magasin -->
+  <text x="310" y="278" font-family="Courier New" font-size="5.5" fill="#999">14x14s</text>
+
+  <!-- Sheriff -->
+  <text x="552" y="278" font-family="Courier New" font-size="5.5" fill="#999">18x16s</text>
+
+  <!-- Forge -->
+  <text x="545" y="378" font-family="Courier New" font-size="5.5" fill="#999">18x16s</text>
+
+  <!-- ============================================ -->
+  <!-- PROPS                                        -->
+  <!-- ============================================ -->
+
+  <!-- Barils entre Magasin et Saloon -->
+  <circle cx="395" cy="262" r="4.5" fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.2" />
+  <circle cx="395" cy="273" r="4.5" fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.2" />
+  <circle cx="404" cy="267" r="4.5" fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.2" />
+
+  <!-- Horse post devant Sheriff -->
+  <rect x="500" y="330" width="14" height="3" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.2" />
+
+  <!-- Water trough entre Sheriff et Forge -->
+  <rect x="530" y="345" width="18" height="7" rx="1" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.2" />
+
+  <!-- Caisses pres Forge -->
+  <rect x="542" y="405" width="11" height="11" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.2" />
+  <rect x="555" y="408" width="11" height="11" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.2" />
+
+  <!-- Enclume devant Forge -->
+  <rect x="478" y="420" width="8" height="6" rx="1" fill="#1a1a1a" opacity="0.06" />
+
+  <!-- Charrette pres de l'entree (left side) -->
+  <rect x="355" y="415" width="22" height="10" rx="2" fill="none" stroke="#1a1a1a" stroke-width="0.4" opacity="0.2" />
+  <circle cx="357" cy="428" r="3" fill="none" stroke="#1a1a1a" stroke-width="0.3" opacity="0.18" />
+  <circle cx="375" cy="428" r="3" fill="none" stroke="#1a1a1a" stroke-width="0.3" opacity="0.18" />
+
+  <!-- ============================================ -->
+  <!-- LABELS                                       -->
+  <!-- ============================================ -->
+
+  <!-- Falaises -->
+  <text x="180" y="90" font-family="Courier New" font-size="10" fill="#1a1a1a" opacity="0.2" letter-spacing="2">FALAISE</text>
+  <text x="620" y="90" font-family="Courier New" font-size="10" fill="#1a1a1a" opacity="0.2" letter-spacing="2">FALAISE</text>
+
+  <!-- Building labels -->
+  <text x="425" y="205" font-family="Courier New" font-size="8" font-weight="bold" fill="#1a1a1a">2</text>
+  <text x="415" y="260" font-family="Courier New" font-size="7" fill="#888">SALOON</text>
+
+  <text x="345" y="288" font-family="Courier New" font-size="8" font-weight="bold" fill="#1a1a1a">1</text>
+  <text x="330" y="345" font-family="Courier New" font-size="7" fill="#888">MAGASIN</text>
+
+  <text x="520" y="280" font-family="Courier New" font-size="8" font-weight="bold" fill="#1a1a1a">4</text>
+  <text x="555" y="300" font-family="Courier New" font-size="7" fill="#888">SHERIFF</text>
+
+  <text x="505" y="378" font-family="Courier New" font-size="8" font-weight="bold" fill="#1a1a1a">3</text>
+  <text x="545" y="395" font-family="Courier New" font-size="7" fill="#888">FORGE</text>
+
+  <!-- Props labels -->
+  <text x="380" y="285" font-family="Courier New" font-size="5" fill="#aaa">barils</text>
+  <text x="485" y="340" font-family="Courier New" font-size="5" fill="#aaa">poteau</text>
+  <text x="550" y="352" font-family="Courier New" font-size="5" fill="#aaa">abreuvoir</text>
+  <text x="542" y="425" font-family="Courier New" font-size="5" fill="#aaa">caisses</text>
+  <text x="462" y="430" font-family="Courier New" font-size="5" fill="#aaa">enclume</text>
+  <text x="340" y="440" font-family="Courier New" font-size="5" fill="#aaa">charrette</text>
+
+  <!-- Passage label -->
+  <text x="405" y="500" font-family="Courier New" font-size="8" fill="#1a1a1a" opacity="0.3" letter-spacing="1">PASSAGE</text>
+
+  <!-- Path direction -->
+  <text x="400" y="705" font-family="Courier New" font-size="7" fill="#aaa">vers pont / riviere</text>
+
+  <!-- Clairiere -->
+  <text x="395" y="445" font-family="Courier New" font-size="6" fill="#bbb" letter-spacing="1">clairiere</text>
+
+  <!-- ============================================ -->
+  <!-- SCALE BAR                                    -->
+  <!-- ============================================ -->
+  <line x1="680" y1="660" x2="750" y2="660" stroke="#1a1a1a" stroke-width="1.2" />
+  <line x1="680" y1="656" x2="680" y2="664" stroke="#1a1a1a" stroke-width="1" />
+  <line x1="750" y1="656" x2="750" y2="664" stroke="#1a1a1a" stroke-width="1" />
+  <text x="693" y="654" font-family="Courier New" font-size="7" fill="#1a1a1a">20 studs</text>
+  <text x="695" y="676" font-family="Courier New" font-size="5.5" fill="#999">~5.6m</text>
+
+  <!-- North indicator -->
+  <line x1="780" y1="60" x2="780" y2="30" stroke="#1a1a1a" stroke-width="1" opacity="0.3" />
+  <polygon points="775,32 780,20 785,32" fill="#1a1a1a" opacity="0.25" />
+  <text x="773" y="70" font-family="Courier New" font-size="6" fill="#999">N</text>
+
+</svg>
+</div>
+
+<table>
+  <tr><th>#</th><th>Batiment</th><th>Footprint</th><th>Hauteur</th><th>Position</th><th>Fonction</th></tr>
+  <tr><td>2</td><td>Saloon de Belle</td><td>22 x 20 studs</td><td>32s</td><td>Centre arriere — focal point en arrivant</td><td>Quetes, buffs, dialogues</td></tr>
+  <tr><td>1</td><td>Magasin de Silas</td><td>14 x 14 studs</td><td>20s</td><td>Gauche de l'arc</td><td>Achat/vente outils + consommables</td></tr>
+  <tr><td>4</td><td>Bureau du Sheriff</td><td>18 x 16.3 studs</td><td>26s</td><td>Droite de l'arc</td><td>Quetes officielles, permis Z3</td></tr>
+  <tr><td>3</td><td>Forge de Gustave</td><td>18 x 16 studs</td><td>28s</td><td>Droite, pres du passage</td><td>Craft + amelioration outils</td></tr>
+</table>
+
+<p class="note"><strong>Falaises :</strong> Deux masses rocheuses enserrent la ville. Le joueur arrive par un passage etroit (~35 studs de large) entre les parois — moment de revelation quand la clairiere s'ouvre et que le Saloon apparait en face. Les falaises sont les murs naturels de la ville, aucune cloture necessaire.</p>
+<p class="note"><strong>Proportions :</strong> Le Saloon (22x20s = 440 studs2) domine — c'est le premier batiment visible en entrant. Le Magasin est le plus petit (14x14s = 196 studs2). Forge et Sheriff quasi identiques (~288 studs2). Espacement : ~15-20 studs entre batiments. Dimensions issues du build-library MCP (medieval/western).</p>
+<p class="note"><strong>Acces :</strong> Le sentier vient du pont (sud), remonte entre les falaises sur ~80 studs, puis debouche dans la clairiere. Aller simple ~15 secondes de marche.</p>
+
+</body>
+</html>
