@@ -3,251 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gold Rush Legacy — Hub</title>
+<title>Dusthaven — Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Rye&family=Lora:wght@400;600&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #1a0e00; overflow: hidden; height: 100vh; display: flex; flex-direction: column; font-family: 'Lora', Georgia, serif; }
-
-  /* ── Password Gate ── */
-  #gate {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: #1a0e00;
-    background-image:
-      radial-gradient(ellipse at 30% 40%, rgba(90, 50, 10, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse at 70% 60%, rgba(60, 30, 5, 0.3) 0%, transparent 50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
-
+  #gate { position: fixed; inset: 0; z-index: 1000; background: #1a0e00;
+    background-image: radial-gradient(ellipse at 30% 40%, rgba(90,50,10,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(60,30,5,0.3) 0%, transparent 50%);
+    display: flex; align-items: center; justify-content: center; flex-direction: column; }
   #gate.hidden { display: none; }
+  .gate-box { background: linear-gradient(160deg, #2a1800 0%, #1a0e00 100%); border: 3px solid #6b3a1f;
+    border-radius: 4px; padding: 40px 36px; text-align: center; max-width: 420px; width: 90%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(90,50,10,0.15); position: relative; }
+  .gate-box::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(184,150,46,0.2); pointer-events: none; border-radius: 2px; }
+  .gate-title { font-family: 'Rye', cursive; font-size: clamp(1.6rem, 5vw, 2.4rem); color: #5c0e0e;
+    text-shadow: 2px 2px 0 rgba(100,20,20,0.3); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .gate-subtitle { font-family: 'Lora', serif; font-style: italic; color: #9a6b3c; font-size: 0.85rem; margin-bottom: 28px; letter-spacing: 0.08em; }
+  .gate-label { font-family: 'Rye', cursive; font-size: 0.7rem; color: #b8962e; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; display: block; }
+  .gate-input { width: 100%; padding: 12px 16px; font-family: 'Lora', serif; font-size: 1rem; background: #0d0700;
+    border: 2px solid #6b3a1f; color: #e8c65a; border-radius: 2px; text-align: center; letter-spacing: 0.15em; outline: none; transition: border-color 0.2s; }
+  .gate-input:focus { border-color: #b8962e; box-shadow: 0 0 12px rgba(184,150,46,0.15); }
+  .gate-input::placeholder { color: #5c420966; letter-spacing: 0.1em; }
+  .gate-btn { margin-top: 18px; padding: 10px 32px; font-family: 'Rye', cursive; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; background: linear-gradient(180deg, #5c4209, #3e2208);
+    color: #e8c65a; border: 2px solid #b8962e; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .gate-btn:hover { background: linear-gradient(180deg, #6b4e0d, #5c4209); box-shadow: 0 0 16px rgba(184,150,46,0.2); }
+  .gate-error { color: #8b1a1a; font-size: 0.78rem; margin-top: 12px; min-height: 1.2em; font-style: italic; }
+  .gate-decoration { color: #b8962e; font-size: 0.7rem; letter-spacing: 0.4em; margin-top: 20px; opacity: 0.5; }
 
-  .gate-box {
-    background: linear-gradient(160deg, #2a1800 0%, #1a0e00 100%);
-    border: 3px solid #6b3a1f;
-    border-radius: 4px;
-    padding: 40px 36px;
-    text-align: center;
-    max-width: 420px;
-    width: 90%;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(90,50,10,0.15);
-    position: relative;
-  }
-
-  .gate-box::before {
-    content: '';
-    position: absolute;
-    inset: 8px;
-    border: 1px solid rgba(184,150,46,0.2);
-    pointer-events: none;
-    border-radius: 2px;
-  }
-
-  .gate-title {
-    font-family: 'Rye', cursive;
-    font-size: clamp(1.6rem, 5vw, 2.4rem);
-    color: #5c0e0e;
-    text-shadow: 2px 2px 0 rgba(100,20,20,0.3);
-    margin-bottom: 6px;
-    letter-spacing: 0.04em;
-  }
-
-  .gate-subtitle {
-    font-family: 'Lora', serif;
-    font-style: italic;
-    color: #9a6b3c;
-    font-size: 0.85rem;
-    margin-bottom: 28px;
-    letter-spacing: 0.08em;
-  }
-
-  .gate-label {
-    font-family: 'Rye', cursive;
-    font-size: 0.7rem;
-    color: #b8962e;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    display: block;
-  }
-
-  .gate-input {
-    width: 100%;
-    padding: 12px 16px;
-    font-family: 'Lora', serif;
-    font-size: 1rem;
-    background: #0d0700;
-    border: 2px solid #6b3a1f;
-    color: #e8c65a;
-    border-radius: 2px;
-    text-align: center;
-    letter-spacing: 0.15em;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .gate-input:focus {
-    border-color: #b8962e;
-    box-shadow: 0 0 12px rgba(184,150,46,0.15);
-  }
-
-  .gate-input::placeholder {
-    color: #5c420966;
-    letter-spacing: 0.1em;
-  }
-
-  .gate-btn {
-    margin-top: 18px;
-    padding: 10px 32px;
-    font-family: 'Rye', cursive;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: linear-gradient(180deg, #5c4209, #3e2208);
-    color: #e8c65a;
-    border: 2px solid #b8962e;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-
-  .gate-btn:hover {
-    background: linear-gradient(180deg, #6b4e0d, #5c4209);
-    box-shadow: 0 0 16px rgba(184,150,46,0.2);
-  }
-
-  .gate-error {
-    color: #8b1a1a;
-    font-size: 0.78rem;
-    margin-top: 12px;
-    min-height: 1.2em;
-    font-style: italic;
-  }
-
-  .gate-decoration {
-    color: #b8962e;
-    font-size: 0.7rem;
-    letter-spacing: 0.4em;
-    margin-top: 20px;
-    opacity: 0.5;
-  }
-
-  /* ── Switch bar ── */
-  #switchbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 8px 16px;
-    background: linear-gradient(180deg, #2a1800 0%, #1a0e00 100%);
-    border-bottom: 2px solid #6b3a1f;
-    z-index: 100;
-    flex-shrink: 0;
-  }
-
-  .switch-btn {
-    font-family: 'Rye', cursive;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    padding: 8px 28px;
-    border: 2px solid #6b3a1f;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    text-transform: uppercase;
-    position: relative;
-  }
-
-  .switch-btn:first-child {
-    border-radius: 6px 0 0 6px;
-    border-right: 1px solid #6b3a1f;
-  }
-  .switch-btn:last-child {
-    border-radius: 0 6px 6px 0;
-    border-left: 1px solid #6b3a1f;
-  }
-
-  .switch-btn.inactive {
-    background: #1a0e00;
-    color: #8b6914aa;
-  }
-  .switch-btn.inactive:hover {
-    background: #2a1800;
-    color: #b8962e;
-  }
-
-  .switch-btn.active {
-    background: linear-gradient(180deg, #5c4209, #3e2208);
-    color: #e8c65a;
-    box-shadow: inset 0 1px 0 rgba(232,198,90,0.2), 0 0 12px rgba(184,150,46,0.15);
-    text-shadow: 0 0 8px rgba(232,198,90,0.3);
-  }
-
-  .dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
+  #switchbar { display: flex; align-items: center; justify-content: center; gap: 0; padding: 8px 16px;
+    background: linear-gradient(180deg, #2a1800 0%, #1a0e00 100%); border-bottom: 2px solid #6b3a1f; z-index: 100; flex-shrink: 0; }
+  .switch-btn { font-family: 'Rye', cursive; font-size: 13px; letter-spacing: 1.5px; padding: 8px 28px;
+    border: 2px solid #6b3a1f; cursor: pointer; transition: all 0.25s ease; text-transform: uppercase; position: relative; }
+  .switch-btn:first-child { border-radius: 6px 0 0 6px; border-right: 1px solid #6b3a1f; }
+  .switch-btn:nth-child(2) { border-radius: 0; border-left: 1px solid #6b3a1f; border-right: 1px solid #6b3a1f; }
+  .switch-btn:last-child { border-radius: 0 6px 6px 0; border-left: 1px solid #6b3a1f; }
+  .switch-btn.inactive { background: #1a0e00; color: #8b6914aa; }
+  .switch-btn.inactive:hover { background: #2a1800; color: #b8962e; }
+  .switch-btn.active { background: linear-gradient(180deg, #5c4209, #3e2208); color: #e8c65a;
+    box-shadow: inset 0 1px 0 rgba(232,198,90,0.2), 0 0 12px rgba(184,150,46,0.15); text-shadow: 0 0 8px rgba(232,198,90,0.3); }
+  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
   .dot-dash { background: #b8962e; }
   .dot-map { background: #4a90d9; }
+  .dot-lore { background: #c9544d; }
+  #frame { flex: 1; width: 100%; border: none; }
 
-  /* ── iframe ── */
-  #frame {
-    flex: 1;
-    width: 100%;
-    border: none;
-  }
-
-  /* ── Mobile responsive ── */
-  @media (max-width: 768px) {
-    .switch-btn {
-      font-size: 11px;
-      letter-spacing: 1px;
-      padding: 8px 16px;
-    }
-    .gate-box {
-      padding: 30px 24px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    #switchbar {
-      padding: 6px 8px;
-    }
-    .switch-btn {
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      padding: 8px 12px;
-      flex: 1;
-      text-align: center;
-    }
-    .dot { width: 5px; height: 5px; margin-right: 4px; }
-    .gate-box {
-      padding: 24px 16px;
-    }
-    .gate-title {
-      font-size: 1.4rem;
-    }
-    .gate-input {
-      font-size: 0.9rem;
-      padding: 10px 12px;
-    }
-  }
+  @media (max-width: 768px) { .switch-btn { font-size: 11px; letter-spacing: 1px; padding: 8px 16px; } .gate-box { padding: 30px 24px; } }
+  @media (max-width: 480px) { #switchbar { padding: 6px 8px; } .switch-btn { font-size: 10px; letter-spacing: 0.5px; padding: 8px 10px; flex: 1; text-align: center; }
+    .dot { width: 5px; height: 5px; margin-right: 4px; } .gate-box { padding: 24px 16px; } .gate-title { font-size: 1.4rem; } .gate-input { font-size: 0.9rem; padding: 10px 12px; } }
 </style>
 </head>
 <body>
-
-<!-- Password Gate -->
 <div id="gate">
   <div class="gate-box">
-    <h1 class="gate-title">GOLD RUSH LEGACY</h1>
-    <p class="gate-subtitle">Perdition Creek Valley &mdash; 1849</p>
+    <h1 class="gate-title">DUSTHAVEN</h1>
+    <p class="gate-subtitle">Perdition Creek Valley &mdash; 1852</p>
     <label class="gate-label">Enter Password</label>
     <input class="gate-input" type="password" id="gate-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="off" />
     <br />
@@ -256,73 +68,31 @@
     <div class="gate-decoration">&#10022; &#10022; &#10022;</div>
   </div>
 </div>
-
 <div id="switchbar" style="display:none;">
-  <button class="switch-btn active" id="btn-dashboard" onclick="switchView('dashboard')">
-    <span class="dot dot-dash"></span>Dashboard
-  </button>
-  <button class="switch-btn inactive" id="btn-map" onclick="switchView('map')">
-    <span class="dot dot-map"></span>Map 2D
-  </button>
+  <button class="switch-btn active" id="btn-dashboard" onclick="switchView('dashboard')"><span class="dot dot-dash"></span>Dashboard</button>
+  <button class="switch-btn inactive" id="btn-map" onclick="switchView('map')"><span class="dot dot-map"></span>Map 2D</button>
+  <button class="switch-btn inactive" id="btn-lore" onclick="switchView('lore')"><span class="dot dot-lore"></span>Lore</button>
 </div>
-
 <iframe id="frame" style="display:none;"></iframe>
-
 <script>
 const HASH = 'd41684f4d74510934afae13a6a5569cdbb8681950c1d217fdb51dafdf25cd49d';
-
-async function sha256(str) {
-  const buf = new TextEncoder().encode(str);
-  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
+async function sha256(str) { const buf = new TextEncoder().encode(str); const h = await crypto.subtle.digest('SHA-256', buf); return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join(''); }
 async function checkPassword() {
   const input = document.getElementById('gate-password').value;
   const hash = await sha256(input);
-  if (hash === HASH) {
-    sessionStorage.setItem('gr-auth', '1');
-    unlock();
-  } else {
-    document.getElementById('gate-error').textContent = 'Wrong password. Try again.';
-    document.getElementById('gate-password').value = '';
-    document.getElementById('gate-password').focus();
-  }
+  if (hash === HASH) { sessionStorage.setItem('gr-auth','1'); unlock(); }
+  else { document.getElementById('gate-error').textContent = 'Wrong password. Try again.'; document.getElementById('gate-password').value = ''; document.getElementById('gate-password').focus(); }
 }
-
-function unlock() {
-  document.getElementById('gate').classList.add('hidden');
-  document.getElementById('switchbar').style.display = 'flex';
-  document.getElementById('frame').style.display = 'block';
-  document.getElementById('frame').src = 'dashboard.html';
-}
-
-// Enter key support
-document.getElementById('gate-password').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') checkPassword();
-});
-
-// Check session
-if (sessionStorage.getItem('gr-auth') === '1') {
-  unlock();
-}
-
+function unlock() { document.getElementById('gate').classList.add('hidden'); document.getElementById('switchbar').style.display = 'flex'; document.getElementById('frame').style.display = 'block'; document.getElementById('frame').src = 'dashboard.html'; }
+document.getElementById('gate-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') checkPassword(); });
+if (sessionStorage.getItem('gr-auth') === '1') { unlock(); }
 function switchView(view) {
   const frame = document.getElementById('frame');
-  const btnDash = document.getElementById('btn-dashboard');
-  const btnMap = document.getElementById('btn-map');
-
-  if (view === 'dashboard') {
-    frame.src = 'dashboard.html';
-    btnDash.className = 'switch-btn active';
-    btnMap.className = 'switch-btn inactive';
-  } else {
-    frame.src = 'map.html';
-    btnDash.className = 'switch-btn inactive';
-    btnMap.className = 'switch-btn active';
-  }
+  document.querySelectorAll('.switch-btn').forEach(b => b.className = 'switch-btn inactive');
+  if (view === 'dashboard') { frame.src = 'dashboard.html'; document.getElementById('btn-dashboard').className = 'switch-btn active'; }
+  else if (view === 'map') { frame.src = 'map.html'; document.getElementById('btn-map').className = 'switch-btn active'; }
+  else { frame.src = 'lore.html'; document.getElementById('btn-lore').className = 'switch-btn active'; }
 }
 </script>
-
 </body>
 </html>
