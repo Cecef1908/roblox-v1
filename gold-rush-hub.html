@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold Rush Legacy — Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a0e00; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── Switch bar ── */
+  #switchbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 8px 16px;
+    background: linear-gradient(180deg, #2a1800 0%, #1a0e00 100%);
+    border-bottom: 2px solid #6b3a1f;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+
+  .switch-btn {
+    font-family: 'Rye', cursive;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    padding: 8px 28px;
+    border: 2px solid #6b3a1f;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .switch-btn:first-child {
+    border-radius: 6px 0 0 6px;
+    border-right: 1px solid #6b3a1f;
+  }
+  .switch-btn:last-child {
+    border-radius: 0 6px 6px 0;
+    border-left: 1px solid #6b3a1f;
+  }
+
+  .switch-btn.inactive {
+    background: #1a0e00;
+    color: #8b6914aa;
+  }
+  .switch-btn.inactive:hover {
+    background: #2a1800;
+    color: #b8962e;
+  }
+
+  .switch-btn.active {
+    background: linear-gradient(180deg, #5c4209, #3e2208);
+    color: #e8c65a;
+    box-shadow: inset 0 1px 0 rgba(232,198,90,0.2), 0 0 12px rgba(184,150,46,0.15);
+    text-shadow: 0 0 8px rgba(232,198,90,0.3);
+  }
+
+  .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .dot-dash { background: #b8962e; }
+  .dot-map { background: #4a90d9; }
+
+  /* ── iframe ── */
+  #frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="switchbar">
+  <button class="switch-btn active" id="btn-dashboard" onclick="switchView('dashboard')">
+    <span class="dot dot-dash"></span>Dashboard
+  </button>
+  <button class="switch-btn inactive" id="btn-map" onclick="switchView('map')">
+    <span class="dot dot-map"></span>Map 2D
+  </button>
+</div>
+
+<iframe id="frame" src="gold-rush-dashboard.html"></iframe>
+
+<script>
+function switchView(view) {
+  const frame = document.getElementById('frame');
+  const btnDash = document.getElementById('btn-dashboard');
+  const btnMap = document.getElementById('btn-map');
+
+  if (view === 'dashboard') {
+    frame.src = 'gold-rush-dashboard.html';
+    btnDash.className = 'switch-btn active';
+    btnMap.className = 'switch-btn inactive';
+  } else {
+    frame.src = 'dusthaven-map-2d.html';
+    btnDash.className = 'switch-btn inactive';
+    btnMap.className = 'switch-btn active';
+  }
+}
+</script>
+
+</body>
+</html>
