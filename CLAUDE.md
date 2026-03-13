@@ -198,3 +198,30 @@ All project docs are in `docs/`. Key references:
 - `docs/guides/publishing-monetization-guide.md` — Creator Programs, monetization
 - `docs/specs/gold-rush-v1-tech-spec.md` — Full tech spec
 - `docs/dev-resources-guide.md` — Links to tutorials, assets, docs
+
+## Hub HTML Deployment (CRITICAL — read this)
+
+### Architecture
+- **GitHub Pages** serves from branch `gh-pages` (NOT main!)
+- **URL**: https://cecef1908.github.io/roblox-v1/
+- **Password**: goldrush2026 (SHA-256 hashed in index.html)
+
+### Hub Files (root of repo, on main)
+| File | Content |
+|------|---------|
+| `index.html` | Hub entry point — password gate + 3-tab switcher |
+| `dashboard.html` | Dashboard tab |
+| `map.html` | Map 2D tab |
+| `lore.html` | Lore Bible tab |
+
+### How to Deploy (MANDATORY after ANY HTML change)
+**Option A — Automatic (preferred):** A GitHub Action auto-syncs `main → gh-pages` when HTML files change on main. Just push to main.
+
+**Option B — Manual:** Run `./scripts/deploy-hub.sh` from main branch.
+
+### Rules for Agents
+- **NEVER push HTML files only to main and call it done** — gh-pages must be updated
+- **NEVER modify the gh-pages branch directly** — always edit on main, then sync
+- **ALWAYS verify deployment** after push: fetch https://cecef1908.github.io/roblox-v1/ and check content
+- **ALL 4 HTML files must stay in sync** between main root and gh-pages
+- The `deploy/` folder is a mirror — keep it in sync too but root files are what gets served

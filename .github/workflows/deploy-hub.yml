@@ -1,0 +1,43 @@
+name: Deploy Hub to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'dashboard.html'
+      - 'map.html'
+      - 'lore.html'
+      - 'deploy/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout gh-pages || git checkout -b gh-pages
+
+          # Copy all hub HTML files from main
+          git checkout main -- index.html dashboard.html map.html lore.html
+
+          # Also sync deploy/ folder
+          git checkout main -- deploy/ 2>/dev/null || true
+
+          # Commit and push if there are changes
+          git add index.html dashboard.html map.html lore.html deploy/
+          if git diff --cached --quiet; then
+            echo "No changes to deploy"
+          else
+            git commit -m "Auto-deploy hub from main [skip ci]"
+            git push origin gh-pages
+          fi
