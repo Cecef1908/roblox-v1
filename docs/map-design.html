@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gold Rush Legacy — Map Layout</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f0e8; font-family: 'Courier New', monospace; color: #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  h1 { font-size: 1.3em; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .sub { font-size: 0.7em; color: #888; margin-bottom: 25px; }
+
+  .map { position: relative; width: 900px; height: 720px; border: 2px solid #1a1a1a; background: #f5f0e8; }
+
+  /* Zones */
+  .zone { position: absolute; border: 2px solid #1a1a1a; }
+  .zone-dashed { border-style: dashed; }
+  .zname { position: absolute; top: 8px; left: 10px; font-size: 0.65em; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; }
+  .zsub { position: absolute; top: 22px; left: 10px; font-size: 0.55em; color: #777; }
+
+  /* Hub */
+  .hub { left: 20px; top: 20px; width: 320px; height: 240px; }
+  /* Z1 */
+  .z1 { left: 20px; top: 280px; width: 400px; height: 200px; }
+  /* Z2 */
+  .z2 { left: 20px; top: 500px; width: 420px; height: 200px; }
+  /* Z3 */
+  .z3 { left: 520px; top: 380px; width: 360px; height: 320px; }
+
+  /* Buildings / structures - simple rectangles */
+  .bld { position: absolute; border: 1.5px solid #1a1a1a; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; }
+  .bld span { font-size: 0.5em; line-height: 1.2; }
+
+  /* Small marker */
+  .marker { position: absolute; font-size: 0.5em; color: #555; }
+  .marker-bold { font-weight: bold; color: #1a1a1a; }
+
+  /* River */
+  .river-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  /* Path */
+  .path-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  /* Lac */
+  .lac { position: absolute; left: 340px; top: 560px; width: 110px; height: 75px; border: 2px solid #1a1a1a; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .lac span { font-size: 0.6em; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Grotte */
+  .grotte { position: absolute; left: 480px; top: 545px; width: 50px; height: 50px; border: 2px solid #1a1a1a; border-radius: 6px 6px 50% 50%; background: #1a1a1a; display: flex; align-items: center; justify-content: center; }
+  .grotte span { font-size: 0.45em; color: #f5f0e8; font-weight: bold; text-transform: uppercase; }
+
+  /* x marks for mining */
+  .x { position: absolute; font-size: 0.65em; font-weight: bold; }
+
+  /* Spawn dot */
+  .spawn { position: absolute; width: 8px; height: 8px; background: #1a1a1a; border-radius: 50%; }
+
+  /* Info below */
+  .info { margin-top: 20px; max-width: 900px; width: 100%; }
+  .info table { width: 100%; border-collapse: collapse; font-size: 0.65em; }
+  .info th { text-align: left; border-bottom: 2px solid #1a1a1a; padding: 4px 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .info td { border-bottom: 1px solid #ddd; padding: 4px 6px; }
+  .info td:first-child { font-weight: bold; width: 30px; text-align: center; }
+  .section-title { font-size: 0.75em; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px; margin-bottom: 6px; border-bottom: 1px solid #1a1a1a; padding-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<h1>Gold Rush Legacy — Map</h1>
+<p class="sub">23 elements — demo spec</p>
+
+<div class="map">
+
+  <!-- ===== ZONES ===== -->
+  <div class="zone hub">
+    <div class="zname">Hub — Dusthaven</div>
+    <div class="zsub">5 batiments</div>
+  </div>
+  <div class="zone z1">
+    <div class="zname">Zone 1 — Dead Man's Shallows</div>
+    <div class="zsub">riviere + orpaillage</div>
+  </div>
+  <div class="zone z2">
+    <div class="zname">Zone 2 — Copper Canyon</div>
+    <div class="zsub">canyon + pepites</div>
+  </div>
+  <div class="zone zone-dashed z3">
+    <div class="zname">Zone 3 — Crow Creek Mine</div>
+    <div class="zsub">grotte — acces par caverne</div>
+  </div>
+
+  <!-- ===== RIVER ===== -->
+  <svg class="river-svg" viewBox="0 0 900 720">
+    <path d="M 180,20 C 190,80 170,140 160,200 C 150,260 140,300 130,360 C 120,400 130,440 150,480 C 170,520 220,550 300,580 C 340,595 370,600 390,595"
+      fill="none" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round" opacity="0.08" />
+    <path d="M 180,20 C 190,80 170,140 160,200 C 150,260 140,300 130,360 C 120,400 130,440 150,480 C 170,520 220,550 300,580 C 340,595 370,600 390,595"
+      fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="6,4" />
+    <text x="195" y="170" font-family="Courier New" font-size="7" fill="#999" transform="rotate(80,195,170)">riviere</text>
+    <text x="140" y="430" font-family="Courier New" font-size="7" fill="#999" transform="rotate(75,140,430)">riviere</text>
+  </svg>
+
+  <!-- ===== PLAYER PATH ===== -->
+  <svg class="path-svg" viewBox="0 0 900 720">
+    <defs>
+      <marker id="arr" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" fill="#1a1a1a" opacity="0.4" />
+      </marker>
+    </defs>
+    <!-- Spawn to Hub -->
+    <line x1="55" y1="52" x2="75" y2="68" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" marker-end="url(#arr)" />
+    <!-- Hub down to Z1 -->
+    <line x1="180" y1="258" x2="180" y2="282" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" marker-end="url(#arr)" />
+    <!-- Z1 down to Z2 -->
+    <line x1="200" y1="478" x2="200" y2="502" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" marker-end="url(#arr)" />
+    <!-- Z2 to Lac -->
+    <line x1="300" y1="600" x2="345" y2="590" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" marker-end="url(#arr)" />
+    <!-- Lac to Grotte -->
+    <line x1="450" y1="580" x2="480" y2="572" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" marker-end="url(#arr)" />
+    <!-- Grotte to Z3 -->
+    <line x1="530" y1="568" x2="555" y2="530" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" marker-end="url(#arr)" />
+  </svg>
+
+  <!-- ===== HUB BUILDINGS ===== -->
+  <!-- #5 Le Bivouac (spawn) -->
+  <div class="bld" style="left:40px; top:40px; width:70px; height:45px;">
+    <span>5. Bivouac<br>spawn</span>
+  </div>
+  <div class="spawn" style="left:48px; top:48px;"></div>
+
+  <!-- #1 Magasin de Silas -->
+  <div class="bld" style="left:130px; top:40px; width:80px; height:45px;">
+    <span>1. Magasin<br>Silas</span>
+  </div>
+
+  <!-- #2 Saloon de Belle -->
+  <div class="bld" style="left:230px; top:40px; width:80px; height:45px;">
+    <span>2. Saloon<br>Belle</span>
+  </div>
+
+  <!-- #3 La Forge -->
+  <div class="bld" style="left:130px; top:110px; width:80px; height:45px;">
+    <span>3. Forge</span>
+  </div>
+
+  <!-- #4 Bureau du Maire -->
+  <div class="bld" style="left:230px; top:110px; width:80px; height:45px;">
+    <span>4. Bureau<br>Maire</span>
+  </div>
+
+  <!-- Hub props -->
+  <div class="marker" style="left:50px; top:110px;">charrette</div>
+  <div class="marker" style="left:50px; top:125px;">barils</div>
+  <div class="marker" style="left:50px; top:180px;">clotures</div>
+  <div class="marker" style="left:140px; top:180px;">lampadaires</div>
+  <div class="marker" style="left:240px; top:180px;">panneaux</div>
+
+  <!-- ===== ZONE 1 STRUCTURES ===== -->
+  <!-- #6 Panneau -->
+  <div class="marker marker-bold" style="left:40px; top:310px;">6. Panneau "Dead Man's Shallows"</div>
+
+  <!-- #7 Batee Stations -->
+  <div class="bld" style="left:200px; top:330px; width:55px; height:30px; border-style:dashed;">
+    <span>7a. Batee</span>
+  </div>
+  <div class="bld" style="left:270px; top:360px; width:55px; height:30px; border-style:dashed;">
+    <span>7b. Batee</span>
+  </div>
+  <div class="bld" style="left:330px; top:330px; width:55px; height:30px; border-style:dashed;">
+    <span>7c. Batee</span>
+  </div>
+
+  <!-- #8 Cabane Guide -->
+  <div class="bld" style="left:40px; top:410px; width:75px; height:35px; border-style:dotted;">
+    <span>8. Cabane<br>Guide (opt)</span>
+  </div>
+
+  <!-- Z1 props -->
+  <div class="marker" style="left:200px; top:445px;">saules, roseaux</div>
+  <div class="marker" style="left:330px; top:445px;">rochers</div>
+
+  <!-- Z1 mining x -->
+  <div class="x" style="left:218px; top:365px;">x</div>
+  <div class="x" style="left:288px; top:395px;">x</div>
+  <div class="x" style="left:348px; top:365px;">x</div>
+
+  <!-- ===== ZONE 2 STRUCTURES ===== -->
+  <!-- #9 Panneau -->
+  <div class="marker marker-bold" style="left:40px; top:525px;">9. Panneau "Copper Canyon"</div>
+
+  <!-- #10 Camp du Rattler -->
+  <div class="bld" style="left:50px; top:560px; width:90px; height:45px;">
+    <span>10. Camp<br>Rattler</span>
+  </div>
+  <div class="marker" style="left:50px; top:610px;">tente + feu + caisses</div>
+
+  <!-- #11 Abri prospection -->
+  <div class="bld" style="left:180px; top:570px; width:80px; height:35px; border-style:dotted;">
+    <span>11. Abri (opt)</span>
+  </div>
+
+  <!-- Z2 props -->
+  <div class="marker" style="left:180px; top:655px;">cactus</div>
+  <div class="marker" style="left:280px; top:655px;">rochers</div>
+  <div class="marker" style="left:50px; top:660px;">feu de camp</div>
+
+  <!-- Z2 mining x -->
+  <div class="x" style="left:160px; top:630px;">x</div>
+  <div class="x" style="left:240px; top:615px;">x</div>
+  <div class="x" style="left:310px; top:640px;">x</div>
+  <div class="x" style="left:370px; top:620px;">x</div>
+
+  <!-- ===== LAC ===== -->
+  <div class="lac"><span>Lac</span></div>
+
+  <!-- ===== GROTTE ===== -->
+  <div class="grotte"><span>Grotte</span></div>
+
+  <!-- ===== ZONE 3 STRUCTURES ===== -->
+  <!-- #12 Entree grotte -->
+  <div class="bld" style="left:540px; top:400px; width:90px; height:35px;">
+    <span>12. Entree<br>portail bois</span>
+  </div>
+
+  <!-- #13 Rails + chariot -->
+  <div class="marker marker-bold" style="left:660px; top:410px;">13. Rails + chariot</div>
+
+  <!-- #14 Boss Arena -->
+  <div class="bld" style="left:580px; top:480px; width:100px; height:50px; border-width:2.5px;">
+    <span>14. Boss<br>Arena</span>
+  </div>
+  <div class="marker" style="left:580px; top:535px;">3 mecanismes</div>
+
+  <!-- #15 Salle du filon -->
+  <div class="bld" style="left:720px; top:520px; width:90px; height:45px;">
+    <span>15. Salle<br>du Filon</span>
+  </div>
+  <div class="marker" style="left:720px; top:570px;">recompense finale</div>
+
+  <!-- Z3 props -->
+  <div class="marker" style="left:540px; top:660px;">torches</div>
+  <div class="marker" style="left:660px; top:660px;">rochers</div>
+  <div class="marker" style="left:540px; top:640px;">rails deco</div>
+
+  <!-- Z3 mining x -->
+  <div class="x" style="left:700px; top:580px;">x</div>
+  <div class="x" style="left:760px; top:620px;">x</div>
+  <div class="x" style="left:820px; top:590px;">x</div>
+
+  <!-- ===== GLOBAL PROPS (scattered) ===== -->
+  <!-- #16 Panneaux directionnels -->
+  <div class="marker" style="left:340px; top:30px; color:#1a1a1a; font-weight:bold;">↓ panneau → Z1</div>
+  <div class="marker" style="left:50px; top:478px; color:#1a1a1a; font-weight:bold;">↓ panneau → Z2</div>
+  <div class="marker" style="left:540px; top:380px; color:#1a1a1a; font-weight:bold;">panneau → Z3</div>
+
+</div>
+
+<!-- ===== SPEC TABLE ===== -->
+<div class="info">
+
+  <div class="section-title">Hub — Dusthaven (5 batiments)</div>
+  <table>
+    <tr><th>#</th><th>Element</th><th>Fonction</th><th>Source</th></tr>
+    <tr><td>1</td><td>Magasin de Silas</td><td>Achat/vente outils + consommables</td><td>Pack western</td></tr>
+    <tr><td>2</td><td>Saloon de Belle</td><td>Quetes, buffs, dialogues</td><td>Pack western</td></tr>
+    <tr><td>3</td><td>La Forge</td><td>Craft + amelioration outils</td><td>Pack western</td></tr>
+    <tr><td>4</td><td>Bureau du Maire</td><td>Quetes officielles, permis zones</td><td>Pack western</td></tr>
+    <tr><td>5</td><td>Le Bivouac</td><td>Spawn, feu de camp, sauvegarde</td><td>Pack western</td></tr>
+  </table>
+
+  <div class="section-title">Zone 1 — Dead Man's Shallows</div>
+  <table>
+    <tr><th>#</th><th>Element</th><th>Fonction</th></tr>
+    <tr><td>6</td><td>Panneau d'entree</td><td>"Dead Man's Shallows" — signaletique</td></tr>
+    <tr><td>7</td><td>3 Batee Stations</td><td>Spots fixes d'orpaillage au bord de la riviere</td></tr>
+    <tr><td>8</td><td>Cabane du Guide (opt)</td><td>Petit abri pour le PNJ tutoriel</td></tr>
+  </table>
+
+  <div class="section-title">Zone 2 — Copper Canyon</div>
+  <table>
+    <tr><th>#</th><th>Element</th><th>Fonction</th></tr>
+    <tr><td>9</td><td>Panneau d'entree</td><td>"Copper Canyon"</td></tr>
+    <tr><td>10</td><td>Camp du Rattler</td><td>Tente + feu + caisses — rival installe</td></tr>
+    <tr><td>11</td><td>Abri de prospection (opt)</td><td>Point de repos dans le canyon</td></tr>
+  </table>
+
+  <div class="section-title">Zone 3 — Crow Creek Mine</div>
+  <table>
+    <tr><th>#</th><th>Element</th><th>Fonction</th></tr>
+    <tr><td>12</td><td>Entree de la grotte</td><td>Portail en bois avec enseigne</td></tr>
+    <tr><td>13</td><td>Rails + chariot</td><td>Decor + eventuellement transport</td></tr>
+    <tr><td>14</td><td>Boss Arena</td><td>Salle du puzzle-boss (3 mecanismes)</td></tr>
+    <tr><td>15</td><td>Salle du filon</td><td>Recompense finale apres le boss</td></tr>
+  </table>
+
+  <div class="section-title">Props / Decors (8 types)</div>
+  <table>
+    <tr><th>#</th><th>Element</th><th>Ou</th></tr>
+    <tr><td>16</td><td>Panneaux directionnels</td><td>Entre hub et chaque zone</td></tr>
+    <tr><td>17</td><td>Barils, caisses, tonneaux</td><td>Hub + camps</td></tr>
+    <tr><td>18</td><td>Lampadaires / torches</td><td>Hub (lampes), grotte (torches)</td></tr>
+    <tr><td>19</td><td>Clotures / barrieres</td><td>Hub, chemins</td></tr>
+    <tr><td>20</td><td>Charrette</td><td>Hub decor</td></tr>
+    <tr><td>21</td><td>Feux de camp</td><td>Bivouac, camp Rattler</td></tr>
+    <tr><td>22</td><td>Rochers decoratifs</td><td>Toutes zones</td></tr>
+    <tr><td>23</td><td>Arbres / vegetation</td><td>Z1 (saules, roseaux), Z2 (cactus)</td></tr>
+  </table>
+
+  <div class="section-title" style="margin-top:25px;">Parcours joueur</div>
+  <p style="font-size:0.7em; line-height:2; color:#333;">
+    <strong>Bivouac (spawn)</strong> → Hub Dusthaven (outils, quetes) → <strong>Panneau Z1</strong> → Dead Man's Shallows (batee, paillettes riviere) → <strong>Panneau Z2</strong> → Copper Canyon (pepites, camp Rattler) → <strong>Lac</strong> (fin riviere) → <strong>Grotte</strong> (passage) → Crow Creek Mine (boss, filon, gemmes)
+  </p>
+
+</div>
+
+</body>
+</html>

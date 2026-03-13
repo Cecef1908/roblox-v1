@@ -202,11 +202,12 @@ All project docs are in `docs/`. Key references:
 ## Hub HTML Deployment (CRITICAL — read this)
 
 ### Architecture
-- **GitHub Pages** serves from branch `gh-pages` (NOT main!)
+- **GitHub Pages** serves directly from **`main` branch, root `/`**
 - **URL**: https://cecef1908.github.io/roblox-v1/
 - **Password**: goldrush2026 (SHA-256 hashed in index.html)
+- **NO separate branch** — push HTML to main = live. C'est tout.
 
-### Hub Files (root of repo, on main)
+### Hub Files (root of repo)
 | File | Content |
 |------|---------|
 | `index.html` | Hub entry point — password gate + 3-tab switcher |
@@ -214,14 +215,13 @@ All project docs are in `docs/`. Key references:
 | `map.html` | Map 2D tab |
 | `lore.html` | Lore Bible tab |
 
-### How to Deploy (MANDATORY after ANY HTML change)
-**Option A — Automatic (preferred):** A GitHub Action auto-syncs `main → gh-pages` when HTML files change on main. Just push to main.
-
-**Option B — Manual:** Run `./scripts/deploy-hub.sh` from main branch.
+### How to Deploy
+1. Edit the HTML files at the root of the repo
+2. Commit and push to `main`
+3. That's it. GitHub Pages serves from main. Live in ~2 min.
 
 ### Rules for Agents
-- **NEVER push HTML files only to main and call it done** — gh-pages must be updated
-- **NEVER modify the gh-pages branch directly** — always edit on main, then sync
+- **Push to main = deployed.** No other branch needed. No script needed.
+- **NEVER create or use a gh-pages branch** — it's not used
 - **ALWAYS verify deployment** after push: fetch https://cecef1908.github.io/roblox-v1/ and check content
-- **ALL 4 HTML files must stay in sync** between main root and gh-pages
-- The `deploy/` folder is a mirror — keep it in sync too but root files are what gets served
+- The `deploy/` folder is a legacy mirror — root files are what gets served
