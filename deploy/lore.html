@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dusthaven — Lore Bible</title>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0700; color: #c4a060; font-family: 'Lora', Georgia, serif; font-size: 15px; line-height: 1.7; }
+  
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  
+  .main-title { font-family: 'Rye', cursive; font-size: clamp(2rem, 5vw, 3rem); color: #e8c65a; text-align: center;
+    text-shadow: 0 0 30px rgba(232,198,90,0.2); letter-spacing: 0.06em; margin-bottom: 8px; }
+  .meta { text-align: center; color: #8a7044; font-size: 0.8rem; font-style: italic; margin-bottom: 4px; }
+  
+  .section-divider { text-align: center; color: #6b3a1f; font-size: 0.9rem; letter-spacing: 1em; margin: 48px 0 16px; }
+  
+  h2 { font-family: 'Rye', cursive; font-size: 1.5rem; color: #e8c65a; letter-spacing: 0.04em;
+    border-bottom: 2px solid #3a2a15; padding-bottom: 8px; margin-bottom: 20px;
+    text-shadow: 0 0 12px rgba(232,198,90,0.1); }
+  h3 { font-family: 'Rye', cursive; font-size: 1.15rem; color: #d4a762; margin: 28px 0 12px; letter-spacing: 0.02em; }
+  h4 { font-family: 'Lora', serif; font-size: 1rem; color: #b8962e; font-weight: 600; margin: 20px 0 8px; }
+  
+  p { margin-bottom: 12px; color: #b8a070; }
+  p strong { color: #d4a762; }
+  p em { color: #c4a060; font-style: italic; }
+  .numbered { padding-left: 20px; position: relative; }
+  
+  ul { margin: 12px 0 12px 24px; }
+  li { margin-bottom: 6px; color: #b8a070; }
+  li strong { color: #d4a762; }
+  li em { color: #c4a060; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.9rem; }
+  th { background: #1a0e00; color: #e8c65a; font-family: 'Rye', cursive; font-size: 0.8rem;
+    letter-spacing: 0.05em; padding: 10px 12px; text-align: left; border-bottom: 2px solid #6b3a1f; }
+  td { padding: 8px 12px; border-bottom: 1px solid #2a1a0a; color: #b8a070; }
+  tr:hover td { background: rgba(184,150,46,0.05); }
+  
+  blockquote.letter { background: linear-gradient(135deg, #1a1008 0%, #1e1510 100%);
+    border: 2px solid #4a3520; border-radius: 4px; padding: 24px 28px; margin: 20px 0;
+    position: relative; font-style: italic; }
+  blockquote.letter::before { content: '"'; position: absolute; top: 8px; left: 12px;
+    font-family: 'Rye', cursive; font-size: 3rem; color: #3a2a15; line-height: 1; }
+  blockquote.letter p { color: #d4a762; margin-bottom: 8px; }
+  
+  hr.gold-rule { border: none; height: 1px; background: linear-gradient(90deg, transparent, #6b3a1f, transparent); margin: 32px 0; }
+  
+  /* Nav */
+  .nav { position: sticky; top: 0; z-index: 50; background: #0d0700ee; backdrop-filter: blur(8px);
+    border-bottom: 1px solid #3a2a15; padding: 8px 0; margin-bottom: 32px; }
+  .nav-inner { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 900px; margin: 0 auto; padding: 0 16px; }
+  .nav a { font-family: 'Rye', cursive; font-size: 0.65rem; color: #8a7044; text-decoration: none;
+    padding: 4px 10px; border: 1px solid #2a1a0a; border-radius: 3px; transition: all 0.2s; letter-spacing: 0.04em; }
+  .nav a:hover { color: #e8c65a; border-color: #6b3a1f; background: #1a0e00; }
+  
+  @media (max-width: 600px) {
+    .container { padding: 20px 16px 60px; }
+    h2 { font-size: 1.2rem; }
+    table { font-size: 0.78rem; }
+    th, td { padding: 6px 8px; }
+    blockquote.letter { padding: 16px 20px; }
+    .nav a { font-size: 0.58rem; padding: 3px 6px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#1-backstory-du-grand-père--elias-eli-henderson">Backstory</a>
+    <a href="#2-arc-narratif-détaillé--3-actes">3 Actes</a>
+    <a href="#3-système-de-fragments">Fragments</a>
+    <a href="#4-texte-de-la-lettre-du-grand-père">Lettre</a>
+    <a href="#5-casting-complet--6-fiches-pnj">Casting</a>
+    <a href="#6-dialogues-dintro-corrigés">Dialogues</a>
+    <a href="#7-chronologie-18301852">Chronologie</a>
+    <a href="#8-mystères-secondaires">Mystères</a>
+    <a href="#9-choix-final--conséquences">Choix Final</a>
+  </div>
+</nav>
+<div class="container">
+<h1 class="main-title">DUSTHAVEN — LORE V2 (PRODUCTION BIBLE)</h1>
+<p class="meta">**Version** : 2.0 — Corrigée & Définitive</p>
+<p class="meta">**Date** : 12 mars 2026</p>
+<p class="meta">**Auteur** : Thorn (Archimage CTO)</p>
+<p class="meta">**Statut** : RÉFÉRENTIEL — Toute contradiction avec un document antérieur est résolue en faveur de ce fichier.</p>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="table-des-mati-res">TABLE DES MATIÈRES</h2>
+<p class="numbered">[Backstory du Grand-Père — Elias "Eli" Henderson](#1-backstory-du-grand-père--elias-eli-henderson)</p>
+<p class="numbered">[Arc Narratif Détaillé — 3 Actes](#2-arc-narratif-détaillé--3-actes)</p>
+<p class="numbered">[Système de Fragments (8 fragments)](#3-système-de-fragments)</p>
+<p class="numbered">[Texte de la Lettre du Grand-Père](#4-texte-de-la-lettre-du-grand-père)</p>
+<p class="numbered">[Casting Complet — 6 Fiches PNJ](#5-casting-complet--6-fiches-pnj)</p>
+<p class="numbered">[Dialogues d'Intro (Corrigés)](#6-dialogues-dintro-corrigés)</p>
+<p class="numbered">[Chronologie 1830–1852](#7-chronologie-18301852)</p>
+<p class="numbered">[Mystères Secondaires](#8-mystères-secondaires)</p>
+<p class="numbered">[Choix Final — Conséquences](#9-choix-final--conséquences)</p>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="1-backstory-du-grand-p-re-elias-eli-henderson">1. BACKSTORY DU GRAND-PÈRE — ELIAS "ELI" HENDERSON</h2>
+<h3>Qui il était</h3>
+<p>Elias "Eli" Henderson, né en 1810 dans une famille de fermiers du Tennessee, est un homme que la curiosité a toujours poussé au-delà des clôtures. Cartographe autodidacte, naturaliste amateur, marcheur infatigable. Il n'a jamais cherché la fortune — il cherchait à comprendre. Quand la ruée vers l'or a éclaté en 1849, Eli avait déjà 39 ans. Il n'est pas venu pour l'or. Il est venu parce que des milliers d'hommes allaient retourner la terre de Californie, et il voulait voir ce qu'ils allaient trouver — et ce qu'ils allaient détruire.</p>
+<p>Eli s'est installé dans la Perdition Creek Valley au printemps 1849. Il a construit une cabane au pied de Copper Canyon, à l'écart du campement qui deviendrait Dusthaven. Il prospectait, oui — il fallait bien manger. Mais ses carnets étaient remplis de croquis géologiques, de relevés d'eau, de notes sur la faune. Et de symboles qu'il ne comprenait pas.</p>
+<p>En 1852, Eli a 42 ans. Il est toujours quelque part dans la vallée. Mais personne ne le voit plus.</p>
+<h3>Ce qu'il a trouvé — La Confluence</h3>
+<p>Au fond de la Perdition Creek Valley, là où trois sources souterraines se rejoignent sous la roche, existe un phénomène géologique rare qu'Eli a nommé "la Confluence" dans ses carnets. L'eau, en traversant des strates minérales anciennes, crée un écosystème souterrain unique : des cristaux de quartz aurifère mêlés à des formations calcaires irisées, des bassins d'eau claire dans l'obscurité totale, et une acoustique naturelle qui fait résonner le moindre son comme un murmure amplifié.</p>
+<p>Ce n'est pas de la magie. C'est de la géologie extraordinaire. Mais pour quiconque la découvre, l'effet est saisissant : un sanctuaire naturel, silencieux et lumineux, caché sous des tonnes de roche.</p>
+<p>La Confluence est aussi un filon aurifère massif. Des veines d'or pur courent dans le quartz comme des racines dans la terre. Si quelqu'un l'exploitait industriellement, il en tirerait une fortune — et détruirait irrémédiablement l'un des sites géologiques les plus remarquables du continent.</p>
+<h3>Lien avec le Peuple du Serpent et Kaya</h3>
+<p>Bien avant Eli, bien avant la ruée, le <strong>Peuple du Serpent</strong> (<em>Nahak'a</em> dans leur langue) connaissait la Confluence. Ce peuple autochtone de la vallée — semi-nomade, discret, profondément lié à la terre — considérait le site comme sacré. Non pas au sens mystique : ils avaient observé que la Confluence régulait le débit des sources en surface, que les plantes médicinales les plus rares poussaient au-dessus, et que les animaux venaient y boire en période de sécheresse. La Confluence était le cœur hydrologique de la vallée. La détruire, c'était tuer la terre.</p>
+<p>Le Peuple du Serpent avait gravé des inscriptions sur les parois rocheuses aux approches de la Confluence — des avertissements, des indications, des récits. Leur symbole : un serpent enroulé autour d'une source, la tête tournée vers le ciel. Ce symbole marquait les passages sûrs, les zones interdites, et les lieux de rassemblement.</p>
+<p><strong>Kaya</strong> est une femme du Peuple du Serpent, l'une des dernières à vivre dans la vallée. Elle a environ 35 ans en 1852. Elle n'est pas la "guide mystique" d'Eli — elle est la gardienne d'un héritage millénaire. Son peuple protégeait la Confluence bien avant qu'Eli n'arrive. Quand elle a rencontré Eli vers 1850, c'est elle qui l'a évalué, pas l'inverse. Elle a vu un homme qui posait des questions au lieu de creuser. Un homme qui dessinait les inscriptions au lieu de les ignorer. Elle a choisi de lui faire confiance — prudemment, progressivement.</p>
+<p>Eli a adopté le symbole du Serpent par respect pour Kaya et son peuple. Il l'a gravé sur ses outils, dessiné dans ses carnets, utilisé comme marque personnelle. Ce n'est pas son symbole — c'est celui du Peuple du Serpent, qu'il porte en conscience.</p>
+<p>Les inscriptions dans les grottes et les canyons sont interprétées par Kaya quand elle le juge utile. Le joueur ne les "déchiffre" pas seul — il les découvre, et c'est Kaya (ou les notes d'Eli qui citent Kaya) qui leur donne un sens. Cela respecte la propriété culturelle du Peuple du Serpent et donne à Kaya une autorité narrative propre.</p>
+<p><strong>Coyote</strong> est le compagnon de Kaya — un vrai coyote, semi-domestiqué, intelligent et imprévisible. Kaya l'a élevé depuis qu'il était louveteau orphelin. Coyote apparaît au joueur dès le début du jeu, comme un guide silencieux, capricieux, jamais là où on l'attend.</p>
+<h3>Lien avec Le Rattler — Silas Rattner</h3>
+<p><strong>Silas "The Rattler" Rattner</strong> est un magnat minier de San Francisco, 50 ans en 1852. Il a fait fortune en rachetant les concessions des prospecteurs ruinés et en industrialisant l'extraction. Il connaissait Eli Henderson <strong>de réputation</strong> — les carnets d'un cartographe méticuleux qui avait identifié des filons dans des zones que personne n'avait prospectées. Mais il ne savait pas où Eli s'était installé.</p>
+<p>Tout a changé quand le <strong>Sheriff Buck Dawson</strong>, endetté et corrompu, a contacté Rattner pour lui vendre des informations. Dawson savait qu'Eli était dans la Perdition Creek Valley. Il savait qu'Eli avait trouvé quelque chose de gros. Il a vendu cette information à Rattner en échange de l'effacement de ses dettes de jeu.</p>
+<p>Rattner est arrivé dans la vallée fin 1851. Il a commencé à racheter des concessions, à placer ses hommes, à étouffer la concurrence. Il ne sait pas exactement ce qu'Eli a trouvé, mais il sait que ça vaut une fortune. Et il sait qu'Eli a disparu — ce qui signifie que le secret est encore là, quelque part, sans propriétaire officiel.</p>
+<h3>Pourquoi Eli a disparu (raison ACTIVE)</h3>
+<p>Eli ne s'est pas enfui. Il ne se cache pas par peur. Eli surveille la Confluence.</p>
+<p>Quand il a compris que Rattner approchait — par les rumeurs, par les panneaux "RATTNER CO." qui apparaissaient sur les concessions voisines — Eli a pris une décision : disparaître de la surface pour protéger le secret. S'il restait visible, Rattner le ferait suivre. S'il partait, Rattner perdrait la piste.</p>
+<p>Eli vit maintenant dans les passages souterrains autour de la Confluence. Il entretient les accès, désarme les éboulements naturels, surveille les entrées. Il est le gardien fantôme d'un lieu qu'il refuse de posséder.</p>
+<p>Sa présence est perceptible pour qui sait regarder : des outils neufs laissés dans des recoins, une lampe à huile encore tiède, un piège à éboulement désactivé, des traces de pas fraîches dans la poussière des grottes. Eli est là. Il regarde. Il attend de voir ce que le joueur — son propre petit-enfant — va faire.</p>
+<h3>Ce que la lettre révèle (fragmentée)</h3>
+<p>La lettre d'Eli est le fil rouge émotionnel du jeu. Elle est partiellement brûlée et déchirée quand le joueur la trouve dans la cabane. Seuls quelques mots sont lisibles au début. Au fil du jeu, en trouvant des fragments complémentaires (morceaux déchirés, pages de carnet qui complètent le contexte), le joueur reconstitue le message complet.</p>
+<p>La lettre ne dit jamais explicitement où est la Confluence. Elle parle d'amour, de regret, de responsabilité. Eli s'adresse à son petit-enfant qu'il n'a jamais rencontré. Il lui dit qu'il a trouvé quelque chose de beau, que des gens puissants veulent le prendre, et qu'il a fait un choix que tout le monde ne comprendra pas. Il demande pardon de ne pas avoir été là — mais il espère que le joueur comprendra pourquoi.</p>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="2-arc-narratif-d-taill-3-actes">2. ARC NARRATIF DÉTAILLÉ — 3 ACTES</h2>
+<h3>PROLOGUE — La Cabane (Z0)</h3>
+<p><strong>Lieu</strong> : Cabane d'Eli, pied de Copper Canyon.</p>
+<p><strong>Séquence d'onboarding</strong> (action AVANT la lettre) :</p>
+<p>Le joueur arrive devant la cabane. La porte est entrouverte. Pas de cinématique, pas de texte explicatif. Le joueur entre.</p>
+<p>À l'intérieur, des <strong>objets concrets</strong> humanisent Eli avant qu'on sache quoi que ce soit :</p>
+<ul>
+<li>Une <strong>tasse en étain</strong> sur la table, encore tiède au toucher (info-bulle : <em>"Tiède. Quelqu'un était là il n'y a pas longtemps."</em>)</li>
+<li>Une <strong>photo floue</strong> dans un cadre en bois, trop abîmée pour distinguer les visages (<em>"Une famille. Les visages sont effacés par le temps."</em>)</li>
+<li>Un <strong>journal ouvert</strong> sur le lit, l'écriture minuscule, illisible sans lumière (<em>"Des notes. Beaucoup de notes. L'encre est fraîche sur certaines pages."</em>)</li>
+<li>Une <strong>batée</strong> (gold pan) accrochée au mur, usée mais solide.</li>
+</ul>
+<p><strong>Le joueur prend la batée.</strong> C'est l'action fondatrice. En la décrochant, une mécanique de tutoriel se déclenche naturellement : le joueur peut aller au ruisseau derrière la cabane et essayer de tamiser. Premier grain d'or. Premier feedback haptique. Le jeu a commencé.</p>
+<p><strong>Après</strong> la première session d'orpaillage, le joueur revient dans la cabane (ou y est guidé par la curiosité). En reposant la batée ou en interagissant avec la table, il remarque un <strong>bout de papier coincé sous la tasse</strong> — le premier fragment de la lettre. Partiellement brûlé, quelques lignes lisibles seulement. C'est une récompense, pas un tutoriel.</p>
+<p><strong>Micro-récompense émotionnelle (~minute 8)</strong> : En sortant de la cabane avec la batée, le joueur tombe sur <strong>Coyote</strong> pour la première fois. L'animal est assis sur un rocher, la tête penchée, il observe le joueur en silence. Quand le joueur s'approche, Coyote trace un cercle dans la poussière avec sa patte, puis s'éloigne vers Dusthaven. Le cercle reste visible au sol — un symbole que le joueur ne comprend pas encore (c'est le symbole du Serpent, simplifié).</p>
+<hr class="gold-rule">
+<h3>ACTE I — Dead Man's Shallows (Hub + Z1)</h3>
+<p><strong>Lieux</strong> : Dusthaven (hub), Dead Man's Shallows (Z1)</p>
+<p><strong>Durée estimée</strong> : 2-3 heures</p>
+<p><strong>Thème</strong> : Découverte, méfiance, premiers indices</p>
+<h4>Événements clés</h4>
+<p class="numbered"><strong>Arrivée à Dusthaven.</strong> Le joueur descend de la cabane vers le village. Première impression : un village western fonctionnel mais tendu. Les gens travaillent, mais personne ne sourit.</p>
+<p class="numbered"><strong>Rencontre avec Jed Bramwell</strong> (marchand). Le joueur vend son premier or, achète du matériel. Jed est cordial mais prudent. Il reconnaît la batée d'Eli immédiatement mais ne dit rien — il la regarde une demi-seconde de trop. Si le joueur insiste, Jed change de sujet. À <strong>haute réputation</strong>, Jed dira : <em>"Ton grand-père m'a confié quelque chose. Reviens quand t'auras prouvé que t'es pas là pour les mêmes raisons que les autres."</em></p>
+<p class="numbered"><strong>Rencontre avec le Sheriff Buck Dawson.</strong> Le Sheriff se déplace VERS le joueur dès qu'il le voit — comportement unique. Il est faussement amical. Il pose des questions : d'où vient le joueur, combien de temps il reste, ce qu'il cherche. Il ne menace jamais directement, mais son intérêt est visiblement trop prononcé.</p>
+<p class="numbered"><strong>Premier contact avec Coyote</strong> dans le village. Coyote apparaît sur un toit, un muret, un tonneau — toujours là où on ne l'attend pas. Il guide le joueur vers Z1 (Dead Man's Shallows) en se déplaçant dans cette direction.</p>
+<p class="numbered"><strong>Dead Man's Shallows.</strong> Zone d'orpaillage principale. Le joueur apprend les mécaniques avancées : types de roche, outils, craft. Il découvre le <strong>Fragment #2</strong> dans un coffre abandonné au bord du ruisseau.</p>
+<h4>Actions concrètes du Rattler (Acte I)</h4>
+<ul>
+<li><strong>Concession rachetée.</strong> En arrivant à Z1, le joueur trouve une zone prometteuse bloquée par des panneaux en bois neufs : <strong>"CLAIM RESERVED — RATTNER CO."</strong> Un PNJ secondaire (Old Pete, un prospecteur) explique qu'il avait une concession ici depuis deux ans — Rattner l'a rachetée pour une bouchée de pain. <em>"Il m'a donné le choix : vendre ou être 'relocalisé'. J'ai pris l'argent."</em></li>
+<li><strong>Peur visible.</strong> Quand le joueur mentionne le nom "Rattner" à n'importe quel PNJ, la réaction est immédiate : voix qui baisse, regard qui se détourne, sujet qui change. Jed pose sa main à plat sur le comptoir et dit <em>"Pas ce nom ici."</em></li>
+<h4>Fragments trouvés (Acte I)</h4>
+<li><strong>Fragment #1</strong> (Prologue) — Sous la tasse dans la cabane. Révèle : Eli écrit à quelqu'un qu'il aime. Mots lisibles : <em>"...forgive me... I found something... couldn't leave it..."</em></li>
+<li><strong>Fragment #2</strong> — Coffre abandonné à Z1. Révèle : Eli parle d'un endroit "under the water, under the stone". Conséquence visible : Coyote réapparaît quand le joueur lit le fragment, et guide vers une inscription murale partiellement cachée par la mousse.</li>
+<h4>Micro-récompenses émotionnelles (Acte I)</h4>
+<li><strong>~min 16</strong> : Premier gros nugget d'or. Feedback visuel + son satisfaisant.</li>
+<li><strong>~min 24</strong> : Jed offre un objet gratuit si le joueur revient avec du quartz (relation building).</li>
+<li><strong>~min 32</strong> : Découverte d'un spot secret sous une cascade — petit bassin avec de l'or concentré. Moment de calme, son d'eau, lumière dorée.</li>
+<li><strong>~min 40</strong> : Inscription du Peuple du Serpent sur une paroi. Le joueur ne la comprend pas mais elle s'enregistre dans le journal de quête. Sentiment de mystère.</li>
+<h4>Reveal/Twist (fin d'Acte I)</h4>
+</ul>
+<p>Jed, une fois la réputation suffisante, donne au joueur le <strong>carnet d'Eli</strong>. Un petit cahier en cuir usé, rempli de croquis et de notes. Le joueur ne peut pas tout lire — certaines pages sont arrachées, d'autres codées. Mais une page montre un dessin clair : le symbole du Serpent, avec une légende en marge : <em>"Kaya's mark. Not mine to use. But I carry it with me."</em></p>
+<p>C'est le premier nom : <strong>Kaya</strong>. Le joueur ne sait pas encore qui c'est.</p>
+<p><strong>Gate Z1→Z2</strong> : Le kayak. Le joueur fabrique ou trouve un kayak pour remonter le ruisseau vers Copper Canyon.</p>
+<hr class="gold-rule">
+<h3>ACTE II — Copper Canyon (Z2)</h3>
+<p><strong>Lieux</strong> : Copper Canyon (Z2), retours au hub</p>
+<p><strong>Durée estimée</strong> : 3-4 heures</p>
+<p><strong>Thème</strong> : Escalade de la menace, alliances, révélation de Kaya</p>
+<h4>Événements clés</h4>
+<p class="numbered"><strong>Copper Canyon.</strong> Zone verticale, minérale, cuivrée. Les filons sont plus riches mais les accès plus difficiles. Des outils de meilleure qualité sont nécessaires — il faut crafter ou acheter chez Jed.</p>
+<p class="numbered"><strong>Rencontre avec Gustave Moreau</strong> (forgeron). Gustave travaille à sa forge, toujours. Le son du marteau est permanent — c'est son signal sensoriel. Quand le joueur entre, Gustave ne lève pas les yeux. Il faut attendre. Quand le joueur montre la batée d'Eli (ou un outil marqué du symbole du Serpent), Gustave <strong>se fige</strong>. Il reconnaît l'objet. Il ne ment pas — il se ferme. Il repose son marteau, regarde la batée en silence pendant trois secondes, puis se retourne vers l'enclume. <em>"...Good steel."</em> C'est tout. Pour l'instant.</p>
+<p class="numbered"><strong>Rencontre avec Kaya.</strong> Kaya n'apparaît pas dans le village. Le joueur la trouve dans le canyon, près d'une inscription du Peuple du Serpent. Elle est en train de nettoyer la mousse qui recouvre les gravures. Elle ne se retourne pas tout de suite. Quand elle voit le symbole du Serpent sur les outils du joueur (hérités d'Eli), elle comprend immédiatement qui est ce jeune étranger. Mais elle ne dit rien de direct. Elle interprète l'inscription devant le joueur : <em>"This one says: 'The water remembers.' My people wrote it. Your grandfather understood what it meant."</em></p>
+<p class="numbered"><strong>Escalade Rattner.</strong> En revenant au hub après une session dans Z2, le joueur constate des changements :</p>
+<ul>
+<li>Deux hommes de main de Rattner bloquent le chemin principal vers la mine nord. <em>"Road's closed. Company business."</em></li>
+<li>Des <strong>rumeurs</strong> circulent : quelqu'un dit que les Henderson sont des voleurs de concessions. La réputation du joueur baisse temporairement auprès de certains PNJ secondaires.</li>
+<li>Old Pete a disparu du village. Personne ne sait où il est.</li>
+</ul>
+<p class="numbered"><strong>Le Sheriff intensifie la pression.</strong> Dawson vient trouver le joueur directement. Il "suggère" de quitter la vallée. <em>"This ain't a place for Henderson folk anymore. Just friendly advice."</em> Si le joueur refuse, Dawson hausse les épaules et s'éloigne — mais à partir de ce moment, il suit parfois le joueur à distance dans le village.</p>
+<h4>Fragments trouvés (Acte II)</h4>
+<ul>
+<li><strong>Fragment #3</strong> — Caché dans une fissure de Copper Canyon, derrière un éboulement que le joueur doit dégager. Révèle : Eli décrit un homme <em>"who buys what he can't dig"</em> — référence claire au Rattler. Conséquence visible : quand le joueur revient au village, un nouveau panneau "RATTNER CO." est apparu devant la forge de Gustave.</li>
+<li><strong>Fragment #4</strong> — Donné par Kaya après que le joueur l'aide à restaurer une inscription endommagée par des prospecteurs. Révèle : une carte partielle dessinée par Eli avec des annotations de Kaya. Le chemin vers Z3 est indiqué. Conséquence visible : Coyote commence à guider le joueur vers l'entrée de Z3.</li>
+<li><strong>Fragment #5</strong> <em>(optionnel)</em> — Trouvé dans l'atelier de Gustave si la réputation est haute. Une page du carnet d'Eli que Gustave avait gardée. Révèle : Eli considérait Gustave comme <em>"the only honest man in Dusthaven."</em> Conséquence visible : Gustave commence à parler au joueur de sa propre initiative.</li>
+<h4>Actions concrètes du Rattler (Acte II)</h4>
+<li><strong>Blocage physique</strong> : hommes de main à un passage clé</li>
+<li><strong>Guerre informationnelle</strong> : rumeurs contre les Henderson, réputation qui baisse</li>
+<li><strong>Pression économique</strong> : panneau Rattner devant la forge → Gustave risque de perdre son atelier</li>
+<li><strong>Disparition d'un PNJ</strong> : Old Pete n'est plus là (sous-entendu : intimidé/déplacé par Rattner)</li>
+<h4>Micro-récompenses émotionnelles (Acte II)</h4>
+<li><strong>~min 48</strong> : Kaya interprète une inscription → le joueur comprend enfin un des symboles vus en Z1. Moment de connexion ("ah, VOILÀ ce que ça voulait dire").</li>
+<li><strong>~min 56</strong> : Le joueur trouve des traces fraîches d'Eli dans le canyon : empreintes de bottes, une lampe à huile encore chaude posée dans un recoin. Il est passé là il y a quelques heures.</li>
+<li><strong>~min 64</strong> : Gustave, après le fragment #5, forge un outil spécial pour le joueur sans rien demander en échange. Moment de silence + geste de confiance.</li>
+<li><strong>~min 72</strong> : Spot d'orpaillage secret dans le canyon avec vue panoramique sur toute la vallée. Musique spéciale, lumière de golden hour.</li>
+<h4>Reveal/Twist (fin d'Acte II)</h4>
+</ul>
+<p>Le Rattler apparaît EN PERSONNE pour la première fois. Il est au saloon de Dusthaven, seul à une table, en costume trois-pièces — le seul homme bien habillé dans tout le village. Il ne menace pas. Il sourit. Il appelle le joueur par son nom de famille.</p>
+<p><em>"Henderson. Sit down. I've got something you'll want to see."</em></p>
+<p>Il sort UNE page du carnet d'Eli — une page arrachée. Il la pose sur la table, visible mais hors de portée. C'est un croquis de la Confluence.</p>
+<p><em>"Your grandfather drew this. I wonder... do you know what it is?"</em></p>
+<p>Il ne donne pas la page. Il la remet dans sa veste. C'est du leverage — il montre qu'il en sait plus que le joueur ne le pense. Puis il propose un partenariat : <em>"I don't need to be your enemy. Think about it."</em></p>
+<p>Le joueur ne peut pas accepter ou refuser à ce stade. C'est une scène narrative, pas un choix. Le choix viendra à l'Acte III.</p>
+<p><strong>Gate Z2→Z3</strong> : La lanterne. Le joueur trouve ou fabrique une lanterne capable d'éclairer les passages souterrains qui mènent à la Grotte du Vieux Serpent.</p>
+<hr class="gold-rule">
+<h3>ACTE III — La Grotte du Vieux Serpent (Z3)</h3>
+<p><strong>Lieux</strong> : Grotte du Vieux Serpent (Z3), retours au hub</p>
+<p><strong>Durée estimée</strong> : 3-4 heures</p>
+<p><strong>Thème</strong> : Vérité, confrontation, choix</p>
+<h4>Événements clés</h4>
+<p class="numbered"><strong>La Grotte du Vieux Serpent.</strong> L'entrée est marquée par le plus grand symbole du Serpent jamais vu — gravé dans la roche sur deux mètres de haut. À l'intérieur : un réseau de galeries naturelles, des bassins d'eau claire, des formations cristallines. C'est beau. C'est silencieux. C'est clairement un lieu que quelqu'un entretient : les passages sont dégagés, des pièges à éboulement sont visiblement désactivés, des lampes à huile éteintes mais récentes jalonnent le chemin.</p>
+<p class="numbered"><strong>Les inscriptions du Peuple du Serpent.</strong> Les parois de la grotte sont couvertes d'inscriptions anciennes. Sans Kaya, elles sont incompréhensibles. Si Kaya accompagne le joueur (dépend de la réputation), elle les interprète au fur et à mesure : ce sont les récits du Peuple du Serpent, l'histoire de la Confluence, les avertissements sur ce qui arrive quand on prend trop à la terre.</p>
+<p class="numbered"><strong>Micro-présence d'Eli maximale.</strong> Dans la grotte, les signes d'Eli sont partout : des outils neufs posés contre les parois, un campement récent avec un feu encore chaud, des pages de carnet coincées dans les fissures. Le joueur sent qu'Eli est tout proche — mais il ne le voit jamais de face.</p>
+<p class="numbered"><strong>L'offre du Rattler (Acte III).</strong> Le Rattler trouve le joueur dans le hub avant la descente finale vers la Confluence. Il fait son offre :</p>
+<p><em>"Fifty-fifty. You show me where Henderson's gold is. I bring the equipment, the men, the capital. You get half of everything we pull out. That's more money than your family's seen in three generations."</em></p>
+<p>C'est un <strong>deal tentant</strong>. 50/50 d'un filon massif, c'est une fortune légitime. Le Rattler ne menace pas — il propose. C'est un choix moral difficile parce que l'offre est rationnellement bonne. Le joueur peut dire oui, dire non, ou ne rien dire (ce qui équivaut à non).</p>
+<p class="numbered"><strong>La Confluence.</strong> Le joueur atteint la Confluence. C'est le climax visuel du jeu : un espace souterrain immense, illuminé par des cristaux de quartz, traversé par trois cours d'eau qui se rejoignent dans un bassin central. Des veines d'or visibles dans les parois. Des inscriptions du Peuple du Serpent sur chaque surface. Et, dans un recoin, le campement permanent d'Eli — son vrai "chez lui" depuis deux ans.</p>
+<h4>Fragments trouvés (Acte III)</h4>
+<ul>
+<li><strong>Fragment #6</strong> — Dans le campement d'Eli à la Confluence. Le dernier morceau de la lettre. Révèle : le message complet d'Eli, sa raison de rester, son espoir que le joueur comprendra. Conséquence visible : la lettre est maintenant complète dans l'inventaire du joueur.</li>
+<li><strong>Fragment #7</strong> <em>(optionnel)</em> — Caché dans un passage secret que seul Kaya peut révéler (nécessite haute réputation avec Kaya). Révèle : l'histoire complète du Peuple du Serpent et de la Confluence. Conséquence visible : le joueur comprend l'échelle de ce qu'il protège — pas seulement un filon d'or, mais un écosystème millénaire.</li>
+<li><strong>Fragment #8</strong> <em>(optionnel)</em> — Trouvé uniquement si le joueur a refusé l'offre du Rattler ET a haute réputation avec Gustave. Gustave donne au joueur la dernière page du carnet d'Eli — celle qu'Eli lui avait confiée "pour la bonne personne". Révèle : un message direct d'Eli au joueur, non codé, non cryptique. <em>"You came. I knew you would."</em> Conséquence visible : le joueur obtient un objet unique hérité d'Eli.</li>
+<h4>Actions concrètes du Rattler (Acte III)</h4>
+<li><strong>L'offre 50/50</strong> : deal tentant, moralement ambigu, conséquences majeures</li>
+<li><strong>Pression maximale</strong> : si le joueur tarde, Rattner commence à envoyer des hommes vers la grotte. Des explosions lointaines se font entendre. Le temps presse.</li>
+<li><strong>Le Sheriff révèle sa main</strong> : Dawson débarque avec des documents de concession signés au nom de Rattner. Il revendique la grotte. Légalement, c'est flou — mais la loi, ici, c'est le Sheriff.</li>
+<h4>Micro-récompenses émotionnelles (Acte III)</h4>
+<li><strong>~min 80</strong> : Première vue de la Confluence. Silence. Musique ambient unique. Le joueur peut rester là sans rien faire et le jeu le récompense visuellement.</li>
+<li><strong>~min 88</strong> : Trouver le campement d'Eli — la tasse en étain (la MÊME que dans la cabane, reconnue), des photos de famille, le journal ouvert à une page qui mentionne le joueur par son prénom.</li>
+<li><strong>~min 96</strong> : Lettre complète. Moment de silence. La musique s'arrête, puis reprend doucement.</li>
+<li><strong>~min 104</strong> : <strong>Aperçu d'Eli.</strong> C'est la dernière scène de la démo. Le joueur, quelle que soit sa décision, aperçoit une <strong>silhouette</strong> dans un passage lointain de la Confluence. De dos, éclairée par une lanterne. Un homme grand, aux cheveux gris, en veste de prospecteur usée. Il pose sa main sur la paroi — exactement sur le symbole du Serpent. Puis il s'éloigne dans le tunnel et la lanterne disparaît. Le joueur ne peut pas le suivre : un éboulement léger bloque le passage. Sur le sol, là où l'homme se tenait, un mot griffonné sur un bout de papier : <em>"Soon."</em></li>
+</ul>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="3-syst-me-de-fragments">3. SYSTÈME DE FRAGMENTS</h2>
+<h3>Vue d'ensemble</h3>
+<table>
+<tr><th>#</th><th>Nom</th><th>Localisation</th><th>Obligatoire</th><th>Acte</th><th>Ce qu'il révèle</th></tr>
+<tr><td>1</td><td>La Lettre (morceau 1)</td><td>Cabane, sous la tasse</td><td>✅ Oui</td><td>Prologue</td><td>Eli écrit à quelqu'un qu'il aime, il a trouvé quelque chose</td></tr>
+<tr><td>2</td><td>La Lettre (morceau 2)</td><td>Coffre abandonné, Z1</td><td>✅ Oui</td><td>I</td><td>Un lieu "under the water, under the stone"</td></tr>
+<tr><td>3</td><td>Page du Carnet — Le Prédateur</td><td>Fissure dans Copper Canyon, Z2</td><td>✅ Oui</td><td>II</td><td>Eli décrit le Rattler sans le nommer</td></tr>
+<tr><td>4</td><td>Carte de Kaya</td><td>Donnée par Kaya (quête Z2)</td><td>✅ Oui</td><td>II</td><td>Chemin vers Z3, annotations croisées Eli/Kaya</td></tr>
+<tr><td>5</td><td>Page du Carnet — L'Honnête Homme</td><td>Atelier de Gustave (haute réputation)</td><td>❌ Optionnel</td><td>II</td><td>Eli faisait confiance à Gustave</td></tr>
+<tr><td>6</td><td>La Lettre (morceau final)</td><td>Campement d'Eli, Confluence, Z3</td><td>✅ Oui</td><td>III</td><td>Message complet, raison de rester</td></tr>
+<tr><td>7</td><td>Récit du Peuple du Serpent</td><td>Passage secret (Kaya, haute réputation)</td><td>❌ Optionnel</td><td>III</td><td>Histoire complète de la Confluence</td></tr>
+<tr><td>8</td><td>Le Mot d'Eli</td><td>Gustave (haute réputation + refus du Rattler)</td><td>❌ Optionnel</td><td>III</td><td>Message direct et personnel d'Eli</td></tr>
+</table>
+<h3>Détail des conséquences</h3>
+<p><strong>Fragment #1</strong> — La Lettre (morceau 1)</p>
+<ul>
+<li><em>Obtention</em> : Interagir avec la table dans la cabane après avoir pris la batée.</li>
+<li><em>Contenu visible</em> : Mots épars sur papier brûlé. Ton personnel, écriture tremblante.</li>
+<li><em>Conséquence</em> : Le journal de quête s'active. L'objectif "Trouver Eli Henderson" apparaît.</li>
+</ul>
+<p><strong>Fragment #2</strong> — La Lettre (morceau 2)</p>
+<ul>
+<li><em>Obtention</em> : Coffre rouillé au bord du ruisseau principal de Z1.</li>
+<li><em>Contenu visible</em> : Plus de mots lisibles, une phrase presque complète.</li>
+<li><em>Conséquence</em> : Coyote apparaît et guide vers une inscription murale. Nouvelle entrée dans le journal.</li>
+</ul>
+<p><strong>Fragment #3</strong> — Le Prédateur</p>
+<ul>
+<li><em>Obtention</em> : Derrière un éboulement dans Z2 (nécessite un outil de dégagement).</li>
+<li><em>Contenu visible</em> : Page du carnet d'Eli. Description d'un homme dangereux.</li>
+<li><em>Conséquence</em> : Un panneau "RATTNER CO." apparaît devant la forge au retour au hub.</li>
+</ul>
+<p><strong>Fragment #4</strong> — Carte de Kaya</p>
+<ul>
+<li><em>Obtention</em> : Quête avec Kaya — restaurer une inscription endommagée dans Z2.</li>
+<li><em>Contenu visible</em> : Carte annotée à deux mains (Eli + Kaya).</li>
+<li><em>Conséquence</em> : L'entrée de Z3 est désormais marquée sur la carte du joueur. Coyote commence à y mener.</li>
+</ul>
+<p><strong>Fragment #5</strong> <em>(optionnel)</em> — L'Honnête Homme</p>
+<ul>
+<li><em>Obtention</em> : Réputation haute avec Gustave. Il ouvre un tiroir de son établi et tend la page sans un mot.</li>
+<li><em>Contenu visible</em> : Eli écrit sur l'homme le plus droit qu'il ait rencontré.</li>
+<li><em>Conséquence</em> : Gustave devient un allié actif. Il parle de lui-même, forge sans conditions.</li>
+</ul>
+<p><strong>Fragment #6</strong> — La Lettre (morceau final)</p>
+<ul>
+<li><em>Obtention</em> : Campement d'Eli dans la Confluence.</li>
+<li><em>Contenu visible</em> : Le reste de la lettre. Message complet reconstituable.</li>
+<li><em>Conséquence</em> : Musique spéciale. La lettre est entière. Le joueur sait pourquoi Eli est resté.</li>
+</ul>
+<p><strong>Fragment #7</strong> <em>(optionnel)</em> — Récit du Peuple du Serpent</p>
+<ul>
+<li><em>Obtention</em> : Kaya mène le joueur dans un passage secret (haute réputation requise).</li>
+<li><em>Contenu visible</em> : Inscriptions anciennes que Kaya traduit intégralement.</li>
+<li><em>Conséquence</em> : Le joueur comprend l'histoire de la Confluence sur des centaines d'années. Contexte pour le choix final.</li>
+</ul>
+<p><strong>Fragment #8</strong> <em>(optionnel)</em> — Le Mot d'Eli</p>
+<ul>
+<li><em>Obtention</em> : Triple condition — haute réputation Gustave + refus de l'offre Rattler + avoir le carnet.</li>
+<li><em>Contenu visible</em> : Un mot court, direct, émouvant.</li>
+<li><em>Conséquence</em> : Objet unique hérité. Implication pour New Game+ (l'objet reste).</li>
+</ul>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="4-texte-de-la-lettre-du-grand-p-re">4. TEXTE DE LA LETTRE DU GRAND-PÈRE</h2>
+<blockquote class="letter">
+<p><em>La lettre est écrite sur du papier de mauvaise qualité, à l'encre ferreuse. Les bords sont brûlés. Certains passages sont illisibles. Les fragments ci-dessous correspondent aux morceaux récupérés dans l'ordre.</em></p>
+<h3>Fragment #1 (Prologue — mots épars sur papier brûlé)</h3>
+<p><em>"...forgive me... I found something... beautiful and terrible... couldn't leave it... couldn't let them..."</em></p>
+</blockquote>
+<p><em>(Le reste est brûlé ou déchiré. L'écriture est tremblante mais régulière.)</em></p>
+<h3>Fragment #2 (Acte I — phrase presque complète)</h3>
+<blockquote class="letter">
+<p><em>"...under the water, under the stone, there is a place that... the earth made for no one to own. Three streams meet... and the gold runs through it like veins in a living thing..."</em></p>
+<h3>Fragment #6 (Acte III — morceau final, message complet)</h3>
+<p><em>"To the child I never held —</em></p>
+</blockquote>
+<p>></p>
+<blockquote class="letter">
+<p><em>I stayed because someone had to. There is a place under this valley that is older than greed, older than maps, older than men like Rattner who see the earth as something to empty. Kaya's people knew it first. I learned it from them.</em></p>
+</blockquote>
+<p>></p>
+<blockquote class="letter">
+<p><em>I'm sorry I wasn't there. I'm sorry you grew up without knowing why. But if you're reading this, you found your way here. And that means you're ready to decide what this place becomes.</em></p>
+</blockquote>
+<p>></p>
+<blockquote class="letter">
+<p><em>Don't trust the law here. Trust the land. Trust the water. Trust the ones who were here before us.</em></p>
+</blockquote>
+<p>></p>
+<blockquote class="letter">
+<p><em>I'll find you when you're ready. Or maybe you'll find me.</em></p>
+</blockquote>
+<p>></p>
+<blockquote class="letter">
+<p><em>All my love, across all this silence —</em></p>
+<p><em>Eli"</em></p>
+</blockquote>
+<p><strong>Mot total</strong> : ~155 mots (lettre complète reconstituée).</p>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="5-casting-complet-6-fiches-pnj">5. CASTING COMPLET — 6 FICHES PNJ</h2>
+<hr class="gold-rule">
+<h3>5.1 — JED BRAMWELL (Le Marchand)</h3>
+<ul>
+<li><strong>Nom complet</strong> : Jedidiah "Jed" Bramwell</li>
+<li><strong>Âge en 1852</strong> : 58 ans</li>
+<li><strong>Apparence physique</strong> : Homme trapu, bedonnant, au visage rond et buriné par le soleil. Peau tannée couleur cuir. Moustache blanche épaisse tombant sous le menton. Calvitie avancée, crâne bronzé, quelques mèches blanches sur les tempes. Tablier en toile beige par-dessus une chemise à carreaux délavée. Lunettes rondes en fil de fer posées sur le nez. Mains larges, ongles courts et propres (il tient à ça). Ceinture à outils avec un mètre ruban en permanence.</li>
+<li><strong>Personnalité</strong> : (1) Prudent — il n'a pas survécu 58 ans dans l'Ouest en parlant trop. (2) Loyal — une fois qu'il fait confiance, c'est indéfectible. (3) Observateur — rien ne lui échappe dans son magasin.</li>
+<li><strong>Signal sensoriel unique</strong> : Jed est <strong>toujours derrière son comptoir</strong>. Jamais devant, jamais dehors. Si le joueur le voit, c'est à travers le comptoir. Le comptoir est son territoire, son bouclier, son poste d'observation.</li>
+<li><strong>Pattern de dialogue</strong> : Phrases courtes, commerciales en surface, sous-texte affectif. Finit souvent par une question qui semble anodine mais qui teste le joueur.</li>
+<li><strong>Exemples</strong> :</li>
+<li><em>"Three nuggets, forty cents. Fair price. ...That's a Henderson pan, ain't it?"</em></li>
+<li><em>"Copper wire's in the back. You know, your granddad used to buy the same gauge."</em></li>
+<li><em>"I keep things for people. Sometimes for a long time. You a patient sort?"</em></li>
+<li><strong>Tic signature</strong> : Essuie ses lunettes avec un coin de son tablier quand il réfléchit ou quand un sujet le met mal à l'aise.</li>
+<li><strong>Rôle dans l'histoire</strong> : Gardien du carnet d'Eli. Intermédiaire de confiance. C'est LUI qui remet le carnet au joueur — pas le Rattler.</li>
+<li><strong>Ce qu'il sait sur Eli</strong> : Il sait qu'Eli est vivant. Il sait qu'Eli a trouvé quelque chose de gros. Il ne sait pas exactement où est la Confluence, mais il sait que c'est dans les grottes. Eli lui a confié le carnet en 1851 avec pour consigne : <em>"Donne-le à quelqu'un de ma famille. Personne d'autre."</em></li>
+<li><strong>Arc de réputation</strong> :</li>
+<li><em>Basse</em> : Transactionnel. Vend, achète, pas plus.</li>
+<li><em>Moyenne</em> : Reconnaît la batée, commence à poser des questions personnelles.</li>
+<li><em>Haute</em> : Donne le carnet d'Eli. Parle d'Eli au passé puis se corrige au présent — il sait qu'il est vivant.</li>
+<li><strong>Quêtes</strong> : "Ramène du quartz bleu de Z1 — j'ai un client spécial." / "Il me manque du cuivre pour une commande. Copper Canyon devrait avoir ce qu'il faut."</li>
+</ul>
+<hr class="gold-rule">
+<h3>5.2 — SHERIFF BUCK DAWSON</h3>
+<ul>
+<li><strong>Nom complet</strong> : Buckley "Buck" Dawson</li>
+<li><strong>Âge en 1852</strong> : 45 ans</li>
+<li><strong>Apparence physique</strong> : Grand (1m85), sec, anguleux. Mâchoire carrée, yeux gris pâle, regard qui ne cille pas. Cheveux noirs coupés court sous un chapeau de sheriff marron usé. Étoile en laiton ternie épinglée sur un gilet en cuir noir. Chemise blanche aux manches retroussées. Holster visible mais jamais la main dessus — sa menace est dans son calme, pas dans ses armes. Cicatrice fine sur l'arête du nez. Bottes cirées — le seul détail soigné de sa tenue.</li>
+<li><strong>Personnalité</strong> : (1) Calculateur — chaque mot est pesé, chaque geste a un but. (2) Corrompu — il a vendu l'information sur Eli à Rattner, mais il se justifie ("la loi coûte cher"). (3) Dangereux calme — il ne crie jamais, ne menace jamais directement, ce qui le rend plus inquiétant.</li>
+<li><strong>Signal sensoriel unique</strong> : Le Sheriff <strong>se déplace vers le joueur</strong>. Tous les autres PNJ attendent qu'on leur parle. Dawson, lui, marche droit vers le joueur quand il le repère. Le bruit de ses bottes sur les planches du saloon est son annonce.</li>
+<li><strong>Pattern de dialogue</strong> : Faussement amical. Questions déguisées en conversation. Termine toujours par un conseil non sollicité qui est en réalité une menace voilée.</li>
+<li><strong>Exemples</strong> :</li>
+<li><em>"New face. I like new faces. They remind me the world's still turning. What brings you to my valley?"</em></li>
+<li><em>"Henderson, you said? Hm. Name rings a bell. Faint one."</em></li>
+<li><em>"Friendly advice: some trails in this valley don't lead anywhere good. I'd hate to see you lost."</em></li>
+<li><strong>Tic signature</strong> : Ajuste l'étoile sur sa poitrine quand il ment ou quand il jauge le joueur. Geste lent, délibéré.</li>
+<li><strong>Rôle dans l'histoire</strong> : Informateur de Rattner. C'est lui qui a vendu la localisation d'Eli. Obstacle passif-agressif. En fin de jeu, il tente de légitimer la revendication de Rattner sur la Confluence avec de faux documents de concession.</li>
+<li><strong>Ce qu'il sait sur Eli</strong> : Il sait qu'Eli était dans la vallée. Il a vendu cette info à Rattner. Il ne sait pas où est la Confluence — Eli ne lui a jamais fait confiance.</li>
+<li><strong>Arc de réputation</strong> :</li>
+<li><em>Basse</em> : Faussement cordial. Surveillance passive.</li>
+<li><em>Moyenne</em> : Plus direct. Suggestions de quitter la vallée.</li>
+<li><em>Haute</em> : Le masque tombe. Il admet travailler pour Rattner, pas par loyauté mais par dette. Possible retournement si le joueur lui offre une sortie.</li>
+<li><strong>Quêtes</strong> : "Fausse quête" — il demande au joueur de signaler toute activité suspecte dans les mines. En réalité, il transmet les infos à Rattner.</li>
+</ul>
+<hr class="gold-rule">
+<h3>5.3 — GUSTAVE MOREAU (Le Forgeron)</h3>
+<ul>
+<li><strong>Nom complet</strong> : Gustave Henri Moreau</li>
+<li><strong>Âge en 1852</strong> : 52 ans</li>
+<li><strong>Apparence physique</strong> : Massif, épaules larges comme un tonneau, bras épais couverts de brûlures anciennes. Peau sombre marquée par la chaleur — Gustave est un homme noir, ancien affranchi de Louisiane, venu en Californie pour recommencer. Crâne rasé, barbe grise courte et soignée. Tablier en cuir lourd, noir de suie. Mains calleuses, doigts épais mais précis. Un tatouage fané sur l'avant-bras gauche — un marteau croisé avec une enclume, symbole de sa guilde de forgerons à La Nouvelle-Orléans.</li>
+<li><strong>Personnalité</strong> : (1) Taiseux — il parle avec ses mains plus qu'avec sa bouche. (2) Intègre — il ne ment jamais, mais il choisit de se taire. (3) Protecteur — une fois gagné, il défend le joueur sans qu'on lui demande.</li>
+<li><strong>Signal sensoriel unique</strong> : Le <strong>son de la forge est permanent</strong>. On entend le marteau sur l'enclume depuis la rue. Quand le son s'arrête, c'est que quelque chose d'important se passe — Gustave s'est arrêté de travailler, ce qui est rare.</li>
+<li><strong>Pattern de dialogue</strong> : Minimum de mots. Pas de questions. Des constats. Des silences lourds de sens. Quand il parle d'Eli, sa voix baisse d'un ton.</li>
+<li><strong>Exemples</strong> :</li>
+<li><em>"...Good steel."</em> (en reconnaissant la batée d'Eli — puis il se retourne vers l'enclume)</li>
+<li><em>"A man's tools tell his story. These... told a good one."</em></li>
+<li><em>"I don't talk about people who aren't here to speak for themselves. Come back when he is."</em></li>
+<li><strong>Tic signature</strong> : Frappe trois coups secs sur l'enclume quand il met fin à une conversation — c'est sa façon de dire "on a fini".</li>
+<li><strong>Rôle dans l'histoire</strong> : Gardien moral. Le seul homme en qui Eli avait une confiance absolue. Il détient le Fragment #5 (optionnel) et le Fragment #8 (optionnel). Il ne donne rien facilement — il faut gagner son respect.</li>
+<li><strong>Ce qu'il sait sur Eli</strong> : Il sait qu'Eli est vivant et où il vit en gros (dans les grottes). Il ne trahira pas cette information. Il sait aussi que le Sheriff a vendu Eli — et il le méprise pour ça.</li>
+<li><strong>Arc de réputation</strong> :</li>
+<li><em>Basse</em> : Silence. Forge. Pas de regard.</li>
+<li><em>Moyenne</em> : Un mot de temps en temps. Accepte les commandes de craft.</li>
+<li><em>Haute</em> : Donne les fragments. Forge un outil unique. Parle d'Eli au présent. Une seule phrase résume tout : <em>"He talks about you. He's proud."</em></li>
+<li><strong>Quêtes</strong> : "Ramène du minerai de cuivre pur — pas le cuivre de surface, celui des veines profondes." / "Ma forge a besoin de charbon de bois d'érable. Il y en a dans le canyon."</li>
+</ul>
+<hr class="gold-rule">
+<h3>5.4 — KAYA (La Gardienne)</h3>
+<ul>
+<li><strong>Nom complet</strong> : Kaya (nom unique — le Peuple du Serpent n'utilise pas de noms de famille)</li>
+<li><strong>Âge en 1852</strong> : ~35 ans</li>
+<li><strong>Apparence physique</strong> : Femme de taille moyenne, silhouette athlétique et souple. Peau cuivrée, traits fins et anguleux, pommettes hautes. Longs cheveux noirs tressés avec des perles d'os et des plumes de corbeau. Yeux sombres, regard direct et calme — elle ne détourne jamais les yeux la première. Vêtements en peau tannée et tissu tissé, couleurs terre (ocre, brun, vert mousse). Un collier de coquillages d'eau douce autour du cou. Pieds souvent nus ou dans des mocassins silencieux. Porte une sacoche en cuir remplie d'outils de gravure (pour entretenir les inscriptions).</li>
+<li><strong>Personnalité</strong> : (1) Indépendante — elle ne répond à personne, ne demande rien. (2) Ancrée — elle connaît cette terre mieux que quiconque et ça se sent. (3) Patiente — elle ne juge pas vite, mais son jugement est définitif.</li>
+<li><strong>Signal sensoriel unique</strong> : Kaya n'est <strong>jamais au même endroit</strong>. Contrairement à Jed (comptoir), Gustave (forge) ou le Sheriff (patrouille prévisible), Kaya apparaît là où on ne l'attend pas : sur une corniche, au bord d'un ruisseau, dans l'ombre d'un canyon. Le joueur ne peut pas la "trouver" — c'est elle qui se montre.</li>
+<li><strong>Pattern de dialogue</strong> : Assertions calmes. Pas de questions (elle observe, elle sait déjà). Parle de la terre comme d'une entité vivante (pas mystique — pratique). Mêle parfois un mot dans la langue du Peuple du Serpent.</li>
+<li><strong>Exemples</strong> :</li>
+<li><em>"You carry his mark. The Serpent's mark. He earned it. Have you?"</em></li>
+<li><em>"This stone says 'the water remembers.' My people carved it when the river changed course. Two hundred years ago."</em></li>
+<li><em>"I don't guide you. The land does. I just... translate."</em></li>
+<li><strong>Tic signature</strong> : Touche la roche du bout des doigts avant de parler d'un lieu — comme si elle écoutait ce que la pierre a à dire.</li>
+<li><strong>Rôle dans l'histoire</strong> : Gardienne de la Confluence et de l'héritage du Peuple du Serpent. La seule personne capable d'interpréter les inscriptions. Elle a ses propres motivations : son peuple protégeait la Confluence bien avant Eli. Elle aide le joueur parce qu'elle voit en lui une chance de préserver ce que les prospecteurs détruisent.</li>
+<li><strong>Ce qu'elle sait sur Eli</strong> : Tout. Elle sait où il est, ce qu'il fait, pourquoi il se cache. C'est elle qui lui a montré la Confluence en premier lieu. Elle considère Eli comme un allié, pas un ami — la distinction est importante pour elle.</li>
+<li><strong>Arc de réputation</strong> :</li>
+<li><em>Basse</em> : Le joueur la voit au loin. Elle ne s'approche pas.</li>
+<li><em>Moyenne</em> : Elle se montre. Interprète une inscription. Teste le joueur.</li>
+<li><em>Haute</em> : Donne le Fragment #4 et #7. Guide le joueur dans les passages secrets. Dit une seule chose personnelle : <em>"Your grandfather understood something most people never will: this land does not belong to us. We belong to it."</em></li>
+<li><strong>Quêtes</strong> : "Restaure l'inscription que les mineurs ont endommagée dans le canyon." / "Apporte de l'eau du bassin de Z1 au symbole du Serpent à l'entrée de Z3 — il a besoin d'être nettoyé."</li>
+</ul>
+<hr class="gold-rule">
+<h3>5.5 — SILAS "THE RATTLER" RATTNER (L'Antagoniste)</h3>
+<ul>
+<li><strong>Nom complet</strong> : Silas Abraham Rattner, dit "The Rattler"</li>
+<li><strong>Âge en 1852</strong> : 50 ans</li>
+<li><strong>Apparence physique</strong> : Le <strong>seul homme en costume</strong> dans tout Dusthaven — c'est son signal sensoriel. Costume trois-pièces gris anthracite, gilet à chaîne de montre en or, chapeau haut-de-forme noir à bord court. Visage émacié, joues creuses, nez aquilin. Yeux marron foncé, petits et vifs, qui calculent en permanence. Cheveux gris plaqués en arrière à la brillantine. Moustache fine et taillée. Mains soignées — il ne creuse pas, il achète. Une bague en or à l'auriculaire droit, avec un R gravé. Canne à pommeau d'argent qu'il n'utilise pas pour marcher — il la tient comme un sceptre.</li>
+<li><strong>Personnalité</strong> : (1) Charmant — il n'est jamais ouvertement hostile, ce qui le rend d'autant plus dangereux. (2) Méthodique — il ne prend pas de risques inutiles, il étouffe lentement. (3) Pragmatique — il n'est pas cruel par plaisir, il est cruel par efficacité.</li>
+<li><strong>Signal sensoriel unique</strong> : <strong>Le costume.</strong> Dans un village de boue, de bois et de toile, un homme en trois-pièces gris est une anomalie visuelle immédiate. Il est toujours seul — ses hommes de main sont ailleurs, lui est au-dessus de ça.</li>
+<li><strong>Pattern de dialogue</strong> : Phrases élégantes, vocabulaire riche, ton de conversation de salon. Il parle au joueur comme à un égal potentiel — c'est plus déstabilisant qu'une menace.</li>
+<li><strong>Exemples</strong> :</li>
+<li><em>"Henderson. Please, sit. I find standing conversations... uncivilized."</em></li>
+<li><em>"I'm not your enemy. Enemies are expensive. I prefer... partners."</em></li>
+<li><em>"Your grandfather had vision. A shame he lacked ambition. You don't seem to share that flaw."</em></li>
+<li><strong>Tic signature</strong> : Tapote la tête de sa canne avec son index quand il attend une réponse — rythme lent, patient, comme un métronome.</li>
+<li><strong>Rôle dans l'histoire</strong> : Antagoniste principal. Magnat minier qui veut la Confluence pour l'exploiter industriellement. Il ne connaît pas l'emplacement exact — il sait juste qu'Eli a trouvé un filon massif. Il utilise le Sheriff comme informateur, ses hommes de main comme muscle, et le charme comme arme principale.</li>
+<li><strong>Ce qu'il sait sur Eli</strong> : Il sait qu'Eli Henderson est un cartographe qui a identifié un filon exceptionnel dans la Perdition Creek Valley. Il ne savait pas OÙ Eli se cachait jusqu'à ce que le Sheriff le contacte fin 1851. Il possède UNE page arrachée du carnet d'Eli (obtenue via Dawson) — un croquis de la Confluence, sans indication d'accès.</li>
+<li><strong>Arc de réputation</strong> :</li>
+<li><em>Première rencontre</em> : Absent physiquement, présent par ses panneaux et ses hommes de main.</li>
+<li><em>Deuxième rencontre</em> : Apparition en personne. Charme. Montre la page du carnet.</li>
+<li><em>Troisième rencontre</em> : L'offre 50/50. Pragmatique, tentant.</li>
+<li><em>Si refusé</em> : Passe à la force (hommes de main + Sheriff + documents légaux). Reste poli même dans l'escalade.</li>
+<li><strong>Quêtes</strong> : Aucune quête donnée par le Rattler. Ses "offres" sont des événements narratifs, pas des quêtes mécaniques. Le joueur ne travaille jamais POUR lui — il peut seulement accepter ou refuser ses propositions.</li>
+</ul>
+<hr class="gold-rule">
+<h3>5.6 — COYOTE (Le Guide Silencieux)</h3>
+<ul>
+<li><strong>Nom complet</strong> : Coyote (pas de nom formel — Kaya l'appelle parfois <em>"Na'ii"</em>, "petit frère" en langue Nahak'a)</li>
+<li><strong>Âge en 1852</strong> : ~5 ans (adulte)</li>
+<li><strong>Apparence physique</strong> : Coyote de taille standard, pelage fauve-gris avec des nuances dorées sur le ventre et les pattes. Museau fin, oreilles larges et mobiles, yeux ambrés vifs et intelligents. Queue touffue, souvent basse mais jamais entre les pattes — confiance, pas soumission. Cicatrice fine sur l'oreille droite (accident de jeunesse). Plus propre qu'un coyote sauvage — Kaya prend soin de lui. Se déplace avec une fluidité féline, silencieux sur n'importe quelle surface.</li>
+<li><strong>Personnalité</strong> : (1) Espiègle — il joue avec le joueur avant de le guider. (2) Indépendant — il ne vient pas quand on l'appelle, il vient quand il décide. (3) Loyal — à Kaya d'abord, au joueur ensuite (et seulement s'il le mérite).</li>
+<li><strong>Signal sensoriel unique</strong> : <strong>Jamais au même endroit.</strong> Le joueur ne peut pas prédire où Coyote apparaîtra : un toit, un rocher, un tonneau, une branche. Il est toujours en hauteur ou en périphérie, jamais au centre de l'action.</li>
+<li><strong>Pattern de "dialogue"</strong> : Coyote ne parle pas. Il communique par ses actions : pencher la tête (curiosité), gratter la terre (direction), s'asseoir et fixer le joueur (attente), tracer un cercle dans la poussière (symbole du Serpent), s'éloigner dans une direction (guide).</li>
+<li><strong>Exemples d'actions</strong> :</li>
+<li><em>Trace un cercle dans la poussière avec sa patte, puis s'éloigne vers le sud.</em> (Guide vers Z1)</li>
+<li><em>S'assied sur le comptoir de Jed et fixe un tiroir spécifique.</em> (Indique où est le carnet)</li>
+<li><em>Apparaît à l'entrée de la grotte, renifle l'air, puis entre.</em> (Guide vers Z3)</li>
+<li><strong>Tic signature</strong> : Penche la tête à 45° quand le joueur fait quelque chose d'intéressant — ou de stupide.</li>
+<li><strong>Rôle dans l'histoire</strong> : Guide non-verbal du joueur. Lien vivant entre Kaya et le monde de surface. Il apparaît dès le Prologue et revient à chaque moment clé. Il est le "fil d'Ariane" émotionnel du jeu — sa présence rassure, son absence inquiète.</li>
+<li><strong>Ce qu'il sait</strong> : Coyote connaît tous les chemins, toutes les personnes, tous les secrets. Il ne les révèle pas — il les montre, quand il le veut.</li>
+<li><strong>Arc de réputation</strong> :</li>
+<li><em>Basse</em> : Apparaît brièvement, s'enfuit quand le joueur s'approche.</li>
+<li><em>Moyenne</em> : Se laisse approcher. Guide vers des lieux clés.</li>
+<li><em>Haute</em> : Marche à côté du joueur. S'assied à ses pieds dans les moments de calme. Seul être vivant présent lors de l'aperçu final d'Eli — il regarde la silhouette sans bouger, comme s'il savait.</li>
+<li><strong>Quêtes</strong> : Pas de quêtes formelles. Coyote déclenche des événements par sa présence ou son comportement. Le joueur apprend à "lire" Coyote comme un langage.</li>
+</ul>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="6-dialogues-d-intro-corrig-s">6. DIALOGUES D'INTRO (CORRIGÉS)</h2>
+<blockquote class="letter">
+<p><em>Première réplique de chaque PNJ. 3 lignes max par bulle. Hook à la fin.</em></p>
+<h3>Jed Bramwell</h3>
+</blockquote>
+<p><em>Le joueur entre dans le magasin général. Jed est derrière le comptoir, en train d'essuyer ses lunettes. Il lève les yeux.</em></p>
+<blockquote class="letter">
+<p>**Jed** : "New customer. Good. Gold's weighed fair here, supplies are on the wall.</p>
+<p>You look like you walked a long way to get here.</p>
+<p>...That pan you're carrying — where'd you get it?"</p>
+<h3>Sheriff Buck Dawson</h3>
+</blockquote>
+<p><em>Le joueur marche dans la rue principale. Le Sheriff se détache de l'ombre d'un porche et marche VERS le joueur. Ses bottes claquent sur les planches.</em></p>
+<blockquote class="letter">
+<p>**Sheriff** : "Well now. Don't think I've seen your face around here before.</p>
+<p>I make it my business to know everyone in Dusthaven.</p>
+<p>Name's Dawson. And yours?"</p>
+<h3>Gustave Moreau</h3>
+</blockquote>
+<p><em>Le joueur entre dans la forge. Gustave ne lève pas les yeux. Le marteau frappe l'enclume. Pause. Le joueur attend. Gustave jette un regard à la batée, s'arrête un instant, puis se retourne vers l'enclume.</em></p>
+<blockquote class="letter">
+<p>**Gustave** : "...Good steel."</p>
+</blockquote>
+<p><em>(Silence. Il ne dit rien d'autre. Le joueur doit revenir.)</em></p>
+<h3>Kaya</h3>
+<p><em>Le joueur explore Copper Canyon. Il tourne un virage et trouve Kaya accroupie devant une inscription murale, en train de nettoyer la mousse avec un outil en os.</em></p>
+<blockquote class="letter">
+<p>**Kaya** : "You walk loud. The canyon hears everything.</p>
+<p>That mark on your tools — do you know what it means?</p>
+<p>...Come closer. I'll show you what this wall is trying to say."</p>
+<h3>Silas "The Rattler" Rattner</h3>
+</blockquote>
+<p><em>Le joueur entre au saloon après un événement déclencheur (Acte II). Le Rattler est seul à une table, en costume, une boisson intouchée devant lui.</em></p>
+<blockquote class="letter">
+<p>**Rattler** : "Henderson. I was hoping you'd come.</p>
+<p>Sit down. I don't bite.</p>
+<p>I do, however, have something your grandfather left behind."</p>
+<h3>Coyote</h3>
+</blockquote>
+<p><em>Le joueur sort de la cabane avec la batée pour la première fois. Coyote est assis sur un rocher à cinq mètres, la tête penchée.</em></p>
+<blockquote class="letter">
+<p><em>(Coyote penche la tête. Ses yeux ambrés fixent le joueur. Il se lève, trace lentement un cercle dans la poussière avec sa patte avant. Puis il trottine vers le chemin qui descend vers Dusthaven, s'arrête, et regarde par-dessus son épaule.)</em></p>
+</blockquote>
+<p><em>(Pas de texte. Le cercle reste visible dans la poussière — le joueur le reverra plus tard et comprendra.)</em></p>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="7-chronologie-1830-1852">7. CHRONOLOGIE 1830–1852</h2>
+<table>
+<tr><th>Année</th><th>Événement</th></tr>
+<tr><td>**~1810**</td><td>Naissance d'Elias "Eli" Henderson, Tennessee. Famille de fermiers.</td></tr>
+<tr><td>**~1817**</td><td>Naissance de Kaya, Perdition Creek Valley. Fille d'un ancien du Peuple du Serpent (Nahak'a).</td></tr>
+<tr><td>**Avant 1830**</td><td>Le Peuple du Serpent protège la Confluence depuis des générations. Inscriptions gravées sur les parois des grottes et canyons. Le symbole du Serpent marque les passages et les lieux sacrés.</td></tr>
+<tr><td>**~1830**</td><td>Eli quitte le Tennessee à 20 ans. Voyages dans l'Ouest : cartographie, relevés géologiques, travail saisonnier. Se marie vers 1832. Un enfant naît (parent du joueur).</td></tr>
+<tr><td>**~1835**</td><td>Mort de l'épouse d'Eli (maladie). Eli confie son enfant à sa sœur au Tennessee et reprend la route. Début de la culpabilité qui le hantera.</td></tr>
+<tr><td>**1840-1848**</td><td>Eli parcourt l'Ouest américain. Réputation croissante comme cartographe méticuleux. Ses carnets de relevés circulent parmi les prospecteurs et les géologues.</td></tr>
+<tr><td>**~1802**</td><td>Naissance de Silas Rattner, Boston. Fils d'un courtier ruiné. Apprend jeune que l'argent est un outil, pas une fin.</td></tr>
+<tr><td>**1847**</td><td>Coyote naît dans la vallée. Louveteau orphelin recueilli par Kaya.</td></tr>
+<tr><td>**Janv. 1848**</td><td>Découverte d'or à Sutter's Mill. Début officiel de la ruée vers l'or californienne.</td></tr>
+<tr><td>**1848-1849**</td><td>Rattner, déjà prospère dans le commerce minier, déplace ses opérations vers la Californie. Il rachète des concessions abandonnées et les exploite industriellement. Fortune grandissante.</td></tr>
+<tr><td>**Printemps 1849**</td><td>Eli arrive dans la Perdition Creek Valley. Il ne vient pas pour l'or — il vient observer la géologie. Il construit la cabane au pied de Copper Canyon.</td></tr>
+<tr><td>**Été 1849**</td><td>Fondation informelle de Dusthaven — un campement de prospecteurs qui devient progressivement un village. Jed Bramwell ouvre le premier magasin général (une tente, puis une cabane).</td></tr>
+<tr><td>**Automne 1849**</td><td>Buck Dawson arrive, s'autoproclame sheriff. Personne ne conteste — il est armé et organisé. Au début, il maintient un semblant d'ordre.</td></tr>
+<tr><td>**1849-1850**</td><td>Gustave Moreau arrive de Louisiane. Ancien affranchi, forgeron de métier. Il ouvre la forge. Respecté pour son travail, toléré pour le reste. Eli et Gustave se lient d'amitié par le silence — deux hommes qui préfèrent le travail aux mots.</td></tr>
+<tr><td>**1850**</td><td>Kaya observe Eli depuis des mois. Elle le voit dessiner les inscriptions du Peuple du Serpent au lieu de les ignorer. Elle décide de le tester : elle laisse un outil de gravure près de son campement. Eli le range soigneusement et le laisse à l'endroit exact où il l'a trouvé. Kaya comprend. Premier contact.</td></tr>
+<tr><td>**Mi-1850**</td><td>Kaya montre à Eli les inscriptions principales. Elle ne le mène pas à la Confluence — pas encore. Elle lui enseigne le symbole du Serpent. Eli l'adopte comme marque de respect, le grave sur ses outils.</td></tr>
+<tr><td>**Fin 1850**</td><td>Kaya mène Eli à la Confluence. Il est le premier étranger à la voir. Il comprend immédiatement : le filon d'or le plus riche qu'il ait vu, mais aussi un écosystème irremplaçable. Il décide de ne rien dire à personne.</td></tr>
+<tr><td>**1851**</td><td>Eli cartographie secrètement les accès à la Confluence dans ses carnets. Notes codées, croquis partiels. Il commence à écrire la lettre à son petit-enfant — il sait qu'il ne reverra probablement pas sa famille.</td></tr>
+<tr><td>**Mi-1851**</td><td>Dawson contracte des dettes de jeu importantes à Sacramento. Rattner, qui cherche de nouvelles concessions, apprend par ses contacts que Dawson est sheriff dans une vallée aurifère. Il le contacte.</td></tr>
+<tr><td>**Fin 1851**</td><td>Dawson vend à Rattner l'information : Eli Henderson est dans la Perdition Creek Valley. Il a trouvé quelque chose d'exceptionnel. Rattner efface les dettes de Dawson. Le pacte est scellé.</td></tr>
+<tr><td>**Début 1852**</td><td>Rattner envoie des éclaireurs dans la vallée. Les premiers panneaux "RATTNER CO." apparaissent. Eli comprend que quelqu'un l'a trahi. Il confie son carnet à Jed Bramwell, arrache certaines pages clés (Dawson en a déjà volé une pour Rattner), et disparaît dans les grottes.</td></tr>
+<tr><td>**Mars 1852**</td><td>Eli vit maintenant dans les passages souterrains. Gardien fantôme de la Confluence. Kaya maintient le contact avec lui. Coyote fait la navette entre la surface et les grottes.</td></tr>
+<tr><td>**Été 1852**</td><td>**Le joueur arrive.** Petit-enfant d'Eli, attiré par la cabane qu'Eli avait mentionnée dans une vieille lettre envoyée au Tennessee des années plus tôt. Le jeu commence.</td></tr>
+</table>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="8-myst-res-secondaires-hooks-post-demo">8. MYSTÈRES SECONDAIRES (hooks post-demo)</h2>
+<h3>Mystère 1 — Le Peuple Disparu</h3>
+<p><em>Où est le reste du Peuple du Serpent ?</em> Kaya est la dernière visible dans la vallée, mais des indices suggèrent que d'autres membres vivent dans des vallées adjacentes. Des signaux de fumée apparaissent parfois au lointain. Une inscription dans Z3 mentionne <em>"les autres foyers"</em>. Quête potentielle en Z4+ : retrouver le Peuple du Serpent et leur apprendre que la Confluence est menacée.</p>
+<h3>Mystère 2 — La Page Manquante</h3>
+<p><em>Que contient la page du carnet qu'a le Rattler ?</em> Le croquis qu'il montre au joueur est un dessin de la Confluence, mais il y a du texte au verso que le joueur n'a pas pu lire. Cette page contient-elle l'accès direct ? Des coordonnées ? Ou un avertissement qu'Eli a laissé délibérément pour piéger quiconque volerait ses notes ? Quête potentielle : récupérer la page (vol, négociation, ou échange) et découvrir le verso.</p>
+<h3>Mystère 3 — Les Dettes de Dawson</h3>
+<p><em>Qui d'autre Dawson a-t-il vendu ?</em> Le Sheriff n'a pas seulement trahi Eli — ses dettes étaient massives. Des indices suggèrent qu'il a vendu des informations sur d'autres prospecteurs, d'autres filons, peut-être même sur le Peuple du Serpent. Quête potentielle : fouiller le bureau du Sheriff et découvrir l'étendue de ses trahisons. Conséquence : possible retournement de Dawson si le joueur utilise ces informations comme leverage.</p>
+<h3>Mystère 4 — La Deuxième Confluence</h3>
+<p><em>Y a-t-il d'autres sites comme celui-ci ?</em> Le carnet d'Eli contient des notes sur d'autres formations géologiques dans l'Ouest californien — des sites qu'il n'a pas eu le temps d'explorer. Une page codée mentionne <em>"sister streams"</em> (<em>courants jumeaux</em>). Quête potentielle en Zone 4+ : suivre les indices d'Eli vers un deuxième site, plus grand, plus profond, plus dangereux d'accès.</p>
+<h3>Mystère 5 — Le Passé de Gustave</h3>
+<p><em>Pourquoi Gustave est-il VRAIMENT venu en Californie ?</em> Un ancien affranchi qui traverse le continent pour ouvrir une forge dans un village de prospecteurs — il y a une histoire là-dessous. Des indices discrets (le tatouage, des lettres cachetées dans son atelier, une réaction quand on mentionne La Nouvelle-Orléans) suggèrent que Gustave fuit quelque chose — ou cherche quelqu'un. Quête potentielle : gagner assez sa confiance pour qu'il parle. Son histoire n'a rien à voir avec la Confluence, mais elle enrichit le monde et donne au joueur un autre lien émotionnel.</p>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="9-choix-final-cons-quences">9. CHOIX FINAL — CONSÉQUENCES</h2>
+<h3>Le contexte du choix</h3>
+<p>Le joueur a atteint la Confluence. Il a lu la lettre complète. Il sait ce que ce lieu représente — de l'or massif ET un écosystème irremplaçable protégé par le Peuple du Serpent depuis des générations. Le Rattler a fait son offre (50/50). Le Sheriff a ses documents de concession. Kaya attend. Et quelque part dans les tunnels, Eli regarde.</p>
+<h3>Branche A — EXPLOITER (accepter le deal du Rattler ou exploiter seul)</h3>
+<p>Le joueur décide d'extraire l'or de la Confluence, que ce soit avec Rattner ou pour son propre compte.</p>
+<h4>Conséquence Niveau 1 — Immédiate</h4>
+<ul>
+<li>L'or afflue. Le joueur devient riche. Feedback de récompense massif : nuggets, pièces, équipement de luxe.</li>
+<li>Rattner tient parole (si deal 50/50) — il est pragmatique, pas traître.</li>
+<li>L'eau de la Confluence commence à se troubler. Les cristaux craquent sous les outils.</li>
+<h4>Conséquence Niveau 2 — Monde</h4>
+<li>Les sources de surface commencent à tarir. Les champs autour de Dusthaven sèchent.</li>
+<li>Les PNJ réagissent : Jed ferme son magasin (<em>"Nothing left to sell when there's nothing left to grow."</em>). Gustave éteint sa forge et quitte le village. Old Pete et les prospecteurs secondaires partent.</li>
+<li>Les inscriptions du Peuple du Serpent dans la grotte sont détruites par l'exploitation. Irréversible.</li>
+<li>Dusthaven devient un camp minier industriel — fonctionnel mais sans âme.</li>
+<h4>Conséquence Niveau 3 — Eli</h4>
+<li>Eli ne se montre pas. La silhouette finale ne vient pas.</li>
+<li>À la place, le joueur trouve un dernier mot dans le campement abandonné d'Eli : <em>"I waited. I hoped. But I understand. The gold always wins. — E."</em></li>
+<li>Coyote disparaît du jeu. Kaya quitte la vallée.</li>
+<li><strong>New Game+ implication</strong> : Le joueur recommence dans un Dusthaven industrialisé. La Confluence est une mine. Les PNJ sont remplacés par des employés de Rattner. Le joueur peut chercher les traces de ce qui existait avant — fragments d'inscriptions, échos de mémoire.</li>
+</ul>
+<h3>Branche B — PRÉSERVER (refuser le deal, protéger la Confluence)</h3>
+<p>Le joueur décide de protéger la Confluence, contre Rattner et contre la logique de la ruée vers l'or.</p>
+<h4>Conséquence Niveau 1 — Immédiate</h4>
+<ul>
+<li>Pas de fortune. Le joueur reste un prospecteur modeste.</li>
+<li>Rattner envoie ses hommes. Le Sheriff débarque avec ses documents. Le joueur doit résister — pas par la violence (Roblox ToS), mais par l'ingéniosité : éboulements stratégiques, alliances avec les PNJ, utilisation des passages secrets que Kaya a révélés.</li>
+<li>Le passage principal vers la Confluence est scellé. Le secret est protégé — pour l'instant.</li>
+<h4>Conséquence Niveau 2 — Monde</h4>
+<li>Les sources de surface restent vives. La vallée continue de vivre.</li>
+<li>Rattner, frustré, finit par quitter la vallée pour d'autres prospects — il est pragmatique, il ne perd pas de temps sur une cause perdue. Ses panneaux sont retirés.</li>
+<li>Le Sheriff, privé de son protecteur, devient vulnérable. Les villageois, enhardis, commencent à questionner son autorité.</li>
+<li>Dusthaven reste un petit village de prospecteurs — modeste mais vivant. Jed rouvre. Gustave forge.</li>
+<li>Les inscriptions du Peuple du Serpent sont préservées. Kaya commence à les enseigner au joueur.</li>
+<h4>Conséquence Niveau 3 — Eli</h4>
+<li>La silhouette finale apparaît. Eli pose sa main sur le symbole du Serpent. Le mot <em>"Soon"</em> est sur le sol.</li>
+<li>Coyote s'assied à côté du joueur et regarde la silhouette ensemble. Moment de silence partagé.</li>
+<li><strong>New Game+ implication</strong> : Le joueur recommence dans un Dusthaven apaisé. Eli est toujours invisible, mais ses signes sont plus fréquents et plus proches. De nouveaux passages s'ouvrent dans les grottes. Le Peuple du Serpent envoie des émissaires. Le monde s'élargit. La relation avec Eli se construit — lentement, indirectement, par la terre qu'ils protègent ensemble.</li>
+</ul>
+<hr class="gold-rule">
+<div class="section-divider">✦ ✦ ✦</div>
+<h2 id="annexe-m-mo-de-conformit">ANNEXE — MÉMO DE CONFORMITÉ</h2>
+<h3>Corrections appliquées (checklist)</h3>
+<table>
+<tr><th>#</th><th>Correction</th><th>Statut</th></tr>
+<tr><td>1</td><td>Old Silas Bramwell → **Jed Bramwell**</td><td>✅ Appliquée</td></tr>
+<tr><td>2</td><td>Miwok → **Peuple du Serpent (Nahak'a)** — peuple fictif. Marque = symbole du peuple de Kaya. Eli l'a adopté par respect. Kaya a ses propres motivations. Inscriptions interprétées par Kaya.</td><td>✅ Appliquée</td></tr>
+<tr><td>3</td><td>Dialogue intro Coyote — PAS de mention du grand-père. Cercle dans la poussière = indice visuel.</td><td>✅ Appliquée</td></tr>
+<tr><td>4</td><td>Onboarding : action AVANT lettre. Batée d'abord. Lettre brûlée/déchirée, fragment par fragment.</td><td>✅ Appliquée</td></tr>
+<tr><td>5</td><td>Date = **1852**. Eli ~42 ans. Rattler connaissait Eli de réputation, pas de localisation (jusqu'au Sheriff).</td><td>✅ Appliquée</td></tr>
+<tr><td>6</td><td>Rattler = actions concrètes (concession rachetée, panneaux, blocage, rumeurs, deal 50/50, peur des PNJ).</td><td>✅ Appliquée</td></tr>
+<tr><td>7</td><td>**8 fragments** (5 obligatoires + 3 optionnels). Arcs de réputation par PNJ. Mystères secondaires.</td><td>✅ Appliquée</td></tr>
+<tr><td>8</td><td>Eli = raison active (surveille/protège la Confluence). Micro-présence. Demo finit avec aperçu d'Eli (silhouette de dos).</td><td>✅ Appliquée</td></tr>
+<tr><td>9</td><td>Gustave ne ment pas, il se ferme. Reconnaît la batée en silence, se retourne vers l'enclume.</td><td>✅ Appliquée</td></tr>
+<tr><td>10</td><td>Micro-récompenses émotionnelles toutes les ~8 min.</td><td>✅ Appliquée</td></tr>
+<tr><td>11</td><td>Signal sensoriel unique par PNJ (Jed=comptoir, Sheriff=se déplace, Gustave=son forge, Coyote=jamais même endroit, Rattler=costume).</td><td>✅ Appliquée</td></tr>
+<tr><td>12</td><td>Dialogues 3 lignes max par bulle, hook à la fin.</td><td>✅ Appliquée</td></tr>
+<tr><td>13</td><td>Objets concrets dans la Cabane AVANT la lettre (tasse tiède, photo floue, journal ouvert).</td><td>✅ Appliquée</td></tr>
+<tr><td>14</td><td>Choix final : 3 niveaux de conséquences (immédiat + monde + Eli). New Game+ possible.</td><td>✅ Appliquée</td></tr>
+<tr><td>15</td><td>Carnet remis par JED (pas Rattler). Rattler montre UNE page comme leverage.</td><td>✅ Appliquée</td></tr>
+</table>
+<h3>Roblox ToS Compliance</h3>
+<ul>
+<li>Aucune violence explicite (pas de morts à l'écran, pas de sang, pas d'armes utilisées contre des personnages)</li>
+<li>Langage approprié 13+ (pas de jurons, pas de thèmes adultes)</li>
+<li>Pas de représentation de peuples réels (peuple fictif Nahak'a)</li>
+<li>Choix moraux sans violence physique (ingéniosité, alliances, résistance passive)</li>
+<li>Antagoniste dangereux par le charme et le pouvoir, pas par la brutalité</li>
+</ul>
+<hr class="gold-rule">
+<blockquote class="letter">
+<p><em>*FIN DU DOCUMENT — LORE V2 DUSTHAVEN*</em></p>
+<p><em>Ce document est le référentiel. Tout document antérieur en contradiction est obsolète.</em></p>
+<p><em>Version 2.0 — 12 mars 2026</em></p>
+</blockquote>
+</div>
+</body>
+</html><!-- cache bust 1773406493 -->
