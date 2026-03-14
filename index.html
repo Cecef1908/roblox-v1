@@ -80,12 +80,12 @@ async function sha256(str) { const buf = new TextEncoder().encode(str); const h 
 async function checkPassword() {
   const input = document.getElementById('gate-password').value;
   const hash = await sha256(input);
-  if (hash === HASH) { sessionStorage.setItem('gr-auth','1'); unlock(); }
+  if (hash === HASH) { localStorage.setItem('gr-auth','1'); unlock(); }
   else { document.getElementById('gate-error').textContent = 'Wrong password. Try again.'; document.getElementById('gate-password').value = ''; document.getElementById('gate-password').focus(); }
 }
 function unlock() { document.getElementById('gate').classList.add('hidden'); document.getElementById('switchbar').style.display = 'flex'; document.getElementById('frame').style.display = 'block'; document.getElementById('frame').src = 'dashboard.html'; }
 document.getElementById('gate-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') checkPassword(); });
-if (sessionStorage.getItem('gr-auth') === '1') { unlock(); }
+if (localStorage.getItem('gr-auth') === '1') { unlock(); }
 function switchView(view) {
   const frame = document.getElementById('frame');
   document.querySelectorAll('.switch-btn').forEach(b => b.className = 'switch-btn inactive');
