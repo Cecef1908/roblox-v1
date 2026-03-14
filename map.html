@@ -3,533 +3,278 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dusthaven — Map Interactive</title>
-<link href="https://fonts.googleapis.com/css2?family=Rye&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Dusthaven — Carte Interactive Z1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0d0700;font-family:'Lora',Georgia,serif;color:#d4a762;overflow:hidden;height:100vh;display:flex;flex-direction:column}
-
-/* Top bar */
-.topbar{background:linear-gradient(180deg,#1a0e00,#0d0700);border-bottom:2px solid #3a2a15;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:6px;z-index:50}
-.topbar-title{font-family:'Rye',cursive;font-size:.95rem;color:#e8c65a;letter-spacing:.04em}
-.topbar-sub{font-size:.65rem;color:#8a7044;font-style:italic;margin-left:8px}
-.legend{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.leg-btn{display:flex;align-items:center;gap:3px;font-size:.6rem;color:#b8a070;cursor:pointer;padding:2px 6px;border-radius:3px;border:1px solid #2a1a0a;transition:all .2s;user-select:none}
-.leg-btn:hover{border-color:#6b3a1f}
-.leg-btn.on{border-color:#6b3a1f;background:#1a0e0088;color:#d4a762}
-.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.export-btn{font-family:'Rye',cursive;font-size:.55rem;padding:3px 10px;background:#1a0e00;border:1px solid #6b3a1f;color:#b8962e;border-radius:3px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase}
-.export-btn:hover{background:#2a1800;color:#e8c65a}
-
-/* Main layout */
-.main{flex:1;display:flex;overflow:hidden}
-
-/* Map area */
-.map-area{flex:1;position:relative;overflow:hidden;background:#0d0700;display:flex;align-items:center;justify-content:center}
-.map-wrap{position:relative;display:inline-block;line-height:0}
-.map-wrap img{display:block;max-width:100%;max-height:calc(100vh - 44px);object-fit:contain;user-select:none;-webkit-user-drag:none}
-
-/* Grid overlay */
-.grid-line-v,.grid-line-h{position:absolute;pointer-events:none}
-.grid-line-v{top:0;bottom:0;width:1px;background:rgba(232,198,90,.08)}
-.grid-line-h{left:0;right:0;height:1px;background:rgba(232,198,90,.08)}
-.grid-label{position:absolute;font-size:10px;color:rgba(232,198,90,.25);font-family:'Lora',serif;pointer-events:none}
-
-/* Pins */
-.pin{position:absolute;width:20px;height:20px;border-radius:50%;cursor:grab;z-index:10;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.7);box-shadow:0 1px 4px rgba(0,0,0,.5);transition:box-shadow .15s,transform .1s}
-.pin:hover{box-shadow:0 0 12px rgba(232,198,90,.4);transform:translate(-50%,-50%) scale(1.2);z-index:20}
-.pin.dragging{cursor:grabbing;z-index:30;box-shadow:0 0 16px rgba(232,198,90,.6)}
-.pin.selected{border-color:#e8c65a;box-shadow:0 0 14px rgba(232,198,90,.5);z-index:25}
-
-/* Side panel */
-.panel{width:360px;background:#0d0700;border-left:2px solid #3a2a15;overflow-y:auto;flex-shrink:0;padding:0;transition:width .2s}
-.panel.collapsed{width:0;padding:0;border:none;overflow:hidden}
-.panel-empty{padding:40px 20px;text-align:center;color:#5c4209;font-style:italic;font-size:.85rem}
-.panel-content{padding:16px}
-.panel-cat{font-size:.55rem;text-transform:uppercase;letter-spacing:.15em;padding:2px 8px;border-radius:2px;display:inline-block;margin-bottom:8px}
-.panel-name{font-family:'Rye',cursive;font-size:1.1rem;color:#e8c65a;margin-bottom:4px}
-.panel-coord{font-size:.7rem;color:#b8962e;margin-bottom:12px;font-style:italic}
-.panel-section{margin-bottom:14px}
-.panel-section-title{font-family:'Rye',cursive;font-size:.7rem;color:#8a7044;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;border-bottom:1px solid #2a1a0a;padding-bottom:3px}
-.panel-text{font-size:.8rem;color:#b8a070;line-height:1.5}
-.panel-quote{font-size:.78rem;color:#c9a84c;font-style:italic;border-left:2px solid #3a2a15;padding-left:10px;margin-top:6px}
-.panel-divider{height:1px;background:linear-gradient(90deg,transparent,#3a2a15,transparent);margin:16px 0}
-
-@media(max-width:900px){.panel{width:280px}.pin{width:16px;height:16px;font-size:7px}}
-@media(max-width:600px){.panel{position:fixed;bottom:0;left:0;right:0;width:100%;height:45vh;border-left:none;border-top:2px solid #3a2a15;z-index:40}.panel.collapsed{height:0}}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#0d0700;color:#e8d5b0;font-family:'Lora',Georgia,serif}
+#topbar{height:52px;background:linear-gradient(180deg,#1a0f04 0%,#0d0700 100%);border-bottom:1px solid #3a2a10;display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;overflow-x:auto;z-index:100}
+#topbar h1{font-family:'Rye',cursive;font-size:16px;color:#e8c65a;white-space:nowrap;margin-right:12px;letter-spacing:1px}
+.fbtn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1.5px solid;border-radius:14px;background:transparent;color:#e8d5b0;font-family:'Lora',serif;font-size:12px;cursor:pointer;white-space:nowrap;transition:background .2s,opacity .2s;flex-shrink:0}
+.fbtn .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.fbtn.active{background:rgba(255,255,255,0.08)}
+.fbtn.inactive{opacity:0.35}
+.fmeta{padding:4px 10px;border:1.5px solid #5a4a2a;border-radius:14px;background:transparent;color:#c9a84c;font-family:'Lora',serif;font-size:12px;cursor:pointer;white-space:nowrap;transition:background .15s;flex-shrink:0}
+.fmeta:hover{background:rgba(201,168,76,0.15)}
+#main{display:flex;height:calc(100vh - 52px);overflow:hidden}
+#map-area{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;background:#0a0500}
+#map-wrapper{position:relative;display:inline-block;max-width:100%;max-height:100%;line-height:0}
+#map-wrapper img{display:block;max-width:100%;max-height:calc(100vh - 52px);object-fit:contain;user-select:none;-webkit-user-drag:none;pointer-events:none}
+#grid-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+#pins-layer{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2}
+.pin{position:absolute;width:22px;height:22px;border-radius:50%;border:2px solid rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.7);cursor:grab;transform:translate(-50%,-50%);transition:transform .15s ease,box-shadow .15s ease;z-index:3;user-select:none;-webkit-user-select:none}
+.pin:hover{transform:translate(-50%,-50%) scale(1.25);box-shadow:0 0 10px 2px rgba(232,198,90,0.5);z-index:10}
+.pin.selected{border:2px solid #e8c65a;box-shadow:0 0 12px 3px rgba(232,198,90,0.6);z-index:11}
+.pin.dragging{cursor:grabbing;z-index:100;transition:none}
+.pin.hidden{display:none}
+#panel{width:360px;min-width:360px;background:#110b02;border-left:1px solid #3a2a10;overflow-y:auto;padding:24px 20px;display:none;flex-shrink:0;z-index:50}
+#panel.open{display:block}
+#panel-close{float:right;background:none;border:none;color:#7a6840;font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+#panel-close:hover{color:#e8c65a}
+#panel h2{font-family:'Rye',cursive;color:#e8c65a;font-size:18px;margin-bottom:6px;padding-right:28px}
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;color:#fff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.coords{font-size:13px;color:#a89060;margin-bottom:16px;font-family:'Lora',serif}
+.stitle{font-family:'Rye',cursive;font-size:12px;color:#c9a84c;text-transform:uppercase;letter-spacing:1px;margin:18px 0 6px;border-bottom:1px solid #2a1e0a;padding-bottom:4px}
+.sbody{font-size:14px;line-height:1.6;color:#d4c49e}
+.quote-block{margin-top:18px;padding:10px 14px;border-left:3px solid #e8c65a;background:rgba(232,198,90,0.04);font-style:italic;color:#c9a84c;font-size:13px;line-height:1.5}
+@media(max-width:600px){
+#main{flex-direction:column}
+#panel{width:100%;min-width:unset;border-left:none;border-top:1px solid #3a2a10;position:fixed;bottom:0;left:0;right:0;height:45vh;max-height:45vh;z-index:200}
+#topbar{padding:0 8px;gap:6px}
+#topbar h1{font-size:13px;margin-right:8px}
+.fbtn{font-size:11px;padding:3px 7px}
+.fmeta{font-size:11px;padding:3px 7px}
+}
 </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div>
-    <span class="topbar-title">DUSTHAVEN</span>
-    <span class="topbar-sub">Zone 1 — Dead Man's Shallows • 1852</span>
-  </div>
-  <div class="legend" id="legend"></div>
-  <button class="export-btn" onclick="exportCoords()">📋 Export Coords</button>
+<div id="topbar">
+  <h1>DUSTHAVEN Z1</h1>
+  <button class="fbtn active" data-cat="structure" style="border-color:#e8c65a"><span class="dot" style="background:#e8c65a"></span>Structure</button>
+  <button class="fbtn active" data-cat="pnj" style="border-color:#c9544d"><span class="dot" style="background:#c9544d"></span>PNJ</button>
+  <button class="fbtn active" data-cat="spot" style="border-color:#f5c542"><span class="dot" style="background:#f5c542"></span>Spot</button>
+  <button class="fbtn active" data-cat="fragment" style="border-color:#7bb3ff"><span class="dot" style="background:#7bb3ff"></span>Fragment</button>
+  <button class="fbtn active" data-cat="event" style="border-color:#9b59b6"><span class="dot" style="background:#9b59b6"></span>Event</button>
+  <button class="fbtn active" data-cat="gate" style="border-color:#2ecc71"><span class="dot" style="background:#2ecc71"></span>Gate</button>
+  <button class="fmeta" id="btn-all">Tout</button>
+  <button class="fmeta" id="btn-none">Rien</button>
+  <button class="fmeta" id="btn-export" style="margin-left:auto;border-color:#6b3a1f;color:#b8962e;font-family:Rye,cursive;font-size:11px;letter-spacing:.05em">📋 Export JSON</button>
 </div>
-
-<div class="main">
-  <div class="map-area">
-    <div class="map-wrap" id="mapWrap">
-      <img src="map-z1.webp" alt="Dusthaven Map" id="mapImg" onload="init()" draggable="false">
+<div id="main">
+  <div id="map-area">
+    <div id="map-wrapper">
+      <img src="map-z1.webp" alt="Dusthaven Zone 1 Map" id="map-img">
+      <canvas id="grid-overlay"></canvas>
+      <div id="pins-layer"></div>
     </div>
   </div>
-  <div class="panel collapsed" id="panel">
-    <div class="panel-empty" id="panelEmpty">Cliquez sur un point pour voir ses détails</div>
-    <div class="panel-content" id="panelContent" style="display:none"></div>
+  <div id="panel">
+    <button id="panel-close">&times;</button>
+    <h2 id="p-title"></h2>
+    <span class="badge" id="p-badge"></span>
+    <div class="coords" id="p-coords"></div>
+    <div class="stitle">Ce que c'est</div>
+    <div class="sbody" id="p-what"></div>
+    <div class="stitle">Conditions d'acc&egrave;s</div>
+    <div class="sbody" id="p-conditions"></div>
+    <div class="stitle">Lore &amp; Contexte</div>
+    <div class="sbody" id="p-lore"></div>
+    <div class="stitle">Gameplay</div>
+    <div class="sbody" id="p-gameplay"></div>
+    <div class="quote-block" id="p-quote" style="display:none"></div>
   </div>
 </div>
-
 <script>
-const CATS = {
-  structure: { name:'Structures', color:'#e8c65a' },
-  pnj:       { name:'PNJs', color:'#c9544d' },
-  spot:      { name:'Orpaillage', color:'#f5c542' },
-  fragment:  { name:'Fragments', color:'#7bb3ff' },
-  event:     { name:'Événements', color:'#9b59b6' },
-  gate:      { name:'Gates', color:'#2ecc71' }
-};
-
-const PINS = [
-  // ZONE 0
-  {id:1,x:18,y:7,cat:'structure',name:'Cabane d\'Eli',icon:'🏠',
-   coord:'B1',
-   what:'Point de spawn. Petite cabane en bois au pied de la montagne enneigée.',
-   conditions:'Aucune — début du jeu.',
-   lore:'Le joueur arrive ici. Intérieur : tasse en étain tiède, photo floue dans un cadre, journal ouvert sur le lit (encre fraîche), batée accrochée au mur. Eli y vivait — des signes montrent que quelqu\'un est passé récemment. La porte est entrouverte.',
-   gameplay:'Le joueur prend la batée au mur → déclenche le tutoriel d\'orpaillage au ruisseau en contrebas.',
-   quote:'"Tiède. Quelqu\'un était là il n\'y a pas longtemps."'},
-
-  {id:2,x:18.5,y:8.5,cat:'fragment',name:'Fragment #1 — La Lettre',icon:'📄',
-   coord:'B1',
-   what:'Bout de lettre partiellement brûlée, coincé sous la tasse en étain.',
-   conditions:'Avoir pris la batée + fait 1er orpaillage. En revenant dans la cabane.',
-   lore:'Premiers mots d\'Eli à son petit-fils. Partiellement illisible. Seuls quelques mots survivent. C\'est une récompense narrative, pas un tutoriel.',
-   gameplay:'Introduit le mystère. Le joueur ne comprend pas encore. La lettre se complète au fil des fragments.',
-   quote:'"Mon cher petit-fils... j\'ai trouvé quelque chose... les ombres s\'allongent... Ne cherche pas la richesse. Cherche la..."'},
-
-  {id:3,x:24,y:13,cat:'spot',name:'Spot Tutoriel',icon:'🟡',
-   coord:'C2',
-   what:'Petit ruisseau derrière la cabane. Premier spot d\'orpaillage du joueur.',
-   conditions:'Avoir la batée.',
-   lore:'Le joueur apprend à tamiser. Premier grain d\'or. Feedback visuel + son satisfaisant. Le jeu a commencé.',
-   gameplay:'Tutoriel mécanique : utiliser la batée, collecter de l\'or. Rendement très faible mais garanti.',
-   quote:''},
-
-  {id:4,x:30,y:10,cat:'event',name:'1ère apparition Coyote',icon:'🐺',
-   coord:'D2',
-   what:'Coyote (vrai animal, pelage fauve-gris, cicatrice oreille) assis sur un rocher.',
-   conditions:'Automatique ~minute 8, en sortant de la cabane.',
-   lore:'L\'animal observe le joueur en silence. Quand le joueur s\'approche, Coyote trace un cercle dans la poussière avec sa patte (symbole simplifié du Serpent), puis s\'éloigne vers Dusthaven. Le cercle reste visible au sol.',
-   gameplay:'Micro-récompense émotionnelle. Guide visuel non-verbal vers le hub. Le joueur ne comprend pas le symbole — il le comprendra plus tard grâce à Kaya.',
-   quote:''},
-
-  // RIVIÈRE
-  {id:5,x:8,y:22,cat:'spot',name:'Spot Secret (sous cascade)',icon:'⭐',
-   coord:'A3',
-   what:'Bassin CACHÉ derrière la cascade. Or concentré.',
-   conditions:'Explorer derrière la cascade (curiosité du joueur).',
-   lore:'Petit bassin illuminé par la lumière dorée filtrant à travers l\'eau. Moment de calme, son d\'eau amplifié. Le joueur qui est curieux est récompensé.',
-   gameplay:'Micro-récompense ~min 32. Pépites rares + chance de gemme. Meilleur spot de Z1.',
-   quote:''},
-
-  {id:6,x:14,y:20,cat:'spot',name:'Spot Cascade',icon:'🟡',
-   coord:'B3',
-   what:'Au pied de la cascade venant de la montagne. Eau agitée.',
-   conditions:'Batée T1 recommandée.',
-   lore:'La cascade provient de la fonte des neiges de la montagne. L\'agitation de l\'eau concentre les sédiments au pied.',
-   gameplay:'Bon rendement. Pépites moyennes + rares. Probablement le spot du 1er gros nugget.',
-   quote:''},
-
-  {id:7,x:16,y:24,cat:'event',name:'1er Gros Nugget',icon:'💰',
-   coord:'B3',
-   what:'Le joueur trouve son premier gros nugget d\'or.',
-   conditions:'~minute 16 de jeu.',
-   lore:'Feedback visuel spécial (éclat doré, particules) + son satisfaisant. Le joueur comprend que l\'effort paie.',
-   gameplay:'Encouragement mécanique. Moment de satisfaction qui pousse à continuer.',
-   quote:''},
-
-  {id:8,x:32,y:35,cat:'spot',name:'Spot Berge facile',icon:'🟡',
-   coord:'D4',
-   what:'Berge plate et accessible le long de la rivière, partie médiane.',
-   conditions:'Aucune.',
-   lore:'Zone tranquille, facile d\'accès. Les sédiments s\'accumulent naturellement.',
-   gameplay:'Spot débutant. Rendement faible mais constant. Or commun + quartz.',
-   quote:''},
-
-  {id:9,x:25,y:42,cat:'fragment',name:'Fragment #2 — Coffre abandonné',icon:'📄',
-   coord:'C5',
-   what:'Vieux coffre en bois au bord du ruisseau, à moitié enterré.',
-   conditions:'Explorer la rivière vers le sud.',
-   lore:'Eli y a caché un morceau de sa lettre. Première mention des Nahak\'a et d\'un lieu mystérieux.',
-   gameplay:'Après lecture : Coyote réapparaît immédiatement et guide le joueur vers l\'inscription Nahak\'a sur la paroi est.',
-   quote:'"...la vérité est dans la terre elle-même. Dans les veines de la montagne. Une confluence. Le Peuple du Serpent le savait..."'},
-
-  {id:10,x:42,y:30,cat:'event',name:'Panneau RATTNER CO.',icon:'🪧',
-   coord:'E4',
-   what:'Zone prometteuse bloquée par des panneaux en bois neufs : "CLAIM RESERVED — RATTNER CO."',
-   conditions:'Visible dès l\'Acte I.',
-   lore:'Introduction de la menace. Des panneaux neufs sur une zone que des prospecteurs exploitaient. Quelqu\'un rachète les concessions. Quand on dit "Rattner" aux PNJ → peur visible, voix qui baisse, sujet qui change.',
-   gameplay:'Contexte narratif. Le joueur commence à comprendre qu\'un antagoniste est en action.',
-   quote:''},
-
-  {id:11,x:43,y:32,cat:'pnj',name:'Old Pete',icon:'👴',
-   coord:'E4',
-   what:'Vieux prospecteur dépossédé par Rattner. PNJ secondaire.',
-   conditions:'Aller vers le panneau Rattner.',
-   lore:'Pete avait une concession ici depuis 2 ans. Rattner l\'a rachetée pour une bouchée de pain. Il disparaît en Acte II — personne ne sait où il est (sous-entendu : intimidé/déplacé).',
-   gameplay:'Contexte narratif. Humanise la menace du Rattler.',
-   quote:'"Il m\'a donné le choix : vendre ou être relocalisé. J\'ai pris l\'argent."'},
-
-  {id:12,x:62,y:32,cat:'event',name:'Inscription Nahak\'a',icon:'🗿',
-   coord:'G4',
-   what:'Symboles anciens gravés sur une paroi rocheuse, partiellement cachés par la mousse.',
-   conditions:'Explorer à l\'est de la rivière.',
-   lore:'Écriture du Peuple du Serpent (Nahak\'a). Incompréhensible sans Kaya. Le joueur sent qu\'il y a un mystère ancien. Plus tard, Kaya interprétera : "Ce symbole dit : La rivière se souvient."',
-   gameplay:'S\'enregistre dans le journal de quête. Sentiment de mystère. Le joueur reviendra ici avec Kaya en Acte II.',
-   quote:'"The water remembers." — Kaya (Acte II)'},
-
-  {id:13,x:72,y:25,cat:'fragment',name:'Fragment #3 (optionnel)',icon:'📄',
-   coord:'H3',
-   what:'Fissure dans la roche, loin des sentiers. Fragment optionnel.',
-   conditions:'Quête donnée par Kaya en Acte II (nécessite haute réputation).',
-   lore:'Révèle la "fausse trahison" de Dawson. Le Sheriff est endetté — Rattner le fait chanter. Dawson n\'est pas 100% méchant, il est piégé.',
-   gameplay:'Le joueur peut comprendre le Sheriff différemment. Ouvre un arc de rédemption pour Dawson.',
-   quote:''},
-
-  {id:14,x:52,y:72,cat:'spot',name:'Spot Courbe rivière',icon:'🟡',
-   coord:'F8',
-   what:'Grande courbe de la rivière. Les sédiments s\'accumulent dans le virage.',
-   conditions:'Batée T1.',
-   lore:'Courbe naturelle où le courant ralentit et dépose l\'or. Zone médiane de la map.',
-   gameplay:'Or commun + pépites moyennes. Le joueur explore le sud de la rivière.',
-   quote:''},
-
-  {id:15,x:75,y:82,cat:'spot',name:'Spot Bassin isolé',icon:'🟡',
-   coord:'H9',
-   what:'Bassin en contrebas, nécessite de descendre les berges.',
-   conditions:'Explorer le sud-est de la map.',
-   lore:'Zone isolée, calme. Récompense l\'exploration des zones éloignées.',
-   gameplay:'Bon rendement. Le joueur doit faire un effort pour y accéder.',
-   quote:''},
-
-  {id:16,x:7,y:15,cat:'gate',name:'Gate Kayak → Z2',icon:'🛶',
-   coord:'A2',
-   what:'Cours d\'eau remontant vers les montagnes. Passage vers Copper Canyon (Zone 2).',
-   conditions:'Avoir un Kayak (acheté chez Jed, ~45-60 min de jeu, Acte I terminé).',
-   lore:'Le joueur a accumulé assez d\'or et de réputation auprès de Jed. Il remonte le cours d\'eau vers le canyon. Fin de l\'Acte I.',
-   gameplay:'Gate Z1→Z2. Débloque Copper Canyon. Le joueur quitte la Zone 1.',
-   quote:''},
-
-  // DUSTHAVEN HUB (cratère)
-  {id:17,x:46,y:55,cat:'structure',name:'Magasin de Jed',icon:'🏪',
-   coord:'E6',
-   what:'Bâtiment en bois sombre, toit tôle rouillée, porche avec auvent, 2 tonneaux + caisse.',
-   conditions:'Aucune.',
-   lore:'Comptoir en bois, étagères (batées, tamis, bottes), balance pour peser l\'or. Jed reconnaît la batée d\'Eli immédiatement mais ne dit rien — il la regarde une demi-seconde de trop.',
-   gameplay:'Vente équipement d\'orpaillage, achat or brut. À haute réputation : donne le carnet d\'Eli. ~20×15×12 studs.',
-   quote:''},
-
-  {id:18,x:47,y:57,cat:'pnj',name:'Jed Bramwell',icon:'🧓',
-   coord:'E6',
-   what:'Jedidiah "Jed" Bramwell — Marchand, 58 ans. Trapu, bedonnant, moustache blanche, lunettes rondes.',
-   conditions:'Aucune.',
-   lore:'Ancien prospecteur devenu marchand. Observe tout, parle peu. Sait faire la différence entre un bon gars et un vaurien. Frotte une vieille pépite constamment.',
-   gameplay:'Vend, achète, informe. Donne le carnet d\'Eli quand la réputation est haute. Source d\'infos indirecte sur Rattner.',
-   quote:'"L\'or, ça se mérite, gamin, pas comme la chance."'},
-
-  {id:19,x:55,y:48,cat:'structure',name:'Belle\'s Saloon',icon:'🍺',
-   coord:'F5',
-   what:'Le plus grand bâtiment de Dusthaven. 2 étages, portes battantes, balcon, piano, lustre bois de cerf.',
-   conditions:'Aucune.',
-   lore:'Centre social de la ville. Le Rattler y apparaît en Acte I tardif — seul à une table, en costume, il appelle le joueur par son nom.',
-   gameplay:'Potins, buffs temporaires (charme, chance). Quêtes de livraison. ~25×20×16 studs.',
-   quote:''},
-
-  {id:20,x:56,y:50,cat:'pnj',name:'Belle Fontaine',icon:'💃',
-   coord:'F5',
-   what:'Belle Fontaine — Gérante du Saloon, 30 ans. Élégante, cheveux auburn, yeux pétillants.',
-   conditions:'Aucune.',
-   lore:'Charmante, bavarde, curiosité insatiable. Connaît toutes les rumeurs, tous les secrets. Très protectrice de ses clients réguliers. Près du piano ou derrière le bar.',
-   gameplay:'Source de potins, quêtes de récupération/livraison. Offre des buffs temporaires.',
-   quote:'"Alors, mon petit veinard, l\'or coule à flots ou c\'est encore la traversée du désert ?"'},
-
-  {id:21,x:60,y:58,cat:'structure',name:'Forge de Gustave',icon:'⚒️',
-   coord:'G6',
-   what:'Bâtiment ouvert (pas de mur avant), toit tôle sur piliers, cheminée en pierre, enclume au centre.',
-   conditions:'Aucune.',
-   lore:'Four/brasero rougeoyant, baril d\'eau, outils accrochés au mur. Sol terre battue, traces de suie. Son permanent du marteau.',
-   gameplay:'Fabrication et amélioration d\'outils. Fabrique la Lanterne (Z3), Pickaxe (Z3, Lvl 12+), Pendentif de la Météorite. ~18×15×10 studs.',
-   quote:''},
-
-  {id:22,x:61,y:60,cat:'pnj',name:'Gustave Moreau',icon:'🔨',
-   coord:'G6',
-   what:'Gustave Moreau — Forgeron, 52 ans. Homme noir, massif, crâne rasé, barbe grise, tatouage enclume.',
-   conditions:'Aucune.',
-   lore:'Taciturne, ne parle que si nécessaire. Ancien esclave affranchi de Louisiane. Reconnaît la batée d\'Eli en silence — se fige 3 secondes puis se retourne vers l\'enclume. Ne ment jamais, se ferme.',
-   gameplay:'Craft, réparations. Confiance lente. 3 coups sur l\'enclume = fin de conversation.',
-   quote:'"...Bon acier."'},
-
-  {id:23,x:62,y:50,cat:'structure',name:'Bureau du Sheriff',icon:'🏛️',
-   coord:'G5',
-   what:'Petit bâtiment, porte unique, étoile de sheriff ternie au mur.',
-   conditions:'Aucune.',
-   lore:'Bureau modeste. L\'étoile ternie symbolise la corruption de Dawson. Documents de concession sur le bureau.',
-   gameplay:'Quêtes de "surveillance" — en réalité des collectes d\'infos pour Rattner (le joueur ne le sait pas au début). ~15×12×10 studs.',
-   quote:''},
-
-  {id:24,x:63,y:52,cat:'pnj',name:'Sheriff Buck Dawson',icon:'🤠',
-   coord:'G5',
-   what:'Sheriff Buck Dawson — 45 ans. Grand, sec, mâchoire carrée, yeux gris, cicatrice sur le nez.',
-   conditions:'Aucune.',
-   lore:'Autoritaire, froid, rongé par la culpabilité. Ancien compagnon d\'Eli, a trahi sa confiance en vendant des infos à Rattner pour effacer ses dettes de jeu. Se déplace VERS le joueur (comportement unique).',
-   gameplay:'Fausses quêtes de surveillance. Peut devenir allié secret si le joueur découvre sa trahison.',
-   quote:'"Je n\'aime pas les problèmes. Faites votre travail et restez en dehors des affaires des autres."'},
-
-  {id:25,x:53,y:54,cat:'structure',name:'Leaderboard',icon:'🏆',
-   coord:'F6',
-   what:'Grand panneau en bois au centre de Dusthaven. Classement des meilleurs orpailleurs.',
-   conditions:'Aucune.',
-   lore:'Le panneau est au centre exact du cratère — là où, sous terre, se trouve le fragment de météorite.',
-   gameplay:'Classement des joueurs du serveur. Compétition sociale.',
-   quote:''},
-
-  {id:26,x:54,y:56,cat:'event',name:'Spot Météorite',icon:'🌠',
-   coord:'F6',
-   what:'Centre exact du cratère. Invisible sans détecteur à métaux.',
-   conditions:'Détecteur à métaux (Acte II+) + quête donnée par Kaya (haute réputation).',
-   lore:'Dusthaven est un cratère de météorite — "l\'Œil du Ciel" pour les Nahak\'a. L\'impact a créé les conditions géologiques de la Confluence. Eli le savait mais ne l\'a jamais écrit. Seule Kaya peut révéler ce secret.',
-   gameplay:'Kaya donne l\'indice → détecteur bipe → mini-game de fouille → Fragment Céleste (pierre noire iridescente) → craft chez Gustave → Pendentif de la Météorite (cosmétique unique).',
-   quote:'"La pierre tombée du ciel, enfouie sous les pas des hommes qui ne regardent jamais en bas." — Kaya'},
-
-  {id:27,x:30,y:20,cat:'structure',name:'Pont Nord',icon:'🌉',
-   coord:'D3',
-   what:'Pont en bois traversant la rivière, reliant la zone spawn au hub.',
-   conditions:'Aucune.',
-   lore:'Le joueur l\'emprunte pour descendre de la cabane vers Dusthaven. Structure simple en bois.',
-   gameplay:'Passage obligatoire entre le spawn et le hub. ~15 secondes de marche.',
-   quote:''},
-
-  {id:28,x:50,y:75,cat:'structure',name:'Pont Sud',icon:'🌉',
-   coord:'E8',
-   what:'Pont en bois au sud du cratère, traversant la rivière.',
-   conditions:'Aucune.',
-   lore:'Accès vers la partie sud de la rivière et les spots d\'orpaillage éloignés.',
-   gameplay:'Passage vers les spots Courbe rivière et Bassin isolé.',
-   quote:''}
+var CAT_COLORS={structure:'#e8c65a',pnj:'#c9544d',spot:'#f5c542',fragment:'#7bb3ff',event:'#9b59b6',gate:'#2ecc71'};
+var PINS=[
+  {"id": 1, "x": 18, "y": 7, "cat": "structure", "name": "Cabane d'Eli", "coord": "B1", "what": "Point de spawn. Petite cabane en bois au pied de la montagne enneigée.", "conditions": "Aucune — début du jeu.", "lore": "Le joueur arrive ici. Intérieur : tasse en étain tiède, photo floue dans un cadre, journal ouvert sur le lit (encre fraîche), batée accrochée au mur. Eli y vivait — des signes montrent que quelqu'un y est passé récemment. La porte est entrouverte.", "gameplay": "Le joueur prend la batée au mur → déclenche le tutoriel d'orpaillage au ruisseau en contrebas.", "quote": "\"Tiède. Quelqu'un était là il n'y a pas longtemps.\""},
+  {"id": 2, "x": 18.5, "y": 8.5, "cat": "fragment", "name": "Fragment #1 — La Lettre", "coord": "B1", "what": "Bout de lettre partiellement brûlée, coincé sous la tasse en étain.", "conditions": "Avoir pris la batée + fait 1er orpaillage. En revenant dans la cabane.", "lore": "Premiers mots d'Eli à son petit-fils. Partiellement illisible. Seuls quelques mots survivent. Récompense narrative, pas un tutoriel.", "gameplay": "Introduit le mystère. Le joueur ne comprend pas encore. La lettre se complète au fil des fragments.", "quote": "\"Mon cher petit-fils... j'ai trouvé quelque chose... les ombres s'allongent... Ne cherche pas la richesse. Cherche la...\""},
+  {"id": 3, "x": 24, "y": 13, "cat": "spot", "name": "Spot Tutoriel", "coord": "C2", "what": "Petit ruisseau derrière la cabane. Premier spot d'orpaillage.", "conditions": "Avoir la batée.", "lore": "Le joueur apprend à tamiser. Premier grain d'or. Feedback visuel + son satisfaisant.", "gameplay": "Tutoriel mécanique : utiliser la batée, collecter de l'or. Rendement très faible mais garanti.", "quote": ""},
+  {"id": 4, "x": 30, "y": 10, "cat": "event", "name": "1ère apparition Coyote", "coord": "D2", "what": "Coyote (vrai animal, pelage fauve-gris, cicatrice oreille) assis sur un rocher.", "conditions": "Automatique ~minute 8, en sortant de la cabane.", "lore": "L'animal observe le joueur en silence. Quand le joueur s'approche, Coyote trace un cercle dans la poussière avec sa patte (symbole simplifié du Serpent), puis s'éloigne vers Dusthaven.", "gameplay": "Micro-récompense émotionnelle. Guide visuel non-verbal vers le hub.", "quote": ""},
+  {"id": 5, "x": 8, "y": 22, "cat": "spot", "name": "Spot Secret (sous cascade)", "coord": "A3", "what": "Bassin CACHÉ derrière la cascade. Or concentré.", "conditions": "Explorer derrière la cascade (curiosité du joueur).", "lore": "Petit bassin illuminé par la lumière dorée filtrant à travers l'eau. Moment de calme. Le joueur curieux est récompensé.", "gameplay": "Micro-récompense ~min 32. Pépites rares + chance de gemme. Meilleur spot de Z1.", "quote": ""},
+  {"id": 6, "x": 14, "y": 20, "cat": "spot", "name": "Spot Cascade", "coord": "B3", "what": "Au pied de la cascade venant de la montagne. Eau agitée.", "conditions": "Batée T1 recommandée.", "lore": "La cascade provient de la fonte des neiges. L'agitation concentre les sédiments au pied.", "gameplay": "Bon rendement. Pépites moyennes + rares.", "quote": ""},
+  {"id": 7, "x": 16, "y": 24, "cat": "event", "name": "1er Gros Nugget", "coord": "B3", "what": "Le joueur trouve son premier gros nugget d'or.", "conditions": "~minute 16 de jeu.", "lore": "Feedback visuel spécial (éclat doré, particules) + son satisfaisant.", "gameplay": "Encouragement mécanique. Le joueur comprend que l'effort paie.", "quote": ""},
+  {"id": 8, "x": 32, "y": 35, "cat": "spot", "name": "Spot Berge facile", "coord": "D4", "what": "Berge plate et accessible le long de la rivière, partie médiane.", "conditions": "Aucune.", "lore": "Zone tranquille, facile d'accès. Les sédiments s'accumulent naturellement.", "gameplay": "Spot débutant. Rendement faible mais constant. Or commun + quartz.", "quote": ""},
+  {"id": 9, "x": 25, "y": 42, "cat": "fragment", "name": "Fragment #2 — Coffre abandonné", "coord": "C5", "what": "Vieux coffre en bois au bord du ruisseau, à moitié enterré.", "conditions": "Explorer la rivière vers le sud.", "lore": "Eli y a caché un morceau de sa lettre. Première mention des Nahak'a et d'un lieu mystérieux.", "gameplay": "Après lecture : Coyote réapparaît et guide le joueur vers l'inscription Nahak'a.", "quote": "\"...la vérité est dans la terre elle-même. Dans les veines de la montagne. Une confluence. Le Peuple du Serpent le savait...\""},
+  {"id": 10, "x": 42, "y": 30, "cat": "event", "name": "Panneau RATTNER CO.", "coord": "E4", "what": "Zone bloquée par des panneaux en bois neufs : 'CLAIM RESERVED — RATTNER CO.'", "conditions": "Visible dès l'Acte I.", "lore": "Introduction de la menace. Des panneaux neufs sur une zone que des prospecteurs exploitaient. Quand on dit 'Rattner' aux PNJ → peur visible.", "gameplay": "Contexte narratif. Le joueur comprend qu'un antagoniste est en action.", "quote": ""},
+  {"id": 11, "x": 43, "y": 32, "cat": "pnj", "name": "Old Pete", "coord": "E4", "what": "Vieux prospecteur dépossédé par Rattner. PNJ secondaire.", "conditions": "Aller vers le panneau Rattner.", "lore": "Pete avait une concession ici depuis 2 ans. Rattner l'a rachetée pour une bouchée de pain. Il disparaît en Acte II.", "gameplay": "Contexte narratif. Humanise la menace du Rattler.", "quote": "\"Il m'a donné le choix : vendre ou être relocalisé. J'ai pris l'argent.\""},
+  {"id": 12, "x": 62, "y": 32, "cat": "event", "name": "Inscription Nahak'a", "coord": "G4", "what": "Symboles anciens gravés sur une paroi rocheuse, cachés par la mousse.", "conditions": "Explorer à l'est de la rivière.", "lore": "Écriture du Peuple du Serpent (Nahak'a). Incompréhensible sans Kaya. Plus tard, Kaya interprétera.", "gameplay": "S'enregistre dans le journal de quête. Sentiment de mystère.", "quote": "\"The water remembers.\" — Kaya (Acte II)"},
+  {"id": 13, "x": 72, "y": 25, "cat": "fragment", "name": "Fragment #3 (optionnel)", "coord": "H3", "what": "Fissure dans la roche, loin des sentiers. Fragment optionnel.", "conditions": "Quête donnée par Kaya en Acte II (haute réputation).", "lore": "Révèle la 'fausse trahison' de Dawson. Le Sheriff est endetté — Rattner le fait chanter.", "gameplay": "Le joueur peut comprendre le Sheriff différemment. Ouvre un arc de rédemption.", "quote": ""},
+  {"id": 14, "x": 52, "y": 72, "cat": "spot", "name": "Spot Courbe rivière", "coord": "F8", "what": "Grande courbe de la rivière. Les sédiments s'accumulent dans le virage.", "conditions": "Batée T1.", "lore": "Courbe naturelle où le courant ralentit et dépose l'or.", "gameplay": "Or commun + pépites moyennes. Zone médiane de la map.", "quote": ""},
+  {"id": 15, "x": 75, "y": 82, "cat": "spot", "name": "Spot Bassin isolé", "coord": "H9", "what": "Bassin en contrebas, nécessite de descendre les berges.", "conditions": "Explorer le sud-est de la map.", "lore": "Zone isolée, calme. Récompense l'exploration.", "gameplay": "Bon rendement. Le joueur doit faire un effort pour y accéder.", "quote": ""},
+  {"id": 16, "x": 7, "y": 15, "cat": "gate", "name": "Gate Kayak → Z2", "coord": "A2", "what": "Cours d'eau remontant vers les montagnes. Passage vers Copper Canyon.", "conditions": "Avoir un Kayak (acheté chez Jed, ~45-60 min).", "lore": "Le joueur remonte le cours d'eau. Fin de l'Acte I.", "gameplay": "Gate Z1→Z2. Débloque Copper Canyon.", "quote": ""},
+  {"id": 17, "x": 46, "y": 55, "cat": "structure", "name": "Magasin de Jed", "coord": "E6", "what": "Bois sombre, toit tôle rouillée, porche avec auvent, 2 tonneaux + caisse.", "conditions": "Aucune.", "lore": "Comptoir en bois, étagères (batées, tamis, bottes), balance pour peser l'or. Jed reconnaît la batée d'Eli — la regarde une demi-seconde de trop.", "gameplay": "Vente équipement d'orpaillage, achat or brut. À haute réputation : donne le carnet d'Eli.", "quote": ""},
+  {"id": 18, "x": 47, "y": 57, "cat": "pnj", "name": "Jed Bramwell", "coord": "E6", "what": "Jedidiah 'Jed' Bramwell — Marchand, 58 ans. Trapu, bedonnant, moustache blanche, lunettes rondes.", "conditions": "Aucune.", "lore": "Ancien prospecteur devenu marchand. Observe tout, parle peu. Frotte une vieille pépite constamment.", "gameplay": "Vend, achète, informe. Donne le carnet d'Eli quand la réputation est haute.", "quote": "\"L'or, ça se mérite, gamin, pas comme la chance.\""},
+  {"id": 19, "x": 55, "y": 48, "cat": "structure", "name": "Belle's Saloon", "coord": "F5", "what": "Le plus grand bâtiment de Dusthaven. 2 étages, portes battantes, balcon, piano.", "conditions": "Aucune.", "lore": "Centre social de la ville. Le Rattler y apparaît en Acte I tardif — seul à une table, en costume.", "gameplay": "Potins, buffs temporaires (charme, chance). Quêtes de livraison.", "quote": ""},
+  {"id": 20, "x": 56, "y": 50, "cat": "pnj", "name": "Belle Fontaine", "coord": "F5", "what": "Belle Fontaine — Gérante du Saloon, 30 ans. Élégante, cheveux auburn, yeux pétillants.", "conditions": "Aucune.", "lore": "Charmante, bavarde, curiosité insatiable. Connaît toutes les rumeurs. Très protectrice.", "gameplay": "Source de potins, quêtes. Offre des buffs temporaires.", "quote": "\"Alors, mon petit veinard, l'or coule à flots ou c'est encore la traversée du désert ?\""},
+  {"id": 21, "x": 60, "y": 58, "cat": "structure", "name": "Forge de Gustave", "coord": "G6", "what": "Bâtiment ouvert (pas de mur avant), toit tôle sur piliers, cheminée pierre, enclume.", "conditions": "Aucune.", "lore": "Four/brasero rougeoyant, baril d'eau, outils accrochés. Sol terre battue, traces de suie.", "gameplay": "Craft et amélioration d'outils. Fabrique Lanterne (Z3), Pickaxe (Z3, Lvl12+), Pendentif Météorite.", "quote": ""},
+  {"id": 22, "x": 61, "y": 60, "cat": "pnj", "name": "Gustave Moreau", "coord": "G7", "what": "Gustave Moreau — Forgeron, 52 ans. Homme noir, massif, crâne rasé, barbe grise.", "conditions": "Aucune.", "lore": "Taciturne. Ancien esclave affranchi de Louisiane. Se fige en voyant la batée d'Eli. Ne ment jamais, se ferme.", "gameplay": "Craft, réparations. Confiance lente. 3 coups enclume = fin de conversation.", "quote": "\"...Bon acier.\""},
+  {"id": 23, "x": 62, "y": 50, "cat": "structure", "name": "Bureau du Sheriff", "coord": "G6", "what": "Petit bâtiment, porte unique, étoile de sheriff ternie au mur.", "conditions": "Aucune.", "lore": "Bureau modeste. L'étoile ternie symbolise la corruption. Documents de concession sur le bureau.", "gameplay": "Quêtes de 'surveillance' — en réalité des collectes d'infos pour Rattner.", "quote": ""},
+  {"id": 24, "x": 63, "y": 52, "cat": "pnj", "name": "Sheriff Buck Dawson", "coord": "G6", "what": "Sheriff Buck Dawson — 45 ans. Grand, sec, mâchoire carrée, yeux gris, cicatrice nez.", "conditions": "Aucune.", "lore": "Autoritaire, froid, rongé par la culpabilité. Ancien compagnon d'Eli. Se déplace VERS le joueur.", "gameplay": "Fausses quêtes de surveillance. Peut devenir allié si le joueur découvre sa trahison.", "quote": "\"Je n'aime pas les problèmes. Faites votre travail et restez en dehors des affaires des autres.\""},
+  {"id": 25, "x": 53, "y": 54, "cat": "structure", "name": "Leaderboard", "coord": "F6", "what": "Grand panneau en bois au centre de Dusthaven. Classement des meilleurs orpailleurs.", "conditions": "Aucune.", "lore": "Au centre exact du cratère — là où se trouve le fragment de météorite sous terre.", "gameplay": "Classement des joueurs du serveur. Compétition sociale.", "quote": ""},
+  {"id": 26, "x": 54, "y": 56, "cat": "event", "name": "Spot Météorite", "coord": "F6", "what": "Centre exact du cratère. Invisible sans détecteur à métaux.", "conditions": "Détecteur à métaux (Acte II+) + quête Kaya (haute réputation).", "lore": "Dusthaven est un cratère de météorite — 'l'Œil du Ciel' pour les Nahak'a. L'impact a créé les conditions géologiques de la Confluence.", "gameplay": "Kaya → Détecteur → mini-game fouille → Fragment Céleste → craft Pendentif chez Gustave.", "quote": "\"La pierre tombée du ciel, enfouie sous les pas des hommes qui ne regardent jamais en bas.\" — Kaya"},
+  {"id": 27, "x": 30, "y": 20, "cat": "structure", "name": "Pont Nord", "coord": "D3", "what": "Pont en bois traversant la rivière, reliant la zone spawn au hub.", "conditions": "Aucune.", "lore": "Le joueur l'emprunte pour descendre de la cabane vers Dusthaven.", "gameplay": "Passage obligatoire entre le spawn et le hub. ~15 secondes de marche.", "quote": ""},
+  {"id": 28, "x": 50, "y": 75, "cat": "structure", "name": "Pont Sud", "coord": "F8", "what": "Pont en bois au sud du cratère, traversant la rivière.", "conditions": "Aucune.", "lore": "Accès vers la partie sud de la rivière.", "gameplay": "Passage vers les spots Courbe rivière et Bassin isolé.", "quote": ""},
 ];
 
-let catVisible = {};
-let selectedPin = null;
-let dragPin = null;
-let dragOffset = {x:0,y:0};
-
-function init() {
-  const wrap = document.getElementById('mapWrap');
-  const img = document.getElementById('mapImg');
-
-  // Build legend
-  const legEl = document.getElementById('legend');
-  for (const [key, val] of Object.entries(CATS)) {
-    catVisible[key] = true;
-    const btn = document.createElement('div');
-    btn.className = 'leg-btn on';
-    btn.dataset.cat = key;
-    btn.innerHTML = '<span class="leg-dot" style="background:'+val.color+'"></span>'+val.name;
-    btn.onclick = () => toggleCat(key, btn);
-    legEl.appendChild(btn);
-  }
-
-  // Build grid
-  for (let i = 1; i < 10; i++) {
-    const vl = document.createElement('div');
-    vl.className = 'grid-line-v';
-    vl.style.left = (i*10)+'%';
-    wrap.appendChild(vl);
-    const hl = document.createElement('div');
-    hl.className = 'grid-line-h';
-    hl.style.top = (i*10)+'%';
-    wrap.appendChild(hl);
-  }
-  // Grid labels
-  for (let i = 0; i < 10; i++) {
-    const cl = document.createElement('div');
-    cl.className = 'grid-label';
-    cl.style.left = (i*10+5)+'%';
-    cl.style.top = '1px';
-    cl.textContent = String.fromCharCode(65+i);
-    wrap.appendChild(cl);
-    const rl = document.createElement('div');
-    rl.className = 'grid-label';
-    rl.style.top = (i*10+5)+'%';
-    rl.style.left = '2px';
-    rl.textContent = String(i+1);
-    wrap.appendChild(rl);
-  }
-
-  // Build pins
-  PINS.forEach(p => {
-    const el = document.createElement('div');
-    el.className = 'pin';
-    el.id = 'pin-'+p.id;
-    el.dataset.id = p.id;
-    el.dataset.cat = p.cat;
-    el.style.left = p.x+'%';
-    el.style.top = p.y+'%';
-    el.style.background = CATS[p.cat].color;
-    el.textContent = p.id;
-    el.title = p.name;
-
-    el.addEventListener('mousedown', e => startDrag(e, p, el));
-    el.addEventListener('click', e => { e.stopPropagation(); selectPin(p, el); });
-    // Touch
-    el.addEventListener('touchstart', e => startDragTouch(e, p, el), {passive:false});
-
-    wrap.appendChild(el);
-  });
-
-  // Map click = deselect
-  wrap.addEventListener('click', () => deselectPin());
-
-  // Mouse move/up on document for dragging
-  document.addEventListener('mousemove', onDrag);
-  document.addEventListener('mouseup', endDrag);
-  document.addEventListener('touchmove', onDragTouch, {passive:false});
-  document.addEventListener('touchend', endDragTouch);
-
-  // Show panel
-  document.getElementById('panel').classList.remove('collapsed');
+/* Grid */
+var COLS=10,ROWS=10;
+function drawGrid(){
+  var canvas=document.getElementById('grid-overlay');
+  var img=document.getElementById('map-img');
+  var w=img.clientWidth,h=img.clientHeight;
+  canvas.width=w;canvas.height=h;
+  canvas.style.width=w+'px';canvas.style.height=h+'px';
+  var ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  var colW=w/COLS,rowH=h/ROWS;
+  ctx.strokeStyle='rgba(232,198,90,0.08)';
+  ctx.lineWidth=1;
+  for(var i=1;i<COLS;i++){var x=Math.round(colW*i)+0.5;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(var j=1;j<ROWS;j++){var y=Math.round(rowH*j)+0.5;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  ctx.font='11px Lora,serif';ctx.fillStyle='rgba(232,198,90,0.25)';
+  ctx.textAlign='center';ctx.textBaseline='top';
+  for(var i=0;i<COLS;i++) ctx.fillText(String.fromCharCode(65+i),colW*i+colW/2,4);
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  for(var j=0;j<ROWS;j++) ctx.fillText(String(j+1),4,rowH*j+rowH/2);
 }
 
-function toggleCat(cat, btn) {
-  catVisible[cat] = !catVisible[cat];
-  btn.classList.toggle('on');
-  document.querySelectorAll('.pin[data-cat="'+cat+'"]').forEach(el => {
-    el.style.display = catVisible[cat] ? 'flex' : 'none';
+function pctToGrid(xPct,yPct){
+  var col=Math.min(Math.floor(xPct/(100/COLS)),COLS-1);
+  var row=Math.min(Math.floor(yPct/(100/ROWS)),ROWS-1);
+  return String.fromCharCode(65+col)+(row+1);
+}
+
+/* Filters */
+var filters={structure:true,pnj:true,spot:true,fragment:true,event:true,gate:true};
+function applyFilters(){
+  document.querySelectorAll('.pin').forEach(function(el){
+    var cat=el.dataset.cat;
+    el.classList.toggle('hidden',!filters[cat]);
+  });
+  document.querySelectorAll('.fbtn').forEach(function(btn){
+    var cat=btn.dataset.cat;
+    btn.classList.toggle('active',!!filters[cat]);
+    btn.classList.toggle('inactive',!filters[cat]);
   });
 }
 
-function selectPin(p, el) {
-  document.querySelectorAll('.pin.selected').forEach(e => e.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedPin = p;
-  showPanel(p);
+/* Panel */
+var panel=document.getElementById('panel');
+var selectedPin=null;
+function openPanel(pin){
+  if(selectedPin){var prev=document.querySelector('.pin[data-id="'+selectedPin.id+'"]');if(prev)prev.classList.remove('selected');}
+  selectedPin=pin;
+  var el=document.querySelector('.pin[data-id="'+pin.id+'"]');
+  if(el)el.classList.add('selected');
+  document.getElementById('p-title').textContent='#'+pin.id+' \u2014 '+pin.name;
+  var badge=document.getElementById('p-badge');
+  badge.textContent=pin.cat.toUpperCase();
+  badge.style.background=CAT_COLORS[pin.cat];
+  updateCoords(pin);
+  document.getElementById('p-what').textContent=pin.what;
+  document.getElementById('p-conditions').textContent=pin.conditions;
+  document.getElementById('p-lore').textContent=pin.lore;
+  document.getElementById('p-gameplay').textContent=pin.gameplay;
+  var quoteEl=document.getElementById('p-quote');
+  if(pin.quote){quoteEl.textContent=pin.quote;quoteEl.style.display='block';}
+  else{quoteEl.style.display='none';}
+  panel.classList.add('open');
 }
-
-function deselectPin() {
-  document.querySelectorAll('.pin.selected').forEach(e => e.classList.remove('selected'));
-  selectedPin = null;
-  document.getElementById('panelEmpty').style.display = 'block';
-  document.getElementById('panelContent').style.display = 'none';
+function updateCoords(pin){
+  var grid=pctToGrid(pin.x,pin.y);pin.coord=grid;
+  document.getElementById('p-coords').textContent='\uD83D\uDCCD '+grid+' \u2014 ('+pin.x.toFixed(1)+'%, '+pin.y.toFixed(1)+'%)';
 }
-
-function showPanel(p) {
-  const cat = CATS[p.cat];
-  const pe = document.getElementById('panelEmpty');
-  const pc = document.getElementById('panelContent');
-  pe.style.display = 'none';
-  pc.style.display = 'block';
-
-  let html = '';
-  html += '<div class="panel-cat" style="background:'+cat.color+'22;color:'+cat.color+';border:1px solid '+cat.color+'44">'+p.icon+' '+cat.name+'</div>';
-  html += '<div class="panel-name">'+p.id+'. '+p.name+'</div>';
-  html += '<div class="panel-coord">📍 '+p.coord+' — Position: '+Math.round(p.x)+'%, '+Math.round(p.y)+'%</div>';
-
-  html += '<div class="panel-section"><div class="panel-section-title">Ce que c\'est</div><div class="panel-text">'+p.what+'</div></div>';
-  html += '<div class="panel-section"><div class="panel-section-title">Conditions d\'accès</div><div class="panel-text">'+p.conditions+'</div></div>';
-  html += '<div class="panel-section"><div class="panel-section-title">Lore & Contexte</div><div class="panel-text">'+p.lore+'</div></div>';
-  html += '<div class="panel-section"><div class="panel-section-title">Gameplay</div><div class="panel-text">'+p.gameplay+'</div></div>';
-
-  if (p.quote) {
-    html += '<div class="panel-quote">'+p.quote+'</div>';
-  }
-
-  pc.innerHTML = html;
+function closePanel(){
+  panel.classList.remove('open');
+  if(selectedPin){var el=document.querySelector('.pin[data-id="'+selectedPin.id+'"]');if(el)el.classList.remove('selected');selectedPin=null;}
 }
+document.getElementById('panel-close').addEventListener('click',closePanel);
 
-// DRAG
-function startDrag(e, p, el) {
-  e.preventDefault();
-  dragPin = { p, el };
-  el.classList.add('dragging');
-  const rect = document.getElementById('mapWrap').getBoundingClientRect();
-  dragOffset.x = e.clientX - (p.x/100 * rect.width + rect.left);
-  dragOffset.y = e.clientY - (p.y/100 * rect.height + rect.top);
-}
+/* Create pins */
+var pinsLayer=document.getElementById('pins-layer');
+PINS.forEach(function(pin){
+  var el=document.createElement('div');
+  el.className='pin';el.dataset.id=pin.id;el.dataset.cat=pin.cat;
+  el.style.left=pin.x+'%';el.style.top=pin.y+'%';
+  el.style.background=CAT_COLORS[pin.cat];
+  el.textContent=pin.id;
+  pinsLayer.appendChild(el);
+});
 
-function onDrag(e) {
-  if (!dragPin) return;
-  e.preventDefault();
-  const rect = document.getElementById('mapWrap').getBoundingClientRect();
-  let nx = ((e.clientX - dragOffset.x - rect.left) / rect.width) * 100;
-  let ny = ((e.clientY - dragOffset.y - rect.top) / rect.height) * 100;
-  nx = Math.max(0, Math.min(100, nx));
-  ny = Math.max(0, Math.min(100, ny));
-  dragPin.el.style.left = nx + '%';
-  dragPin.el.style.top = ny + '%';
-  dragPin.p.x = nx;
-  dragPin.p.y = ny;
-  // Update coord display
-  const col = String.fromCharCode(65 + Math.floor(nx/10));
-  const row = Math.floor(ny/10) + 1;
-  dragPin.p.coord = col + row;
-  if (selectedPin && selectedPin.id === dragPin.p.id) showPanel(dragPin.p);
-}
-
-function endDrag() {
-  if (!dragPin) return;
-  dragPin.el.classList.remove('dragging');
-  selectPin(dragPin.p, dragPin.el);
-  dragPin = null;
-}
-
-// Touch support
-function startDragTouch(e, p, el) {
-  e.preventDefault();
-  const t = e.touches[0];
-  dragPin = { p, el };
-  el.classList.add('dragging');
-  const rect = document.getElementById('mapWrap').getBoundingClientRect();
-  dragOffset.x = t.clientX - (p.x/100 * rect.width + rect.left);
-  dragOffset.y = t.clientY - (p.y/100 * rect.height + rect.top);
-}
-function onDragTouch(e) {
-  if (!dragPin) return;
-  e.preventDefault();
-  const t = e.touches[0];
-  const rect = document.getElementById('mapWrap').getBoundingClientRect();
-  let nx = ((t.clientX - dragOffset.x - rect.left) / rect.width) * 100;
-  let ny = ((t.clientY - dragOffset.y - rect.top) / rect.height) * 100;
-  nx = Math.max(0, Math.min(100, nx));
-  ny = Math.max(0, Math.min(100, ny));
-  dragPin.el.style.left = nx + '%';
-  dragPin.el.style.top = ny + '%';
-  dragPin.p.x = nx;
-  dragPin.p.y = ny;
-  const col = String.fromCharCode(65 + Math.floor(nx/10));
-  const row = Math.floor(ny/10) + 1;
-  dragPin.p.coord = col + row;
-  if (selectedPin && selectedPin.id === dragPin.p.id) showPanel(dragPin.p);
-}
-function endDragTouch() {
-  if (!dragPin) return;
-  dragPin.el.classList.remove('dragging');
-  selectPin(dragPin.p, dragPin.el);
-  dragPin = null;
-}
-
-function exportCoords() {
-  const data = PINS.map(p => ({id:p.id, name:p.name, x:Math.round(p.x*10)/10, y:Math.round(p.y*10)/10, coord:p.coord, cat:p.cat}));
-  const json = JSON.stringify(data, null, 2);
-  navigator.clipboard.writeText(json).then(() => {
-    alert('Coordonnées copiées dans le presse-papier !');
-  }).catch(() => {
-    const w = window.open('','','width=600,height=400');
-    w.document.write('<pre>'+json+'</pre>');
+/* Filter buttons */
+document.querySelectorAll('.fbtn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var cat=btn.dataset.cat;filters[cat]=!filters[cat];applyFilters();
   });
+});
+document.getElementById('btn-all').addEventListener('click',function(){
+  Object.keys(filters).forEach(function(k){filters[k]=true;});applyFilters();
+});
+document.getElementById('btn-none').addEventListener('click',function(){
+  Object.keys(filters).forEach(function(k){filters[k]=false;});applyFilters();
+});
+document.getElementById("btn-export").addEventListener("click",function(){var d=PINS.map(function(p){return{id:p.id,name:p.name,x:Math.round(p.x*10)/10,y:Math.round(p.y*10)/10,coord:p.coord,cat:p.cat}});var j=JSON.stringify(d,null,2);if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(j).then(function(){var b=document.getElementById("btn-export");b.textContent="✅ Copié!";setTimeout(function(){b.textContent="📋 Export JSON"},1500)}).catch(function(){var w=window.open("","","width=600,height=400");w.document.write("<pre>"+j+"</pre>")})}else{var w=window.open("","","width=600,height=400");w.document.write("<pre>"+j+"</pre>")}});
+
+/* Drag & Drop + Click */
+var isDragging=false,dragEl=null,dragPin=null;
+var dragStartX,dragStartY,pinStartX,pinStartY,hasMoved=false;
+var DRAG_THRESHOLD=4;
+function getClientPos(e){
+  if(e.touches&&e.touches.length)return{cx:e.touches[0].clientX,cy:e.touches[0].clientY};
+  return{cx:e.clientX,cy:e.clientY};
 }
+function onPointerDown(e){
+  var pinEl=e.target.closest('.pin');if(!pinEl)return;
+  var id=parseInt(pinEl.dataset.id);
+  var pin=PINS.find(function(p){return p.id===id;});if(!pin)return;
+  e.preventDefault();
+  var pos=getClientPos(e);
+  isDragging=true;dragEl=pinEl;dragPin=pin;
+  dragStartX=pos.cx;dragStartY=pos.cy;
+  pinStartX=pin.x;pinStartY=pin.y;hasMoved=false;
+  pinEl.classList.add('dragging');
+}
+function onPointerMove(e){
+  if(!isDragging||!dragEl)return;e.preventDefault();
+  var pos=getClientPos(e);
+  var dx=pos.cx-dragStartX,dy=pos.cy-dragStartY;
+  if(!hasMoved&&Math.abs(dx)<DRAG_THRESHOLD&&Math.abs(dy)<DRAG_THRESHOLD)return;
+  hasMoved=true;
+  var wrapper=document.getElementById('map-wrapper');
+  var rect=wrapper.getBoundingClientRect();
+  var newX=pinStartX+(dx/rect.width)*100;
+  var newY=pinStartY+(dy/rect.height)*100;
+  dragPin.x=Math.max(0,Math.min(100,newX));
+  dragPin.y=Math.max(0,Math.min(100,newY));
+  dragEl.style.left=dragPin.x+'%';dragEl.style.top=dragPin.y+'%';
+  if(selectedPin&&selectedPin.id===dragPin.id)updateCoords(dragPin);
+}
+function onPointerUp(e){
+  if(!isDragging||!dragEl)return;
+  dragEl.classList.remove('dragging');
+  if(!hasMoved)openPanel(dragPin);
+  else if(selectedPin&&selectedPin.id===dragPin.id)updateCoords(dragPin);
+  isDragging=false;dragEl=null;dragPin=null;
+}
+pinsLayer.addEventListener('mousedown',onPointerDown);
+document.addEventListener('mousemove',onPointerMove);
+document.addEventListener('mouseup',onPointerUp);
+pinsLayer.addEventListener('touchstart',onPointerDown,{passive:false});
+document.addEventListener('touchmove',onPointerMove,{passive:false});
+document.addEventListener('touchend',onPointerUp);
+
+/* Click background to close panel */
+document.getElementById('map-area').addEventListener('click',function(e){
+  if(!e.target.closest('.pin')&&!e.target.closest('#panel'))closePanel();
+});
+
+/* Init */
+var mapImg=document.getElementById('map-img');
+function init(){drawGrid();applyFilters();}
+if(mapImg.complete)init();else mapImg.addEventListener('load',init);
+window.addEventListener('resize',drawGrid);
 </script>
 </body>
 </html>
