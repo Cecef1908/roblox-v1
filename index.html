@@ -90,10 +90,10 @@ function switchView(view) {
   const frame = document.getElementById('frame');
   document.querySelectorAll('.switch-btn').forEach(b => b.className = 'switch-btn inactive');
   if (view === 'dashboard') { frame.src = 'dashboard.html'; document.getElementById('btn-dashboard').className = 'switch-btn active'; }
-  else if (view === 'map') { frame.src = 'map.html'; document.getElementById('btn-map').className = 'switch-btn active'; }
+  else if (view === 'map') { frame.src = 'map.html?v=20260314b'; document.getElementById('btn-map').className = 'switch-btn active'; }
   else { frame.src = 'lore.html'; document.getElementById('btn-lore').className = 'switch-btn active'; }
 }
 </script>
 </body>
 </html>
-<!-- cache bust 1773406493 -->
+<!-- cache bust 1773522300 -->
