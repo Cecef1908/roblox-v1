@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gold Rush Legacy — Dashboard</title>
+  <title>Dusthaven — Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Rye&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
   <style>
     /* ═══════════════════════════════════════════════
@@ -940,9 +940,9 @@
       <span class="header-star-left">&#10022;</span>
       <span class="header-star-right">&#10022;</span>
       <p class="header-eyebrow">&#10022; &nbsp; Document de R&eacute;f&eacute;rence &mdash; Jeu Roblox &nbsp; &#10022;</p>
-      <h1 class="header-title">GOLD RUSH LEGACY</h1>
+      <h1 class="header-title">DUSTHAVEN</h1>
       <div class="header-divider">&#10073; &#10022; &#10073;</div>
-      <p class="header-subtitle">Perdition Creek Valley &mdash; 1849, California</p>
+      <p class="header-subtitle">Perdition Creek Valley &mdash; 1852, California</p>
       <span class="header-badge">&#127942; D&Eacute;MO V1 &nbsp;&middot;&nbsp; Roblox Incubator &nbsp;&middot;&nbsp; Deadline 6 Avril 2026</span>
     </div>
   </div>
@@ -1082,7 +1082,7 @@
           <span class="zone-emoji">🏜️</span>
           <p class="zone-desc">
             Canyon rocheux avec rapides et cascade. <strong>Bivouac</strong> (respawn + coffre).
-            Site sacr&eacute; du <strong>Peuple de la Rivi&egrave;re</strong>.
+            Site sacr&eacute; du <strong>Kaya (Nahak'a)</strong>.
           </p>
           <div class="zone-tags">
             <span class="zone-tag">🪨 Canyon</span>
@@ -1120,76 +1120,169 @@
     ══════════════════════════════════════════════ -->
     <section id="personnages" class="section-block">
       <h2 class="section-title">👤 Les Personnages (PNJs)</h2>
-      <div class="chars-grid">
+      
+      <style>
+        .char-card-v2 {
+          background: linear-gradient(160deg, #1e1408 0%, #0d0700 100%);
+          border: 2px solid #3a2a15;
+          border-radius: 6px;
+          padding: 20px;
+          margin-bottom: 20px;
+          display: grid;
+          grid-template-columns: 120px 1fr;
+          gap: 20px;
+          align-items: start;
+        }
+        .char-card-v2:hover { border-color: #6b3a1f; }
+        .char-avatar-placeholder {
+          width: 120px;
+          height: 150px;
+          background: #1a0e00;
+          border: 2px dashed #3a2a15;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .char-avatar-placeholder .av-emoji { font-size: 2.5rem; }
+        .char-avatar-placeholder .av-label { font-size: 0.6rem; color: #6b3a1f; letter-spacing: 0.1em; text-transform: uppercase; }
+        .char-info h3 { font-family: 'Rye', cursive; color: #e8c65a; font-size: 1.1rem; margin-bottom: 2px; }
+        .char-info .char-subtitle { color: #b8962e; font-size: 0.8rem; font-style: italic; margin-bottom: 10px; }
+        .char-info .char-detail { color: #b8a070; font-size: 0.85rem; margin-bottom: 6px; line-height: 1.5; }
+        .char-info .char-detail strong { color: #d4a762; }
+        .char-info .char-quote { color: #c9a84c; font-style: italic; font-size: 0.85rem; border-left: 2px solid #3a2a15; padding-left: 10px; margin-top: 8px; }
+        .char-signal { display: inline-block; background: #1a0e0088; border: 1px solid #3a2a15; border-radius: 3px; padding: 3px 8px; font-size: 0.7rem; color: #8a7044; margin-top: 8px; }
+        @media (max-width: 600px) {
+          .char-card-v2 { grid-template-columns: 1fr; }
+          .char-avatar-placeholder { width: 80px; height: 100px; margin: 0 auto; }
+        }
+      </style>
 
-        <div class="char-card validated">
-          <span class="char-emoji">🧓</span>
-          <p class="char-name">Old Silas</p>
-          <p class="char-role">Marchand &mdash; Magasin g&eacute;n&eacute;ral</p>
-          <p class="char-personality">Bourru, protecteur, cache un lourd secret sur la vall&eacute;e</p>
-          <span class="char-art-status art-done">✅ Concept Art Valid&eacute;</span>
+      <!-- JED BRAMWELL -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">🧓</span>
+          <span class="av-label">Avatar</span>
         </div>
-
-        <div class="char-card validated">
-          <span class="char-emoji">💃</span>
-          <p class="char-name">Belle</p>
-          <p class="char-role">Tenanci&egrave;re &mdash; Saloon</p>
-          <p class="char-personality">Charmante, maligne, sait absolument tout ce qui se passe en ville</p>
-          <span class="char-art-status art-done">✅ Concept Art Valid&eacute;</span>
+        <div class="char-info">
+          <h3>Jedidiah "Jed" Bramwell</h3>
+          <div class="char-subtitle">Le Marchand — Magasin g&eacute;n&eacute;ral, Dusthaven &bull; 58 ans</div>
+          <p class="char-detail"><strong>Look :</strong> Trapu, bedonnant, calvitie bronz&eacute;e. Grosse moustache blanche tombante. Lunettes rondes sur le bout du nez. Tablier en toile us&eacute; sur chemise &agrave; carreaux. Mains larges et propres.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Grognon en surface, c&oelig;ur en or. Ancien prospecteur. Observe tout, parle peu. Sait faire la diff&eacute;rence entre un bon gars et un vaurien.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Vend l'&eacute;quipement d'orpaillage, ach&egrave;te l'or brut, donne le <strong>carnet d'Eli</strong> (r&eacute;putation haute). Source d'infos indirecte sur Rattner.</p>
+          <p class="char-quote">"L'or, &ccedil;a se m&eacute;rite, gamin, pas comme la chance."</p>
+          <span class="char-signal">📶 Toujours derri&egrave;re son comptoir, frotte une vieille p&eacute;pite</span>
         </div>
-
-        <div class="char-card todo">
-          <span class="char-emoji">🤠</span>
-          <p class="char-name">Sheriff</p>
-          <p class="char-role">Bureau des qu&ecirc;tes</p>
-          <p class="char-personality">Terse, direct, fait r&eacute;gner l'autorit&eacute; sans concession</p>
-          <span class="char-art-status art-todo">❌ &Agrave; faire</span>
-        </div>
-
-        <div class="char-card validated">
-          <span class="char-emoji">🔨</span>
-          <p class="char-name">Gustave</p>
-          <p class="char-role">Forgeron &mdash; La Forge</p>
-          <p class="char-personality">Taciturne, efficace, perfectionniste &mdash; l'outil doit &ecirc;tre parfait</p>
-          <span class="char-art-status art-done">✅ Concept Art Valid&eacute;</span>
-        </div>
-
-        <div class="char-card todo">
-          <span class="char-emoji">🐺</span>
-          <p class="char-name">Coyote</p>
-          <p class="char-role">Errant myst&eacute;rieux</p>
-          <p class="char-personality">&Eacute;nigmatique, parle uniquement en riddles, appara&icirc;t au bon moment</p>
-          <span class="char-art-status art-todo">❌ &Agrave; faire</span>
-        </div>
-
-        <div class="char-card todo">
-          <span class="char-emoji">🐍</span>
-          <p class="char-name">Le Rattler</p>
-          <p class="char-role">Antagoniste principal</p>
-          <p class="char-personality">Mena&ccedil;ant, rus&eacute; &mdash; cr&eacute;e la rivalit&eacute; et devient obstacle en Z2/Z3</p>
-          <span class="char-art-status art-todo">❌ &Agrave; faire</span>
-        </div>
-
-        <div class="char-card todo">
-          <span class="char-emoji">🎪</span>
-          <p class="char-name">Le Colporteur</p>
-          <p class="char-role">Vendeur ambulant &mdash; spawn rare</p>
-          <p class="char-personality">Jovial, opportuniste &mdash; prix d&eacute;favorables mais acc&egrave;s unique</p>
-          <span class="char-art-status art-todo">❌ &Agrave; faire</span>
-        </div>
-
-        <div class="char-card todo">
-          <span class="char-emoji">🌿</span>
-          <p class="char-name">Peuple de la Rivi&egrave;re</p>
-          <p class="char-role">Gardiens de Zone 2 (2&ndash;3 PNJs)</p>
-          <p class="char-personality">Sages, respectueux, protecteurs &mdash; donnent les qu&ecirc;tes spirituelles</p>
-          <span class="char-art-status art-todo">❌ &Agrave; faire</span>
-        </div>
-
       </div>
+
+      <!-- BELLE FONTAINE -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">💃</span>
+          <span class="av-label">Avatar</span>
+        </div>
+        <div class="char-info">
+          <h3>Belle Fontaine</h3>
+          <div class="char-subtitle">La G&eacute;rante du Saloon — Belle's Saloon, Dusthaven &bull; 30 ans</div>
+          <p class="char-detail"><strong>Look :</strong> &Eacute;l&eacute;gante malgr&eacute; le contexte. Robe longue sombre avec d&eacute;tails raffin&eacute;s. Cheveux auburn en chignon l&acirc;che, m&egrave;ches encadrant un visage expressif. Sourcils fins, yeux p&eacute;tillants.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Charmante, bavarde, curiosit&eacute; insatiable. Centre nerveux de Dusthaven. Conna&icirc;t toutes les rumeurs et tous les secrets. Tr&egrave;s protectrice envers ses clients r&eacute;guliers.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Source de potins, qu&ecirc;tes de livraison. Offre des <strong>buffs temporaires</strong> (charme, chance) apr&egrave;s certaines qu&ecirc;tes.</p>
+          <p class="char-quote">"Alors, mon petit veinard, l'or coule &agrave; flots ou c'est encore la travers&eacute;e du d&eacute;sert ?"</p>
+          <span class="char-signal">📶 Pr&egrave;s du piano ou derri&egrave;re le bar, un verre &agrave; la main</span>
+        </div>
+      </div>
+
+      <!-- SHERIFF BUCK DAWSON -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">🤠</span>
+          <span class="av-label">Avatar</span>
+        </div>
+        <div class="char-info">
+          <h3>Sheriff Buck Dawson</h3>
+          <div class="char-subtitle">L'Autorit&eacute; Corrompue — Bureau du Sheriff, Dusthaven &bull; 45 ans</div>
+          <p class="char-detail"><strong>Look :</strong> Grand, sec, d&eacute;marche raide. M&acirc;choire carr&eacute;e, yeux gris per&ccedil;ants, cheveux noirs courts sous un chapeau de sheriff us&eacute;. &Eacute;toile ternie. Gilet cuir noir, chemise blanche, bottes impeccables. Cicatrice sur l'ar&ecirc;te du nez.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Autoritaire, froid, rong&eacute; par la culpabilit&eacute;. Ancien compagnon d'Eli, a trahi sa confiance en vendant des infos &agrave; Rattner. Manipulateur.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Qu&ecirc;tes de "surveillance" (en r&eacute;alit&eacute; pour Rattner). Bloque l'acc&egrave;s &agrave; certaines zones en Z2. Peut devenir alli&eacute; secret si le joueur d&eacute;couvre la trahison.</p>
+          <p class="char-quote">"Je n'aime pas les probl&egrave;mes. Faites votre travail et restez en dehors des affaires des autres."</p>
+          <span class="char-signal">📶 S'approche du joueur, croise les bras. Claquement de bottes.</span>
+        </div>
+      </div>
+
+      <!-- GUSTAVE MOREAU -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">🔨</span>
+          <span class="av-label">Avatar</span>
+        </div>
+        <div class="char-info">
+          <h3>Gustave Moreau</h3>
+          <div class="char-subtitle">Le Forgeron Taciturne — La Forge, Dusthaven &bull; 52 ans</div>
+          <p class="char-detail"><strong>Look :</strong> Homme noir, massif, puissant. Cr&acirc;ne ras&eacute;, barbe grise bien taill&eacute;e. Yeux vifs. Mains calleuses. Tablier de forgeron en cuir br&ucirc;l&eacute;. Tatouage enclume sur l'avant-bras. Ancien esclave affranchi de Louisiane.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Taciturne, ne parle que si n&eacute;cessaire. Respecte le travail bien fait. Cache un lourd pass&eacute;. D'une grande honn&ecirc;tet&eacute;.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Fabrication et am&eacute;lioration d'outils (bat&eacute;es, tapis de filtrage). R&eacute;paration d'&eacute;quipement. Fabrique la <strong>Lanterne</strong> (Z3) et le <strong>Pickaxe</strong> (Z3, Lvl 12+). Forge le <strong>Pendentif de la M&eacute;t&eacute;orite</strong>.</p>
+          <p class="char-quote">"...Bon acier."</p>
+          <span class="char-signal">📶 Son r&eacute;p&eacute;titif du marteau. 3 coups sur l'enclume = fin de conversation.</span>
+        </div>
+      </div>
+
+      <!-- KAYA -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">🌿</span>
+          <span class="av-label">Avatar</span>
+        </div>
+        <div class="char-info">
+          <h3>Kaya</h3>
+          <div class="char-subtitle">La Gardienne du Serpent — Peuple du Serpent (Nahak'a) &bull; 35 ans</div>
+          <p class="char-detail"><strong>Look :</strong> Femme athl&eacute;tique, peau cuivr&eacute;e, traits anguleux, pommettes hautes, yeux sombres. Cheveux tress&eacute;s noirs orn&eacute;s de perles en os et plumes. V&ecirc;tements en peau tann&eacute;e, tons ocre et vert mousse. Collier de coquillages d'eau douce. Pieds nus ou mocassins silencieux.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Calme, mesur&eacute;e, profond&eacute;ment ancr&eacute;e dans la nature. Protectrice de la Confluence. Ne fait confiance qu'aux c&oelig;urs purs. Guide, n'impose pas.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Guide spirituelle et narrative. Interpr&egrave;te les fragments d'Eli et les runes Nahak'a. R&eacute;v&egrave;le les secrets de la Confluence. Donne la <strong>qu&ecirc;te de la M&eacute;t&eacute;orite</strong>. D&eacute;bloque des zones cach&eacute;es.</p>
+          <p class="char-quote">"La vall&eacute;e se souvient. De ceux qui &eacute;coutent. De ceux qui... prennent."</p>
+          <span class="char-signal">📶 Toujours accompagn&eacute;e du Coyote. Appara&icirc;t silencieusement.</span>
+        </div>
+      </div>
+
+      <!-- LE RATTLER -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">🐍</span>
+          <span class="av-label">Avatar</span>
+        </div>
+        <div class="char-info">
+          <h3>Silas "The Rattler" Rattner</h3>
+          <div class="char-subtitle">L'Antagoniste Calculateur — Magnat minier &bull; 50 ans</div>
+          <p class="char-detail"><strong>Look :</strong> Grand, mince, &eacute;l&eacute;gant. Visage osseux, joues creuses, nez aquilin. Yeux bruns vifs. Cheveux gris gomin&eacute;s, fine moustache. Costume trois-pi&egrave;ces gris anthracite, chapeau haut-de-forme. Canne &agrave; pommeau argent. Bague en or &agrave; l'auriculaire.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Charismatique, manipulateur, implacable. Se pr&eacute;sente comme un homme d'affaires honn&ecirc;te. Sa qu&ecirc;te de richesse est sans limite.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Antagoniste principal. Rach&egrave;te des concessions, bloque des passages, r&eacute;pand des rumeurs. Propose un <strong>deal 50/50</strong> pi&eacute;g&eacute; en Acte II. Confrontation finale en Acte III.</p>
+          <p class="char-quote">"Un homme intelligent sait reconna&icirc;tre une opportunit&eacute;, jeune homme. Surtout quand elle brille."</p>
+          <span class="char-signal">📶 Cliquetis de canne sur le plancher. Son silence est un avertissement.</span>
+        </div>
+      </div>
+
+      <!-- COYOTE -->
+      <div class="char-card-v2">
+        <div class="char-avatar-placeholder">
+          <span class="av-emoji">🐺</span>
+          <span class="av-label">Avatar</span>
+        </div>
+        <div class="char-info">
+          <h3>Coyote</h3>
+          <div class="char-subtitle">Le Guide Silencieux — Animal, compagnon de Kaya</div>
+          <p class="char-detail"><strong>Look :</strong> Vrai coyote. Pelage fauve-gris &eacute;pais, yeux ambr&eacute;s vifs. Oreille droite l&eacute;g&egrave;rement d&eacute;chir&eacute;e (vieille cicatrice). Queue touffue.</p>
+          <p class="char-detail"><strong>Personnalit&eacute; :</strong> Insaisissable, myst&eacute;rieux, toujours pr&eacute;sent. &Eacute;claireur et guide pour Kaya et le joueur. Ne fait jamais de bruit.</p>
+          <p class="char-detail"><strong>Gameplay :</strong> Guide non-verbal. Dirige le joueur vers Kaya ou vers des indices importants. Repr&eacute;sente l'esprit sauvage de la vall&eacute;e. Si Coyote est visible, Kaya est proche.</p>
+          <p class="char-quote"><em>(Aucun. Il regarde. C'est suffisant.)</em></p>
+          <span class="char-signal">📶 Appara&icirc;t et dispara&icirc;t. Jamais au m&ecirc;me endroit deux fois.</span>
+        </div>
+      </div>
+
     </section>
 
     <!-- ══════════════════════════════════════════════
+         SECTION 5    <!-- ══════════════════════════════════════════════
          SECTION 5 — BOUCLE DE GAMEPLAY
     ══════════════════════════════════════════════ -->
     <section id="gameloop" class="section-block">
@@ -1230,12 +1323,12 @@
           <p class="variant-desc">
             Barrage en rivi&egrave;re avec tapis filtrant. Collecte passive 2-4 items/2 min.
             <strong>Nettoyage branchages</strong> obligatoire (proximit&eacute; 30 studs).
-            1er cycle garanti. <strong>Ne b&eacute;n&eacute;ficie PAS</strong> du Gold Rush x2.
+            1er cycle garanti. <strong>Ne b&eacute;n&eacute;ficie PAS</strong> du Dusthaven x2.
           </p>
         </div>
 
         <div class="variant-card">
-          <p class="variant-title">&#9889; Gold Rush Events</p>
+          <p class="variant-title">&#9889; Dusthaven Events</p>
           <p class="variant-desc">
             Toutes les <strong>45 min</strong>, zone random en <strong>x2 drops pendant 5 min</strong>.
             Orpaillage actif seulement (pas le tapis). Alerte audio + visuelle serveur.
@@ -1360,7 +1453,7 @@
           </thead>
           <tbody>
             <tr><td><strong>MQ-01</strong></td><td>Z1</td><td>R&eacute;colter 20 p&eacute;pites d'or dans la rivi&egrave;re</td><td>Bat&eacute;e Am&eacute;lior&eacute;e + 50$</td></tr>
-            <tr><td><strong>MQ-02</strong></td><td>Z1</td><td>Apporter 5 p&eacute;pites &agrave; Old Silas sans passer par le Saloon</td><td>Acc&egrave;s D&eacute;tecteur + 30$</td></tr>
+            <tr><td><strong>MQ-02</strong></td><td>Z1</td><td>Apporter 5 p&eacute;pites &agrave; Jed Bramwell sans passer par le Saloon</td><td>Acc&egrave;s D&eacute;tecteur + 30$</td></tr>
             <tr><td><strong>MQ-03</strong></td><td>Z1</td><td>Construire un Tapis de Filtrage et r&eacute;cup&eacute;rer sa premi&egrave;re collecte</td><td>D&eacute;bloquer qu&ecirc;tes Z2 + 75$</td></tr>
             <tr><td><strong>MQ-04</strong></td><td>Z2</td><td>Traverser Copper Canyon jusqu'au bivouac</td><td>Recette Dynamite + 100$</td></tr>
             <tr><td><strong>MQ-05</strong></td><td>Z2</td><td>Neutraliser Le Rattler lors de sa premi&egrave;re apparition</td><td>Titre "Pistolero" + 150$</td></tr>
@@ -1368,7 +1461,7 @@
             <tr><td><strong>MQ-07</strong></td><td>Z3</td><td>Entrer dans la mine et activer le premier m&eacute;canisme du puzzle</td><td>Pickaxe Renforc&eacute;e + 250$</td></tr>
             <tr><td><strong>MQ-08</strong></td><td>Z3</td><td>R&eacute;soudre les 3 m&eacute;canismes du puzzle boss</td><td>Veine d'or secr&egrave;te + 400$</td></tr>
             <tr><td><strong>MQ-09</strong></td><td>Z3</td><td>Extraire 10 cristaux lumineux sans les casser</td><td>Cristal Rare + 350$</td></tr>
-            <tr><td><strong>MQ-10</strong></td><td>Toutes</td><td>Devenir le premier joueur &agrave; 1000$ de r&eacute;colte cumul&eacute;e</td><td>Titre "Gold Rush Legend" + skin exclusif</td></tr>
+            <tr><td><strong>MQ-10</strong></td><td>Toutes</td><td>Devenir le premier joueur &agrave; 1000$ de r&eacute;colte cumul&eacute;e</td><td>Titre "Dusthaven Legend" + skin exclusif</td></tr>
           </tbody>
         </table>
       </div>
@@ -1384,12 +1477,12 @@
             <tr><td><strong>BQ-02</strong></td><td>Z1</td><td>Battre le record de vitesse du Mini-jeu Timing</td><td>Skin outil + 80$</td></tr>
             <tr><td><strong>BQ-03</strong></td><td>Hub</td><td>Trouver les 3 lettres cach&eacute;es dans Dusthaven</td><td>Histoire secr&egrave;te + 120$</td></tr>
             <tr><td><strong>BQ-04</strong></td><td>Z2</td><td>Photographier (observer) Le Rattler sans se faire rep&eacute;rer</td><td>Info sur la prochaine cache + 60$</td></tr>
-            <tr><td><strong>BQ-05</strong></td><td>Toutes</td><td>Compl&eacute;ter un Gold Rush Event seul</td><td>Bonus permanent +5% drop rate</td></tr>
+            <tr><td><strong>BQ-05</strong></td><td>Toutes</td><td>Compl&eacute;ter un Dusthaven Event seul</td><td>Bonus permanent +5% drop rate</td></tr>
           </tbody>
         </table>
       </div>
 
-      <p class="quest-subtitle" style="margin-top:24px;">🌿 Qu&ecirc;tes Peuple de la Rivi&egrave;re</p>
+      <p class="quest-subtitle" style="margin-top:24px;">🌿 Qu&ecirc;tes Kaya (Nahak'a)</p>
       <div class="table-scroll">
         <table class="data-table">
           <thead>
@@ -1535,7 +1628,7 @@
         <li>Nom officiel de la monnaie</li>
         <li>M&eacute;caniques Saloon (Belle)</li>
         <li>Mini-jeux Zone 3 (pickaxe, tamis)</li>
-        <li>Syst&egrave;me de r&eacute;putation Peuple de la Rivi&egrave;re</li>
+        <li>Syst&egrave;me de r&eacute;putation Kaya (Nahak'a)</li>
         <li>Mode Coop &mdash; partage des ressources</li>
         <li>&Eacute;v&eacute;nements saisonniers / F&ecirc;tes</li>
         <li>Zone 4 (post-lancement &eacute;ventuel)</li>
@@ -1545,7 +1638,7 @@
 
     <!-- FOOTER -->
     <footer class="section-block footer">
-      <p>&#10022; Gold Rush Legacy &mdash; Dashboard de R&eacute;f&eacute;rence &mdash; Roblox Incubator 2026 &#10022;</p>
+      <p>&#10022; Dusthaven &mdash; Dashboard de R&eacute;f&eacute;rence &mdash; Roblox Incubator 2026 &#10022;</p>
       <p style="margin-top:6px;">Document de travail interne. Mis &agrave; jour r&eacute;guli&egrave;rement.</p>
     </footer>
 
