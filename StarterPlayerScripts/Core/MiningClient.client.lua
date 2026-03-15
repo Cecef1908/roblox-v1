@@ -233,28 +233,22 @@ local function ConnectPrompt(prompt)
 		local tool = AutoEquipTool(character, humanoid)
 		print("[MiningClient] Outil équipé:", tool and tool.Name or "AUCUN")
 
-		-- Jouer l'animation de minage
-		local animDuration = 0
-		if ToolAnimator:HasMineAnimation() then
-			-- Animation track (configurée dans AnimationConfig)
-			animDuration = ToolAnimator:PlayMineAnimation()
-		else
-			-- Fallback : animation procédurale Grip tween
-			animDuration = PlayPanningAnimation(character) or 1.0
-		end
-
-		-- Éclaboussures d'eau + paillettes pendant le swirl
-		task.delay(math.min(0.35, animDuration * 0.25), function()
-			PlayWaterSplashEffect(depositPos)
-			PlayWaterSound()
-		end)
-
-		-- Attendre la fin de l'animation
-		task.wait(animDuration)
-
-		-- Envoyer la requête au serveur
+		-- Envoyer la requête au serveur IMMÉDIATEMENT (pas d'attente animation)
 		Events.RequestMine:FireServer(deposit.Name)
 		print("[MiningClient] RequestMine envoyé pour:", deposit.Name)
+
+		-- Jouer l'animation en parallèle (cosmétique seulement)
+		task.spawn(function()
+			if ToolAnimator:HasMineAnimation() then
+				ToolAnimator:PlayMineAnimation()
+			else
+				PlayPanningAnimation(character)
+			end
+			task.delay(0.3, function()
+				PlayWaterSplashEffect(depositPos)
+				PlayWaterSound()
+			end)
+		end)
 
 		-- Réactiver après un court délai
 		task.delay(0.5, function()

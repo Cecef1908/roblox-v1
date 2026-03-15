@@ -63,14 +63,17 @@ local function makeWall(name, size, position, color, parent)
     })
 end
 
--- Raycast vers le bas pour trouver la hauteur du terrain
+-- Raycast vers le bas pour trouver la hauteur du TERRAIN (ignore les objets)
 local function getTerrainHeight(x, z)
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Include
+    params.FilterDescendantsInstances = {Workspace.Terrain}
     local ray = Workspace:Raycast(
         Vector3.new(x, 500, z),
         Vector3.new(0, -1000, 0),
-        RaycastParams.new()
+        params
     )
-    return ray and ray.Position.Y or 5
+    return ray and ray.Position.Y or 22
 end
 
 -- SurfaceGui pour les panneaux de zone (remplace addBillboard)
@@ -110,6 +113,22 @@ end
 -- ═══════════════════════════════════════════
 function MapBuilder:Init()
     print("[MapBuilder] Construction du monde...")
+
+    -- Cleanup ancien build (évite doublons si Init() appelé plusieurs fois)
+    for _, name in ipairs({"World", "Map", "ActiveGoldDeposits"}) do
+        for _, child in Workspace:GetChildren() do
+            if child.Name == name then child:Destroy() end
+        end
+    end
+    local RS = game:GetService("ReplicatedStorage")
+    local oldEvents = RS:FindFirstChild("Events")
+    if oldEvents then oldEvents:Destroy() end
+    local SS = game:GetService("ServerStorage")
+    for _, name in ipairs({"Templates", "ItemModels"}) do
+        local old = SS:FindFirstChild(name)
+        if old then old:Destroy() end
+    end
+
     self:CreateRemoteEvents()
     self:CreateFolders()
     self:SetupAtmosphere()
@@ -729,34 +748,20 @@ function MapBuilder:CreateWorld()
     worldFolder.Name = "World"
     worldFolder.Parent = Workspace
 
-    -- Nettoyer (sauf le Terrain importé)
-    for _, child in Workspace:GetChildren() do
-        if child:IsA("SpawnLocation") then child:Destroy() end
-        if child.Name == "Baseplate" then child:Destroy() end
-    end
-    -- PAS de Terrain:Clear() — le terrain DusthavenTerrain est importé manuellement
-    -- PAS de CreateTerrain() — idem
+    -- Le SpawnLocation est déjà placé dans le .rbxl — on n'y touche pas
 
-    -- Spawn (position à ajuster selon le terrain importé)
-    local spawnLoc = Instance.new("SpawnLocation")
-    spawnLoc.Name = "SpawnLocation"
-    spawnLoc.Size = Vector3.new(10, 1, 10)
-    spawnLoc.Position = Vector3.new(0, 155, 0)
-    spawnLoc.Anchored = true
-    spawnLoc.Transparency = 1
-    spawnLoc.CanCollide = false
-    spawnLoc.Parent = worldFolder
-
-    -- ═══ STEPS SUIVANTS (désactivés pour validation) ═══
-    -- self:CreateRiver()
-    -- self:CreateBridge(worldFolder)
-    -- self:CreateCollines()
-    -- self:CreateDusthavenArea(worldFolder)
-    -- self:CreateTrails(worldFolder)
-    -- self:CreateDecor(worldFolder)
-    -- self:CreateMiningZone(worldFolder)
+    self:CreateTerrain()
+    self:CreateRiver()
+    self:CreateBridge(worldFolder)
+    self:CreateCollines()
+    self:CreateDusthavenArea(worldFolder)
+    self:CreateMiningZone(worldFolder)
+    self:CreateMiningZone2()
+    self:CreateMiningZone3()
+    self:CreateTrails(worldFolder)
+    self:CreateDecor(worldFolder)
     self:SetupSkybox()
-    -- self:CreateTownNPCs(worldFolder)
+    self:CreateTownNPCs(worldFolder)
 end
 
 -- ═══════════════════════════════════════════
@@ -1127,32 +1132,15 @@ function MapBuilder:CreateMiningZone(worldFolder)
     z1.Name = "Zone1_RiviereTransquille"
     z1.Parent = mapFolder
 
-    -- Panneau "Dead Man's Shallows"
-    local signPost = makePart({
-        Name = "ZoneSignPost",
-        Size = Vector3.new(0.5, 5, 0.5),
-        Position = Vector3.new(-300, 2.5, -500),
-        Color = C.woodDark,
-        Material = Enum.Material.Wood,
-        Parent = z1,
-    })
-    local zoneSign = makePart({
-        Name = "ZoneSign",
-        Size = Vector3.new(10, 2.5, 0.4),
-        Position = Vector3.new(-300, 5.5, -500),
-        Color = C.sign,
-        Material = Enum.Material.Wood,
-        Parent = z1,
-    })
-    addZoneSign(zoneSign, "Dead Man's Shallows", Color3.fromRGB(255, 215, 0))
-
-    -- 3 batée stations sur les BERGES (décalées de la rivière, sur terre ferme)
-    -- La rivière passe par: (-280,-470), (-320,-200), (-250,100)
-    -- On décale de ~30-40 studs vers la terre pour être sur la rive
-    local stations = {
-        { name = "Batee1", x = -240, z = -460 }, -- rive ouest du virage nord
-        { name = "Batee2", x = -360, z = -150 }, -- rive ouest du virage milieu
-        { name = "Batee3", x = -210, z =  100 }, -- rive est du virage sud
+    -- Spots de minage Zone 1 — coordonnées calibrées depuis la carte 2D
+    -- Chaque spot = centre autour duquel 2 spawn points apparaissent
+    local spots = {
+        { name = "SpotTutoriel", x = 868, z = 566 },    -- pin 3
+        { name = "SpotCascade", x = 890, z = 648 },      -- pin 6
+        { name = "SpotBerge", x = 916, z = 429 },        -- pin 8
+        { name = "SpotCourbe", x = 814, z = 47 },        -- pin 14
+        { name = "MeandreOuest", x = 907, z = 287 },     -- pin 30
+        { name = "BancSable", x = 742, z = 287 },        -- pin 33
     }
 
     local spawnFolder = Instance.new("Folder")
@@ -1160,53 +1148,19 @@ function MapBuilder:CreateMiningZone(worldFolder)
     spawnFolder.Parent = z1
 
     local spawnIndex = 1
-
-    for _, station in ipairs(stations) do
-        local pontonFolder = Instance.new("Folder")
-        pontonFolder.Name = station.name
-        pontonFolder.Parent = z1
-
-        -- Ponton
-        makePart({
-            Name = station.name .. "_Floor",
-            Size = Vector3.new(8, 0.4, 8),
-            Position = Vector3.new(station.x, 0.2, station.z),
-            Color = C.wood,
-            Material = Enum.Material.WoodPlanks,
-            Parent = pontonFolder,
-        })
-        for _, corner in ipairs({{-3.5, -3.5}, {3.5, -3.5}, {-3.5, 3.5}, {3.5, 3.5}}) do
-            makePart({
-                Name = station.name .. "_Post",
-                Size = Vector3.new(0.5, 2, 0.5),
-                Position = Vector3.new(station.x + corner[1], -0.8, station.z + corner[2]),
-                Color = C.woodDark,
-                Material = Enum.Material.Wood,
-                Parent = pontonFolder,
-            })
-        end
-
-        -- Sol terre autour
-        makePart({
-            Name = station.name .. "_Ground",
-            Size = Vector3.new(20, 0.12, 20),
-            Position = Vector3.new(station.x, 0.06, station.z),
-            Color = Color3.fromRGB(170, 145, 95),
-            Material = Enum.Material.Ground,
-            Parent = pontonFolder,
-        })
-
-        -- 4 spawn points par station
-        for j = 1, 4 do
-            local angle = (j / 4) * math.pi * 2 + math.random() * 0.4
-            local radius = 6 + math.random() * 8
+    for _, spot in ipairs(spots) do
+        -- 2 spawn points par spot (rayon 8-15 studs autour du centre)
+        for j = 1, 2 do
+            local angle = (j / 2) * math.pi * 2 + math.random() * 0.5
+            local radius = 8 + math.random() * 7
+            local h = getTerrainHeight(spot.x, spot.z)
             local pt = makePart({
                 Name = "SP_" .. spawnIndex,
                 Size = Vector3.new(3, 0.1, 3),
                 Position = Vector3.new(
-                    station.x + math.cos(angle) * radius,
-                    0.05,
-                    station.z + math.sin(angle) * radius
+                    spot.x + math.cos(angle) * radius,
+                    h + 1,
+                    spot.z + math.sin(angle) * radius
                 ),
                 Transparency = 1,
                 CanCollide = false,
@@ -1218,9 +1172,125 @@ function MapBuilder:CreateMiningZone(worldFolder)
         end
     end
 
-    print("[MapBuilder] Zone de minage créée — 3 stations, 12 spawn points ✓")
+    print("[MapBuilder] Zone 1 créée — " .. (spawnIndex - 1) .. " spawn points ✓")
 end
 
+-- ═══════════════════════════════════════════
+-- ZONE 2 — Collines Ambrées (spawn points pour GoldSpawner)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateMiningZone2()
+    local mapFolder = Workspace:FindFirstChild("Map")
+    if not mapFolder then return end
+
+    local z2 = Instance.new("Folder")
+    z2.Name = "Zone2_CollinesAmbrees"
+    z2.Parent = mapFolder
+
+    -- Zone 2 spots — côté est de la rivière, zone collines
+    -- Coordonnées calibrées depuis la carte 2D
+    local spots = {
+        { name = "GraviereEst", x = 258, z = 523 },     -- pin 34
+        { name = "InscriptionZone", x = 127, z = 435 },  -- pin 12 area
+        { name = "Rapides", x = 97, z = 140 },           -- pin 32
+        { name = "SpotBassin", x = 150, z = 280 },       -- sud-est rivière
+        { name = "LitAsseche", x = 178, z = 824 },       -- pin 35
+    }
+
+    local spawnFolder = Instance.new("Folder")
+    spawnFolder.Name = "SpawnPoints"
+    spawnFolder.Parent = z2
+
+    local spawnIndex = 1
+    for _, spot in ipairs(spots) do
+        for j = 1, 2 do
+            local angle = (j / 2) * math.pi * 2 + math.random() * 0.5
+            local radius = 8 + math.random() * 7
+            local h = getTerrainHeight(spot.x, spot.z)
+            local pt = makePart({
+                Name = "SP_" .. spawnIndex,
+                Size = Vector3.new(3, 0.1, 3),
+                Position = Vector3.new(
+                    spot.x + math.cos(angle) * radius,
+                    h + 1,
+                    spot.z + math.sin(angle) * radius
+                ),
+                Transparency = 1,
+                CanCollide = false,
+                Anchored = true,
+                Parent = spawnFolder,
+            })
+            pt:SetAttribute("ZoneId", "Zone2")
+            spawnIndex = spawnIndex + 1
+        end
+    end
+
+    print("[MapBuilder] Zone 2 créée — " .. (spawnIndex - 1) .. " spawn points ✓")
+end
+
+-- ═══════════════════════════════════════════
+-- ZONE 3 — Mine de Crow Creek (spawn points pour GoldSpawner)
+-- ═══════════════════════════════════════════
+function MapBuilder:CreateMiningZone3()
+    local mapFolder = Workspace:FindFirstChild("Map")
+    if not mapFolder then return end
+
+    local z3 = Instance.new("Folder")
+    z3.Name = "Zone3_MineCrowCreek"
+    z3.Parent = mapFolder
+
+    -- Zone 3 — autour du cratère (intérieur et bord)
+    -- Les filons sont dans le cratère lui-même
+    local spots = {
+        { name = "CratereNord", x = 484, z = 540 },
+        { name = "CratereEst", x = 430, z = 485 },
+        { name = "CratereSud", x = 484, z = 430 },
+        { name = "CratereOuest", x = 540, z = 485 },
+        { name = "ConfluenceNord", x = 354, z = 825 },  -- pin 29
+        { name = "SpotSecret", x = 78, z = 302 },       -- pin 5
+    }
+
+    local spawnFolder = Instance.new("Folder")
+    spawnFolder.Name = "SpawnPoints"
+    spawnFolder.Parent = z3
+
+    local spawnIndex = 1
+    for _, spot in ipairs(spots) do
+        for j = 1, 2 do
+            local angle = (j / 2) * math.pi * 2 + math.random() * 0.5
+            local radius = 8 + math.random() * 7
+            local h = getTerrainHeight(spot.x, spot.z)
+            local pt = makePart({
+                Name = "SP_" .. spawnIndex,
+                Size = Vector3.new(3, 0.1, 3),
+                Position = Vector3.new(
+                    spot.x + math.cos(angle) * radius,
+                    h + 1,
+                    spot.z + math.sin(angle) * radius
+                ),
+                Transparency = 1,
+                CanCollide = false,
+                Anchored = true,
+                Parent = spawnFolder,
+            })
+            pt:SetAttribute("ZoneId", "Zone3")
+            spawnIndex = spawnIndex + 1
+        end
+    end
+
+    -- Boss arena au centre du cratère
+    local bossArena = makePart({
+        Name = "BossArena",
+        Size = Vector3.new(40, 0.2, 40),
+        Position = Vector3.new(484, 0.1, 485),
+        Color = C.stoneDark,
+        Material = Enum.Material.Slate,
+        Transparency = 0.8,
+        Parent = z3,
+    })
+    bossArena:SetAttribute("IsBossArena", true)
+
+    print("[MapBuilder] Zone 3 créée — " .. (spawnIndex - 1) .. " spawn points + boss arena ✓")
+end
 
 -- ═══════════════════════════════════════════
 -- SKYBOX
@@ -1245,64 +1315,28 @@ function MapBuilder:SetupSkybox()
 end
 
 -- ═══════════════════════════════════════════
--- NPCs DE LA VILLE (R15 animés)
+-- NPCs DE LA VILLE — en cercle dans le cratère
 -- ═══════════════════════════════════════════
--- NPCs dans Dusthaven (zone plate à (120, -330))
--- Même sans bâtiments, ils attendent les joueurs en plein air
-local NPC_DATA = {
-    {
-        -- Entrée de Dusthaven, accueille les arrivants du passage
-        pos = Vector3.new(60, 0, -330), facing = 270,
-        name = "Guide", displayName = "Tom le Guide",
-        npcType = "Tutor", actionText = "Parler",
-        skin = Color3.fromRGB(190, 150, 110),
-        torso = Color3.fromRGB(80, 130, 80),
-        legs = Color3.fromRGB(60, 50, 35),
-        shirt = 2789617463, pants = 2789619169,
-    },
-    {
-        -- Centre-ouest de Dusthaven
-        pos = Vector3.new(100, 0, -310), facing = 220,
-        name = "ToolVendor", displayName = "Jake l'Outilleur",
-        npcType = "ToolShop", actionText = "Acheter des outils",
-        skin = Color3.fromRGB(180, 140, 100),
-        torso = Color3.fromRGB(139, 90, 43),
-        legs = Color3.fromRGB(70, 50, 30),
-        shirt = 2789617463, pants = 2789619169,
-        hat = "425117435",
-    },
-    {
-        -- Centre de Dusthaven
-        pos = Vector3.new(130, 0, -340), facing = 180,
-        name = "Marcel", displayName = "Marcel le Marchand",
-        npcType = "Merchant", actionText = "Vendre de l'or",
-        skin = Color3.fromRGB(210, 170, 130),
-        torso = Color3.fromRGB(50, 100, 50),
-        legs = Color3.fromRGB(50, 40, 30),
-        shirt = 2789617463, pants = 2789619169,
-        hat = "30385423",
-    },
-    {
-        -- Nord-est de Dusthaven
-        pos = Vector3.new(160, 0, -315), facing = 250,
-        name = "Gustave", displayName = "Gustave le Forgeron",
-        npcType = "Crafter", actionText = "Forger",
-        skin = Color3.fromRGB(170, 130, 90),
-        torso = Color3.fromRGB(160, 80, 40),
-        legs = Color3.fromRGB(60, 45, 25),
-        shirt = 2789617463, pants = 2789619169,
-    },
-    {
-        -- Sud-est de Dusthaven
-        pos = Vector3.new(150, 0, -350), facing = 300,
-        name = "Bill", displayName = "Bill le Barman",
-        npcType = "Saloon", actionText = "Boire un verre",
-        skin = Color3.fromRGB(200, 160, 120),
-        torso = Color3.fromRGB(180, 60, 60),
-        legs = Color3.fromRGB(40, 35, 30),
-        shirt = 2789617463, pants = 2789619169,
-        hat = "425117435",
-    },
+local CRATER_CENTER_X = 484
+local CRATER_CENTER_Z = 485
+local CRATER_NPC_RADIUS = 20
+
+local NPC_DEFS = {
+    { name = "Guide", displayName = "Tom le Guide", npcType = "Tutor", actionText = "Parler",
+      skin = Color3.fromRGB(190, 150, 110), torso = Color3.fromRGB(80, 130, 80), legs = Color3.fromRGB(60, 50, 35),
+      shirt = 2789617463, pants = 2789619169 },
+    { name = "ToolVendor", displayName = "Jake l'Outilleur", npcType = "ToolShop", actionText = "Acheter des outils",
+      skin = Color3.fromRGB(180, 140, 100), torso = Color3.fromRGB(139, 90, 43), legs = Color3.fromRGB(70, 50, 30),
+      shirt = 2789617463, pants = 2789619169, hat = "425117435" },
+    { name = "Marcel", displayName = "Marcel le Marchand", npcType = "Merchant", actionText = "Vendre de l'or",
+      skin = Color3.fromRGB(210, 170, 130), torso = Color3.fromRGB(50, 100, 50), legs = Color3.fromRGB(50, 40, 30),
+      shirt = 2789617463, pants = 2789619169, hat = "30385423" },
+    { name = "Gustave", displayName = "Gustave le Forgeron", npcType = "Crafter", actionText = "Forger",
+      skin = Color3.fromRGB(170, 130, 90), torso = Color3.fromRGB(160, 80, 40), legs = Color3.fromRGB(60, 45, 25),
+      shirt = 2789617463, pants = 2789619169 },
+    { name = "Bill", displayName = "Bill le Barman", npcType = "Saloon", actionText = "Boire un verre",
+      skin = Color3.fromRGB(200, 160, 120), torso = Color3.fromRGB(180, 60, 60), legs = Color3.fromRGB(40, 35, 30),
+      shirt = 2789617463, pants = 2789619169, hat = "425117435" },
 }
 
 function MapBuilder:CreateTownNPCs(worldFolder)
@@ -1310,11 +1344,23 @@ function MapBuilder:CreateTownNPCs(worldFolder)
     npcFolder.Name = "TownNPCs"
     npcFolder.Parent = worldFolder
 
-    for _, data in ipairs(NPC_DATA) do
+    local total = #NPC_DEFS
+    for i, data in ipairs(NPC_DEFS) do
+        -- Position en cercle autour du cratère
+        local angle = (i / total) * math.pi * 2 - math.pi / 2
+        local x = CRATER_CENTER_X + math.cos(angle) * CRATER_NPC_RADIUS
+        local z = CRATER_CENTER_Z + math.sin(angle) * CRATER_NPC_RADIUS
+        local h = getTerrainHeight(x, z)
+
+        -- Face vers le centre du cratère
+        local facingRad = math.atan2(CRATER_CENTER_X - x, CRATER_CENTER_Z - z)
+        data.pos = Vector3.new(x, h, z)
+        data.facing = math.deg(facingRad)
+
         self:CreateNPC(npcFolder, data)
     end
 
-    print("[MapBuilder] " .. #NPC_DATA .. " NPCs créés")
+    print("[MapBuilder] " .. total .. " NPCs placés dans le cratère")
 end
 
 -- ═══════════════════════════════════════════

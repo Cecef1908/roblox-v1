@@ -18,6 +18,9 @@ local ToolConfig = require(ReplicatedStorage.Modules.Config.ToolConfig)
 local MiningCooldowns = {} -- { [userId] = lastMineTime }
 local MIN_MINE_INTERVAL = 2
 
+-- Track pending minigames (anti-exploit: can't send score without starting minigame)
+local PendingMinigames = {} -- { [userId] = depositId }
+
 -- ==========================================
 -- INIT
 -- ==========================================
@@ -103,6 +106,7 @@ function MiningSystem:HandleMineRequest(player: Player, depositId: string)
     -- Zone 1 : déclencher le mini-jeu de batée côté client
     if zoneId == "Zone1" then
         deposit:SetAttribute("IsActive", false)
+        PendingMinigames[player.UserId] = depositId
         print("[MiningSystem] StartBateeMinigame envoyé à", player.Name, "deposit:", depositId)
         ReplicatedStorage.Events.RemoteEvents.StartBateeMinigame:FireClient(player, depositId)
         return
@@ -118,6 +122,13 @@ end
 -- ==========================================
 function MiningSystem:HandleBateeResult(player: Player, depositId: string, score: number)
     print("[MiningSystem] BateeResult de", player.Name, "deposit:", depositId, "score:", score)
+
+    -- Anti-exploit : vérifier qu'un minigame a bien été demandé
+    if PendingMinigames[player.UserId] ~= depositId then
+        warn("[MiningSystem] BateeResult sans minigame pending — exploit?", player.Name)
+        return
+    end
+    PendingMinigames[player.UserId] = nil
 
     if type(score) ~= "number" then
         warn("[MiningSystem] Score invalide (pas un nombre)")
@@ -189,9 +200,11 @@ function MiningSystem:ProcessMining(player: Player, deposit: Instance, zoneId: s
 
     -- Notifier le QuestManager
     local QuestManager = require(ServerScriptService.Systems.QuestManager)
+    local StoryManager = require(ServerScriptService.Systems.StoryManager)
     for itemName, qty in pairs(drops) do
         QuestManager:OnMineGold(player, itemName, qty)
     end
+    StoryManager:OnMineGold(player)
 
     -- Envoyer le résultat au client (drops + XP)
     print("[MiningSystem] Drops pour", player.Name, ":", drops, "XP:", totalXP)

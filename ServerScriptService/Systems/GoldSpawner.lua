@@ -82,6 +82,9 @@ function GoldSpawner:SpawnDeposit(zoneId: string, spawnPoint: BasePart)
 
     deposit.Parent = Workspace.ActiveGoldDeposits
 
+    -- DEBUG: log position
+    print(string.format("[GoldSpawner] Spawned %s at position (%d, %d, %d)", deposit.Name, spawnPoint.Position.X, spawnPoint.Position.Y, spawnPoint.Position.Z))
+
     -- Positionner avec rotation aléatoire pour varier le visuel
     local randomAngle = math.random() * math.pi * 2
     local spawnCFrame = spawnPoint.CFrame * CFrame.Angles(0, randomAngle, 0)

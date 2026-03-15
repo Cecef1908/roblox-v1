@@ -25,6 +25,7 @@ local QuestManager = require(ServerScriptService.Systems.QuestManager)
 local BossManager = require(ServerScriptService.Systems.BossManager)
 local SaloonManager = require(ServerScriptService.Systems.SaloonManager)
 local LeaderboardManager = require(ServerScriptService.Systems.LeaderboardManager)
+local StoryManager = require(ServerScriptService.Systems.StoryManager)
 local GameConfig = require(ReplicatedStorage.Modules.Config.GameConfig)
 
 -- État global serveur
@@ -44,6 +45,14 @@ function Initialize()
     -- 0. Construire le monde (remote events, templates, map, NPCs)
     MapBuilder:Init()
 
+    -- 0.5. DevCommand RemoteEvent (après MapBuilder qui crée Events/)
+    devEvent = Instance.new("RemoteEvent")
+    devEvent.Name = "DevCommand"
+    devEvent.Parent = ReplicatedStorage.Events.RemoteEvents
+    devEvent.OnServerEvent:Connect(function(player, cmd)
+        HandleDevCommand(player, cmd)
+    end)
+
     -- 1. Initialiser le DataManager (ProfileStore)
     DataManager:Init()
 
@@ -56,6 +65,7 @@ function Initialize()
     BossManager:Init()
     SaloonManager:Init()
     LeaderboardManager:Init()
+    StoryManager:Init()
 
     -- 3. Connecter les événements joueurs
     Players.PlayerAdded:Connect(OnPlayerAdded)
@@ -73,10 +83,50 @@ function Initialize()
 end
 
 -- ==========================================
+-- DEV COMMANDS — A RETIRER AVANT PUBLICATION
+-- ==========================================
+local function HandleDevCommand(player: Player, msg: string)
+    if msg == "/give" then
+        local data = DataManager:GetData(player)
+        if not data then return end
+        data.Inventory.Paillettes = (data.Inventory.Paillettes or 0) + 50
+        data.Inventory.Pepites = (data.Inventory.Pepites or 0) + 20
+        data.Inventory.MineraiOr = (data.Inventory.MineraiOr or 0) + 15
+        data.Inventory.Quartz = (data.Inventory.Quartz or 0) + 5
+        data.Inventory.Amethyste = (data.Inventory.Amethyste or 0) + 3
+        data.Inventory.Topaze = (data.Inventory.Topaze or 0) + 1
+        data.Cash = (data.Cash or 0) + 500
+        data.XP = (data.XP or 0) + 200
+        ReplicatedStorage.Events.RemoteEvents.PlayerDataUpdated:FireClient(player, data)
+        print("[DevCmd] /give — inventaire rempli pour " .. player.Name)
+    elseif msg == "/lvlup" then
+        DataManager:AddXP(player, 500)
+        local data = DataManager:GetData(player)
+        if data then
+            ReplicatedStorage.Events.RemoteEvents.PlayerDataUpdated:FireClient(player, data)
+        end
+        print("[DevCmd] /lvlup — +500 XP pour " .. player.Name)
+    end
+end
+
+local function SetupDevCommands(player: Player)
+    -- Legacy chat
+    player.Chatted:Connect(function(msg)
+        HandleDevCommand(player, msg)
+    end)
+end
+
+-- DevCommand RemoteEvent — créé dans Initialize() après MapBuilder:Init()
+local devEvent = nil
+
+-- ==========================================
 -- JOUEUR REJOINT
 -- ==========================================
 function OnPlayerAdded(player: Player)
     print("[GameManager] Joueur rejoint :", player.Name)
+
+    -- Dev commands
+    SetupDevCommands(player)
 
     -- 1. Charger / créer le profil
     local profile = DataManager:LoadProfile(player)
@@ -119,13 +169,10 @@ function OnPlayerAdded(player: Player)
         initEvent:FireClient(player, profile.Data)
     end
 
-    -- 7. Si tutoriel non complété, déclencher le tuto
-    if not profile.Data.Tutorial.Completed then
-        local tutEvent = ReplicatedStorage.Events.RemoteEvents:FindFirstChild("StartTutorial")
-        if tutEvent then
-            tutEvent:FireClient(player, profile.Data.Tutorial.Step)
-        end
-    end
+    -- 7. Story quest chain
+    task.delay(3, function()
+        StoryManager:StartForPlayer(player)
+    end)
 
     -- 8. Mettre à jour le leaderboard
     LeaderboardManager:UpdatePlayer(player)

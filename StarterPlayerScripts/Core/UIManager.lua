@@ -1,6 +1,6 @@
 --[[
 	UIManager.lua (ModuleScript)
-	ROLE : Module partagé pour l'UI client — HUD premium western, responsive mobile.
+	Western Ink — HUD premium RPG, desktop-first, 18+ audience.
 ]]
 
 local UIManager = {}
@@ -18,59 +18,93 @@ local Events = ReplicatedStorage:WaitForChild("Events"):WaitForChild("RemoteEven
 local PlayerData = nil
 
 -- ═══════════════════════════════════════════
--- RESPONSIVE — detect platform
+-- RESPONSIVE — PreferredInput + UIScale
 -- ═══════════════════════════════════════════
-local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+local BASE_HEIGHT = 1080
+
+local function detectPlatform(): string
+	local ok, preferred = pcall(function()
+		return UserInputService.PreferredInput
+	end)
+	if ok and preferred == Enum.PreferredInput.Touch then
+		return "mobile"
+	elseif ok and preferred == Enum.PreferredInput.Gamepad then
+		return "console"
+	end
+	-- Fallback for older clients
+	if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+		return "mobile"
+	end
+	return "desktop"
+end
+
+local platform = detectPlatform()
+local isMobile = (platform == "mobile")
 local screenSize = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1920, 1080)
-local guiInset = GuiService:GetGuiInset()
 
 local function updateScreenInfo()
 	local cam = workspace.CurrentCamera
 	if cam then
 		screenSize = cam.ViewportSize
 	end
-	isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+	platform = detectPlatform()
+	isMobile = (platform == "mobile")
 end
 
--- Scale factor: desktop always returns baseSize, mobile scales down
+-- S() scales sizes for mobile. Desktop uses raw values; UIScale handles viewport adaptation.
 local function S(baseSize)
 	if isMobile then
-		local scale = math.clamp(screenSize.X / 1200, 0.55, 0.85)
-		return math.max(math.floor(baseSize * scale), 6)
+		local scale = math.clamp(screenSize.X / 1200, 0.6, 0.9)
+		return math.max(math.floor(baseSize * scale), 8)
 	end
-	-- Desktop: no scaling, just return the base size as-is
 	return baseSize
 end
 
+-- Update UIScale on the main HUD based on viewport
+local function updateUIScale(screenGui)
+	local scaleObj = screenGui:FindFirstChild("ResponsiveScale")
+	if not scaleObj then return end
+	local viewportY = screenSize.Y
+	scaleObj.Scale = math.clamp(viewportY / BASE_HEIGHT, 0.65, 1.4)
+end
+
 -- ═══════════════════════════════════════════
--- STYLE CONSTANTS
+-- STYLE — Western Ink
 -- ═══════════════════════════════════════════
 local COLORS = {
-	BgDark = Color3.fromRGB(22, 18, 14),
-	BgPanel = Color3.fromRGB(35, 28, 22),
-	BgRow = Color3.fromRGB(50, 40, 30),
-	BgRowHover = Color3.fromRGB(65, 52, 38),
-	BgButton = Color3.fromRGB(60, 45, 25),
-	BgButtonHover = Color3.fromRGB(80, 60, 35),
+	BgDark = Color3.fromRGB(18, 15, 12),
+	BgPanel = Color3.fromRGB(28, 23, 18),
+	BgRow = Color3.fromRGB(38, 32, 25),
+	BgRowHover = Color3.fromRGB(48, 40, 32),
+	BgButton = Color3.fromRGB(45, 38, 28),
+	BgButtonHover = Color3.fromRGB(58, 48, 35),
 
-	Gold = Color3.fromRGB(255, 215, 0),
-	GoldDark = Color3.fromRGB(200, 160, 50),
-	GoldMuted = Color3.fromRGB(180, 150, 60),
+	Gold = Color3.fromRGB(195, 165, 85),
+	GoldDark = Color3.fromRGB(145, 120, 60),
+	GoldMuted = Color3.fromRGB(160, 138, 75),
 
-	TextWhite = Color3.fromRGB(240, 230, 210),
-	TextGray = Color3.fromRGB(170, 160, 145),
-	TextDim = Color3.fromRGB(120, 110, 95),
+	TextWhite = Color3.fromRGB(215, 208, 195),
+	TextGray = Color3.fromRGB(140, 132, 118),
+	TextDim = Color3.fromRGB(95, 88, 75),
 
-	Success = Color3.fromRGB(80, 200, 80),
-	Error = Color3.fromRGB(220, 70, 70),
-	Info = Color3.fromRGB(100, 170, 240),
-	LevelUp = Color3.fromRGB(255, 180, 50),
+	Success = Color3.fromRGB(75, 165, 75),
+	Error = Color3.fromRGB(185, 60, 55),
+	Info = Color3.fromRGB(85, 145, 200),
+	LevelUp = Color3.fromRGB(210, 170, 60),
 
-	RarityCommon = Color3.fromRGB(180, 170, 155),
-	RarityUncommon = Color3.fromRGB(100, 200, 100),
-	RarityRare = Color3.fromRGB(80, 150, 255),
-	RarityEpic = Color3.fromRGB(180, 80, 255),
-	RarityLegendary = Color3.fromRGB(255, 180, 0),
+	RarityCommon = Color3.fromRGB(150, 142, 130),
+	RarityUncommon = Color3.fromRGB(85, 170, 85),
+	RarityRare = Color3.fromRGB(70, 130, 215),
+	RarityEpic = Color3.fromRGB(155, 70, 215),
+	RarityLegendary = Color3.fromRGB(210, 155, 30),
+}
+
+local FONTS = {
+	Title = Enum.Font.Antique,
+	Header = Enum.Font.SourceSansBold,
+	Body = Enum.Font.SourceSans,
+	Number = Enum.Font.SourceSansBold,
+	Small = Enum.Font.SourceSansLight,
 }
 
 local ITEM_RARITY = {
@@ -81,7 +115,7 @@ local ITEM_RARITY = {
 
 local ITEM_ICONS = {
 	Paillettes = "✦", Pepites = "◆", MineraiOr = "⬡", OrPur = "●",
-	Lingots = "▬", Quartz = "◇", Amethyste = "♦", Topaze = "★", Diamant = "💎",
+	Lingots = "▬", Quartz = "◇", Amethyste = "♦", Topaze = "★", Diamant = "◈",
 }
 
 local ITEM_DISPLAY = {
@@ -105,7 +139,7 @@ end
 -- ═══════════════════════════════════════════
 local function addCorner(parent, radius)
 	local c = Instance.new("UICorner")
-	c.CornerRadius = UDim.new(0, radius or 8)
+	c.CornerRadius = UDim.new(0, radius or 6)
 	c.Parent = parent
 	return c
 end
@@ -113,8 +147,8 @@ end
 local function addStroke(parent, color, thickness, transparency)
 	local s = Instance.new("UIStroke")
 	s.Color = color or COLORS.GoldDark
-	s.Thickness = thickness or 2
-	s.Transparency = transparency or 0
+	s.Thickness = thickness or 1
+	s.Transparency = transparency or 0.3
 	s.Parent = parent
 	return s
 end
@@ -148,10 +182,47 @@ local function tweenProperty(obj, props, duration, style, direction)
 end
 
 -- ═══════════════════════════════════════════
+-- HAPTIC FEEDBACK (mobile only)
+-- ═══════════════════════════════════════════
+local HapticService = pcall(game.GetService, game, "HapticService") and game:GetService("HapticService") or nil
+
+local function haptic(_intensity)
+	-- Haptic feedback for mobile — silently fails if unsupported
+	if not isMobile or not HapticService then return end
+	pcall(function()
+		if HapticService:IsMotorSupported(Enum.UserInputType.Gamepad1, Enum.VibrationMotor.Small) then
+			HapticService:SetMotor(Enum.UserInputType.Gamepad1, Enum.VibrationMotor.Small, _intensity or 0.3)
+			task.delay(0.1, function()
+				pcall(function()
+					HapticService:SetMotor(Enum.UserInputType.Gamepad1, Enum.VibrationMotor.Small, 0)
+				end)
+			end)
+		end
+	end)
+end
+
+-- ═══════════════════════════════════════════
 -- INIT
 -- ═══════════════════════════════════════════
 function UIManager:Init()
 	updateScreenInfo()
+
+	-- Disable default Roblox UI (we have our own HUD)
+	local StarterGui = game:GetService("StarterGui")
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
+
+	-- React to input mode changes (tablet + keyboard, etc.)
+	pcall(function()
+		UserInputService:GetPropertyChangedSignal("PreferredInput"):Connect(function()
+			local oldMobile = isMobile
+			updateScreenInfo()
+			if isMobile ~= oldMobile then
+				self:CreateHUD()
+				self:RefreshHUD()
+			end
+		end)
+	end)
 
 	Events.InitPlayerData.OnClientEvent:Connect(function(data)
 		PlayerData = data
@@ -180,7 +251,76 @@ function UIManager:Init()
 	end)
 
 	self:CreateHUD()
-	print("[UIManager] Initialisé ✓")
+	self:SetupKeybinds()
+	print("[UIManager] Initialisé")
+end
+
+-- ═══════════════════════════════════════════
+-- KEYBINDS
+-- ═══════════════════════════════════════════
+local inventoryOpen = not (UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled)
+
+function UIManager:SetupKeybinds()
+	-- Desktop: Tab or I to toggle inventory
+	UserInputService.InputBegan:Connect(function(input, gameProcessed)
+		if gameProcessed then return end
+		if input.KeyCode == Enum.KeyCode.Tab or input.KeyCode == Enum.KeyCode.I then
+			self:ToggleInventory()
+		end
+	end)
+
+	-- Mobile: swipe right to open inventory, swipe left to close
+	if isMobile then
+		UserInputService.TouchSwipe:Connect(function(direction, _, processed)
+			if processed then return end
+			if direction == Enum.SwipeDirection.Right and not inventoryOpen then
+				self:ToggleInventory()
+			elseif direction == Enum.SwipeDirection.Left and inventoryOpen then
+				self:ToggleInventory()
+			end
+		end)
+	end
+end
+
+function UIManager:ToggleInventory()
+	local mainHUD = playerGui:FindFirstChild("MainHUD")
+	if not mainHUD then return end
+	local invFrame = mainHUD:FindFirstChild("InventoryFrame")
+	if not invFrame then return end
+
+	inventoryOpen = not inventoryOpen
+	if isMobile then
+		-- Mobile: show/hide fullscreen overlay
+		if inventoryOpen then
+			self:RefreshInventory(mainHUD)
+			invFrame.Visible = true
+			invFrame.BackgroundTransparency = 1
+			tweenProperty(invFrame, {BackgroundTransparency = 0.05}, 0.2)
+		else
+			tweenProperty(invFrame, {BackgroundTransparency = 1}, 0.2)
+			task.delay(0.2, function()
+				if not inventoryOpen then invFrame.Visible = false end
+			end)
+		end
+	else
+		-- Desktop: slide from left
+		local offX = -(invFrame.Size.X.Offset + 20)
+		if inventoryOpen then
+			self:RefreshInventory(mainHUD)
+			invFrame.Visible = true
+			invFrame.Position = UDim2.new(0, offX, 0.5, -(invFrame.Size.Y.Offset / 2))
+			tweenProperty(invFrame, {
+				Position = UDim2.new(0, 12, 0.5, -(invFrame.Size.Y.Offset / 2)),
+			}, 0.25, Enum.EasingStyle.Quad)
+		else
+			tweenProperty(invFrame, {
+				Position = UDim2.new(0, offX, 0.5, -(invFrame.Size.Y.Offset / 2)),
+			}, 0.2, Enum.EasingStyle.Quad)
+			task.delay(0.2, function()
+				if not inventoryOpen then invFrame.Visible = false end
+			end)
+		end
+	end
 end
 
 -- ═══════════════════════════════════════════
@@ -197,342 +337,444 @@ function UIManager:CreateHUD()
 	mainHUD.ResetOnSpawn = false
 	mainHUD.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	mainHUD.IgnoreGuiInset = false
+	pcall(function() mainHUD.ScreenInsets = Enum.ScreenInsets.CoreUISafeInsets end)
 	mainHUD.Parent = playerGui
+
+	-- UIScale adapts all children to viewport resolution
+	local uiScale = Instance.new("UIScale")
+	uiScale.Name = "ResponsiveScale"
+	uiScale.Parent = mainHUD
+	updateUIScale(mainHUD)
+
+	-- Listen for viewport resize
+	local cam = workspace.CurrentCamera
+	if cam then
+		cam:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+			updateScreenInfo()
+			updateUIScale(mainHUD)
+		end)
+	end
 
 	self:CreateTopBar(mainHUD)
 	self:CreateInventoryPanel(mainHUD)
 	self:CreateToolBar(mainHUD)
 	self:CreateNotificationContainer(mainHUD)
+	-- self:CreateMinimap(mainHUD) -- désactivée pour l'instant
 end
 
 -- ═══════════════════════════════════════════
--- TOP BAR — Cash + Level + XP
+-- TOP BAR — Cash display (top-right, minimal)
 -- ═══════════════════════════════════════════
 function UIManager:CreateTopBar(parent)
-	local w = isMobile and S(200) or S(240)
-	local cashH = isMobile and S(34) or S(38)
-	local levelH = isMobile and S(38) or S(44)
-	local gap = 4
-	local margin = isMobile and 6 or 10
-
+	local tbW = isMobile and 130 or S(160)
+	local tbH = isMobile and 44 or S(38)
 	local topBar = Instance.new("Frame")
 	topBar.Name = "TopBar"
-	topBar.Size = UDim2.new(0, w, 0, cashH + levelH + gap)
-	topBar.Position = UDim2.new(1, -(w + margin), 0, margin)
-	topBar.BackgroundTransparency = 1
+	topBar.Size = UDim2.new(0, tbW, 0, tbH)
+	topBar.Position = UDim2.new(1, -(tbW + 12), 0, 10)
+	topBar.BackgroundColor3 = COLORS.BgDark
+	topBar.BackgroundTransparency = 0.15
 	topBar.Parent = parent
+	addCorner(topBar, 6)
+	addStroke(topBar, COLORS.GoldDark, 1, 0.5)
 
-	-- Cash frame
-	local cashFrame = Instance.new("Frame")
-	cashFrame.Name = "CashFrame"
-	cashFrame.Size = UDim2.new(1, 0, 0, cashH)
-	cashFrame.BackgroundColor3 = COLORS.BgDark
-	cashFrame.BackgroundTransparency = 0.15
-	cashFrame.Parent = topBar
-	addCorner(cashFrame, S(10))
-	addStroke(cashFrame, COLORS.GoldDark, isMobile and 1.5 or 2, 0.2)
-	addGradient(cashFrame, Color3.fromRGB(45, 35, 20), Color3.fromRGB(25, 20, 12))
-
-	local coinSize = isMobile and S(26) or S(30)
-	local coinIcon = Instance.new("TextLabel")
-	coinIcon.Name = "CoinIcon"
-	coinIcon.Size = UDim2.new(0, coinSize, 0, coinSize)
-	coinIcon.Position = UDim2.new(0, 4, 0.5, -coinSize/2)
-	coinIcon.BackgroundColor3 = COLORS.Gold
-	coinIcon.TextColor3 = Color3.fromRGB(120, 90, 0)
-	coinIcon.Font = Enum.Font.GothamBold
-	coinIcon.TextSize = S(16)
-	coinIcon.Text = "$"
-	coinIcon.Parent = cashFrame
-	addCorner(coinIcon, coinSize/2)
+	local coinSize = S(18)
+	local cashIcon = Instance.new("TextLabel")
+	cashIcon.Name = "CashIcon"
+	cashIcon.Size = UDim2.new(0, coinSize, 0, coinSize)
+	cashIcon.Position = UDim2.new(0, 8, 0.5, -coinSize/2)
+	cashIcon.BackgroundColor3 = COLORS.Gold
+	cashIcon.TextColor3 = Color3.fromRGB(80, 60, 20)
+	cashIcon.Font = FONTS.Number
+	cashIcon.TextSize = isMobile and 14 or S(11)
+	cashIcon.Text = "$"
+	cashIcon.Parent = topBar
+	addCorner(cashIcon, coinSize / 2)
 
 	local cashLabel = Instance.new("TextLabel")
 	cashLabel.Name = "CashLabel"
-	cashLabel.Size = UDim2.new(1, -(coinSize + 8), 1, 0)
-	cashLabel.Position = UDim2.new(0, coinSize + 6, 0, 0)
+	cashLabel.Size = UDim2.new(1, -(coinSize + 20), 0, coinSize)
+	cashLabel.Position = UDim2.new(0, coinSize + 12, 0.5, -coinSize/2)
 	cashLabel.BackgroundTransparency = 1
 	cashLabel.TextColor3 = COLORS.Gold
-	cashLabel.Font = Enum.Font.GothamBold
-	cashLabel.TextSize = isMobile and S(18) or S(20)
-	cashLabel.TextXAlignment = Enum.TextXAlignment.Right
+	cashLabel.Font = FONTS.Number
+	cashLabel.TextSize = isMobile and 18 or S(18)
+	cashLabel.TextXAlignment = Enum.TextXAlignment.Left
 	cashLabel.Text = "50"
-	cashLabel.Parent = cashFrame
-	addPadding(cashLabel, 0, 8, 0, 0)
+	cashLabel.Parent = topBar
 
 	local cashDelta = Instance.new("TextLabel")
 	cashDelta.Name = "CashDelta"
-	cashDelta.Size = UDim2.new(0, 80, 0, 20)
-	cashDelta.Position = UDim2.new(1, -90, 0, -2)
+	cashDelta.Size = UDim2.new(0, 60, 0, 16)
+	cashDelta.Position = UDim2.new(0, coinSize + 12, 0, -6)
 	cashDelta.BackgroundTransparency = 1
 	cashDelta.TextColor3 = COLORS.Success
-	cashDelta.Font = Enum.Font.GothamBold
-	cashDelta.TextSize = S(13)
+	cashDelta.Font = FONTS.Number
+	cashDelta.TextSize = isMobile and 14 or S(11)
 	cashDelta.TextTransparency = 1
-	cashDelta.TextXAlignment = Enum.TextXAlignment.Right
+	cashDelta.TextXAlignment = Enum.TextXAlignment.Left
 	cashDelta.Text = ""
-	cashDelta.Parent = cashFrame
-
-	-- Level frame
-	local levelFrame = Instance.new("Frame")
-	levelFrame.Name = "LevelFrame"
-	levelFrame.Size = UDim2.new(1, 0, 0, levelH)
-	levelFrame.Position = UDim2.new(0, 0, 0, cashH + gap)
-	levelFrame.BackgroundColor3 = COLORS.BgDark
-	levelFrame.BackgroundTransparency = 0.15
-	levelFrame.Parent = topBar
-	addCorner(levelFrame, S(10))
-	addStroke(levelFrame, COLORS.GoldDark, 1.5, 0.4)
-
-	local levelIcon = Instance.new("TextLabel")
-	levelIcon.Name = "LevelIcon"
-	levelIcon.Size = UDim2.new(0, S(24), 0, S(24))
-	levelIcon.Position = UDim2.new(0, 6, 0, 3)
-	levelIcon.BackgroundTransparency = 1
-	levelIcon.TextColor3 = COLORS.GoldMuted
-	levelIcon.Font = Enum.Font.GothamBold
-	levelIcon.TextSize = S(16)
-	levelIcon.Text = "★"
-	levelIcon.Parent = levelFrame
-
-	local levelLabel = Instance.new("TextLabel")
-	levelLabel.Name = "LevelLabel"
-	levelLabel.Size = UDim2.new(1, -S(34), 0, S(16))
-	levelLabel.Position = UDim2.new(0, S(32), 0, 2)
-	levelLabel.BackgroundTransparency = 1
-	levelLabel.TextColor3 = COLORS.TextWhite
-	levelLabel.Font = Enum.Font.GothamBold
-	levelLabel.TextSize = isMobile and S(11) or S(13)
-	levelLabel.TextXAlignment = Enum.TextXAlignment.Left
-	levelLabel.Text = "Niv. 1 — Amateur"
-	levelLabel.TextTruncate = Enum.TextTruncate.AtEnd
-	levelLabel.Parent = levelFrame
-
-	local barY = isMobile and S(20) or S(24)
-	local xpBarBg = Instance.new("Frame")
-	xpBarBg.Name = "XPBarBg"
-	xpBarBg.Size = UDim2.new(1, -16, 0, S(10))
-	xpBarBg.Position = UDim2.new(0, 8, 0, barY)
-	xpBarBg.BackgroundColor3 = Color3.fromRGB(15, 12, 8)
-	xpBarBg.Parent = levelFrame
-	addCorner(xpBarBg, 5)
-
-	local xpBarFill = Instance.new("Frame")
-	xpBarFill.Name = "XPBarFill"
-	xpBarFill.Size = UDim2.new(0, 0, 1, 0)
-	xpBarFill.BackgroundColor3 = COLORS.Gold
-	xpBarFill.Parent = xpBarBg
-	addCorner(xpBarFill, 5)
-	addGradient(xpBarFill, Color3.fromRGB(255, 220, 60), Color3.fromRGB(200, 150, 0))
-
-	local xpText = Instance.new("TextLabel")
-	xpText.Name = "XPText"
-	xpText.Size = UDim2.new(1, 0, 1, 0)
-	xpText.BackgroundTransparency = 1
-	xpText.TextColor3 = COLORS.TextWhite
-	xpText.Font = Enum.Font.GothamBold
-	xpText.TextSize = isMobile and 7 or 8
-	xpText.Text = "0 / 500 XP"
-	xpText.ZIndex = 3
-	xpText.Parent = xpBarBg
+	cashDelta.Parent = topBar
 end
 
 -- ═══════════════════════════════════════════
--- INVENTORY PANEL — collapsible on mobile
+-- INVENTORY — Grid, toggle with Tab
 -- ═══════════════════════════════════════════
-local inventoryOpen = not isMobile -- auto-open on desktop, closed on mobile
-
 function UIManager:CreateInventoryPanel(parent)
-	local invW = isMobile and S(180) or S(210)
-	local invH = isMobile and S(220) or S(280)
-	local margin = isMobile and 4 or 10
+	local padding = 14
+	local headerH = S(40)
 
-	-- Toggle button (always visible)
-	local toggleBtn = Instance.new("TextButton")
-	toggleBtn.Name = "InvToggle"
-	toggleBtn.Size = UDim2.new(0, isMobile and 40 or 36, 0, isMobile and 40 or 36)
-	toggleBtn.Position = UDim2.new(0, margin, 0.5, -(invH/2) - (isMobile and 44 or 0))
-	toggleBtn.BackgroundColor3 = COLORS.BgDark
-	toggleBtn.BackgroundTransparency = 0.15
-	toggleBtn.TextColor3 = COLORS.GoldMuted
-	toggleBtn.Font = Enum.Font.GothamBold
-	toggleBtn.TextSize = isMobile and 18 or 16
-	toggleBtn.Text = "📦"
-	toggleBtn.AutoButtonColor = false
-	toggleBtn.Parent = parent
-	addCorner(toggleBtn, isMobile and 20 or 8)
-	addStroke(toggleBtn, COLORS.GoldDark, 1.5, 0.3)
-
-	-- Inventory frame
 	local invFrame = Instance.new("Frame")
 	invFrame.Name = "InventoryFrame"
-	invFrame.Size = UDim2.new(0, invW, 0, invH)
-	invFrame.Position = UDim2.new(0, margin, 0.5, -(invH/2))
 	invFrame.BackgroundColor3 = COLORS.BgDark
-	invFrame.BackgroundTransparency = 0.1
-	invFrame.Visible = inventoryOpen
+	invFrame.ClipsDescendants = true
 	invFrame.Parent = parent
-	addCorner(invFrame, S(10))
-	addStroke(invFrame, COLORS.GoldDark, 1.5, 0.3)
 
-	-- Toggle logic
-	toggleBtn.MouseButton1Click:Connect(function()
-		inventoryOpen = not inventoryOpen
-		if inventoryOpen then
-			invFrame.Visible = true
-			invFrame.BackgroundTransparency = 1
-			tweenProperty(invFrame, {BackgroundTransparency = 0.1}, 0.2)
-		else
-			tweenProperty(invFrame, {BackgroundTransparency = 1}, 0.2)
-			task.delay(0.2, function()
-				invFrame.Visible = false
-			end)
-		end
-	end)
-
-	-- Hide toggle on desktop if always visible
-	if not isMobile then
-		toggleBtn.Visible = false
+	if isMobile then
+		-- Mobile: fullscreen overlay when open
+		invFrame.Size = UDim2.new(0.9, 0, 0.7, 0)
+		invFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+		invFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+		invFrame.BackgroundTransparency = 0.05
+		invFrame.Visible = false
+		addCorner(invFrame, 12)
+		addStroke(invFrame, COLORS.GoldDark, 1.5, 0.2)
+	else
+		-- Desktop: sidebar left, always visible
+		local invW = S(260)
+		local invH = S(380)
+		invFrame.Size = UDim2.new(0, invW, 0, invH)
+		invFrame.Position = UDim2.new(0, 12, 0.5, -(invH / 2))
+		invFrame.BackgroundTransparency = 0.08
+		invFrame.Visible = inventoryOpen
+		addCorner(invFrame, 8)
+		addStroke(invFrame, COLORS.GoldDark, 1, 0.4)
 	end
+	addCorner(invFrame, 8)
+	addStroke(invFrame, COLORS.GoldDark, 1, 0.4)
 
 	-- Header
-	local header = Instance.new("Frame")
+	local header = Instance.new("TextLabel")
 	header.Name = "Header"
-	header.Size = UDim2.new(1, 0, 0, S(28))
-	header.BackgroundColor3 = COLORS.BgPanel
-	header.BackgroundTransparency = 0.3
+	header.Size = UDim2.new(1, 0, 0, headerH)
+	header.BackgroundTransparency = 1
+	header.TextColor3 = COLORS.GoldMuted
+	header.Font = FONTS.Title
+	header.TextSize = S(20)
+	header.Text = "INVENTAIRE"
 	header.Parent = invFrame
-	addCorner(header, S(10))
 
-	local title = Instance.new("TextLabel")
-	title.Size = UDim2.new(1, 0, 1, 0)
-	title.BackgroundTransparency = 1
-	title.TextColor3 = COLORS.GoldMuted
-	title.Font = Enum.Font.GothamBold
-	title.TextSize = isMobile and S(11) or S(13)
-	title.Text = "INVENTAIRE"
-	title.Parent = header
-
-	-- Close button on mobile (inside panel)
-	if isMobile then
-		local closeBtn = Instance.new("TextButton")
-		closeBtn.Size = UDim2.new(0, 28, 0, 28)
-		closeBtn.Position = UDim2.new(1, -30, 0, 0)
-		closeBtn.BackgroundTransparency = 1
-		closeBtn.TextColor3 = COLORS.TextGray
-		closeBtn.Font = Enum.Font.GothamBold
-		closeBtn.TextSize = 14
-		closeBtn.Text = "✕"
-		closeBtn.Parent = header
-		closeBtn.MouseButton1Click:Connect(function()
-			inventoryOpen = false
-			tweenProperty(invFrame, {BackgroundTransparency = 1}, 0.2)
-			task.delay(0.2, function() invFrame.Visible = false end)
-		end)
+	-- Keybind hint (desktop only)
+	if not isMobile then
+		local hint = Instance.new("TextLabel")
+		hint.Size = UDim2.new(0, 40, 0, 16)
+		hint.Position = UDim2.new(1, -46, 0, 9)
+		hint.BackgroundTransparency = 1
+		hint.TextColor3 = COLORS.TextDim
+		hint.Font = FONTS.Small
+		hint.TextSize = S(10)
+		hint.Text = "[TAB]"
+		hint.Parent = invFrame
 	end
 
 	local sep = Instance.new("Frame")
 	sep.Size = UDim2.new(0.85, 0, 0, 1)
-	sep.Position = UDim2.new(0.075, 0, 0, S(30))
+	sep.Position = UDim2.new(0.075, 0, 0, headerH)
 	sep.BackgroundColor3 = COLORS.GoldDark
 	sep.BackgroundTransparency = 0.6
 	sep.BorderSizePixel = 0
 	sep.Parent = invFrame
 
-	local scrollFrame = Instance.new("ScrollingFrame")
-	scrollFrame.Name = "ItemList"
-	scrollFrame.Size = UDim2.new(1, -10, 1, -S(36))
-	scrollFrame.Position = UDim2.new(0, 5, 0, S(34))
-	scrollFrame.BackgroundTransparency = 1
-	scrollFrame.ScrollBarThickness = isMobile and 4 or 3
-	scrollFrame.ScrollBarImageColor3 = COLORS.GoldDark
-	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-	scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-	scrollFrame.BorderSizePixel = 0
-	scrollFrame.Parent = invFrame
+	-- Item list (scrollable)
+	local listFrame = Instance.new("ScrollingFrame")
+	listFrame.Name = "ItemList"
+	listFrame.Size = UDim2.new(1, -(padding * 2), 1, -(headerH + 10))
+	listFrame.Position = UDim2.new(0, padding, 0, headerH + 8)
+	listFrame.BackgroundTransparency = 1
+	listFrame.ScrollBarThickness = 3
+	listFrame.ScrollBarImageColor3 = COLORS.GoldDark
+	listFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	listFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	listFrame.BorderSizePixel = 0
+	listFrame.Parent = invFrame
 
-	local layout = Instance.new("UIListLayout")
-	layout.SortOrder = Enum.SortOrder.LayoutOrder
-	layout.Padding = UDim.new(0, isMobile and 4 or 3)
-	layout.Parent = scrollFrame
+	local listLayout = Instance.new("UIListLayout")
+	listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	listLayout.Padding = UDim.new(0, S(5))
+	listLayout.Parent = listFrame
+
+	if isMobile then
+		-- Toggle button (top-left, visible when inventory closed)
+		local toggleBtn = Instance.new("TextButton")
+		toggleBtn.Name = "InvToggle"
+		toggleBtn.Size = UDim2.new(0, 52, 0, 52)
+		toggleBtn.Position = UDim2.new(0, 8, 0, 8)
+		toggleBtn.BackgroundColor3 = COLORS.BgDark
+		toggleBtn.BackgroundTransparency = 0.12
+		toggleBtn.TextColor3 = COLORS.GoldMuted
+		toggleBtn.Font = FONTS.Title
+		toggleBtn.TextSize = 20
+		toggleBtn.Text = "SAC"
+		toggleBtn.AutoButtonColor = false
+		toggleBtn.Parent = parent
+		addCorner(toggleBtn, 10)
+		addStroke(toggleBtn, COLORS.GoldDark, 1, 0.3)
+
+		toggleBtn.MouseButton1Click:Connect(function()
+			self:ToggleInventory()
+		end)
+
+		-- Close button inside the inventory panel
+		local closeBtn = Instance.new("TextButton")
+		closeBtn.Name = "CloseBtn"
+		closeBtn.Size = UDim2.new(0, 48, 0, 48)
+		closeBtn.Position = UDim2.new(1, -54, 0, 4)
+		closeBtn.BackgroundColor3 = Color3.fromRGB(65, 28, 25)
+		closeBtn.TextColor3 = COLORS.TextWhite
+		closeBtn.Font = FONTS.Header
+		closeBtn.TextSize = 22
+		closeBtn.Text = "X"
+		closeBtn.AutoButtonColor = false
+		closeBtn.Parent = invFrame
+		addCorner(closeBtn, 22)
+
+		closeBtn.MouseButton1Click:Connect(function()
+			self:ToggleInventory()
+		end)
+	end
 end
 
 -- ═══════════════════════════════════════════
--- TOOLBAR (bottom center)
+-- ACTION BAR — RPG Soulslike (bottom center)
 -- ═══════════════════════════════════════════
+local TOOL_ORDER = {"Batee", "Tapis", "Pioche"}
+local TOOL_ICONS = {Batee = "◎", Tapis = "▤", Pioche = "⚒"}
+local TOOL_KEYBINDS = {"1", "2", "3"}
+
 function UIManager:CreateToolBar(parent)
-	local tbW = isMobile and S(160) or S(180)
-	local tbH = isMobile and S(44) or S(50)
-	local bottomMargin = isMobile and 20 or 10
+	local slotSize, slotGap, infoW
+	if isMobile then
+		slotSize = 50 -- raw px, no S() — guaranteed touch target
+		slotGap = 6
+		infoW = 0
+	else
+		slotSize = S(64)
+		slotGap = S(8)
+		infoW = S(200)
+	end
+	local slotsW = 3 * slotSize + 2 * slotGap
+	local barW = isMobile and (slotsW + S(16)) or (slotsW + slotGap + infoW + S(20))
+	local barH = isMobile and (slotSize + S(12)) or (slotSize + S(16))
 
 	local toolBar = Instance.new("Frame")
 	toolBar.Name = "ToolBar"
-	toolBar.Size = UDim2.new(0, tbW, 0, tbH)
-	toolBar.AnchorPoint = Vector2.new(0.5, 1)
-	toolBar.Position = UDim2.new(0.5, 0, 1, -bottomMargin)
+	toolBar.Size = UDim2.new(0, barW, 0, barH)
+	if isMobile then
+		-- Mobile: top-right, below cash (cash is ~44px + 12 margin)
+		toolBar.AnchorPoint = Vector2.new(1, 0)
+		toolBar.Position = UDim2.new(1, -10, 0, 60)
+	else
+		-- Desktop: bottom-center, wide with info panel
+		toolBar.AnchorPoint = Vector2.new(0.5, 1)
+		toolBar.Position = UDim2.new(0.5, 0, 1, -12)
+	end
 	toolBar.BackgroundColor3 = COLORS.BgDark
-	toolBar.BackgroundTransparency = 0.15
+	toolBar.BackgroundTransparency = 0.12
 	toolBar.Parent = parent
-	addCorner(toolBar, S(12))
-	addStroke(toolBar, COLORS.GoldDark, 1.5, 0.3)
+	addCorner(toolBar, 8)
+	addStroke(toolBar, COLORS.GoldDark, 1, 0.35)
 
-	local slotSize = isMobile and S(36) or S(40)
-	local slot = Instance.new("Frame")
-	slot.Name = "ToolSlot"
-	slot.Size = UDim2.new(0, slotSize, 0, slotSize)
-	slot.Position = UDim2.new(0, 5, 0.5, -slotSize/2)
-	slot.BackgroundColor3 = COLORS.BgRow
-	slot.Parent = toolBar
-	addCorner(slot, 8)
-	addStroke(slot, COLORS.GoldDark, 1, 0.5)
+	-- 3 Tool Slots (left side)
+	local slotsY = S(8)
+	for i, toolName in ipairs(TOOL_ORDER) do
+		local slotX = S(10) + (i - 1) * (slotSize + slotGap)
 
-	local toolIcon = Instance.new("TextLabel")
-	toolIcon.Name = "ToolIcon"
-	toolIcon.Size = UDim2.new(1, 0, 1, 0)
-	toolIcon.BackgroundTransparency = 1
-	toolIcon.TextColor3 = COLORS.GoldMuted
-	toolIcon.Font = Enum.Font.GothamBold
-	toolIcon.TextSize = S(18)
-	toolIcon.Text = "⛏"
-	toolIcon.Parent = slot
+		local slot = Instance.new("TextButton")
+		slot.Name = `Slot_{toolName}`
+		slot.Size = UDim2.new(0, slotSize, 0, slotSize)
+		slot.Position = UDim2.new(0, slotX, 0, slotsY)
+		slot.BackgroundColor3 = COLORS.BgRow
+		slot.BackgroundTransparency = 0.3
+		slot.Text = ""
+		slot.AutoButtonColor = false
+		slot.Parent = toolBar
+		addCorner(slot, 6)
+		addStroke(slot, COLORS.GoldDark, 1, 0.5)
 
-	local labelX = slotSize + 10
-	local toolLabel = Instance.new("TextLabel")
-	toolLabel.Name = "ToolLabel"
-	toolLabel.Size = UDim2.new(1, -(labelX + 4), 0, S(18))
-	toolLabel.Position = UDim2.new(0, labelX, 0, isMobile and 4 or 5)
-	toolLabel.BackgroundTransparency = 1
-	toolLabel.TextColor3 = COLORS.TextWhite
-	toolLabel.Font = Enum.Font.GothamBold
-	toolLabel.TextSize = isMobile and S(11) or S(13)
-	toolLabel.TextXAlignment = Enum.TextXAlignment.Left
-	toolLabel.TextTruncate = Enum.TextTruncate.AtEnd
-	toolLabel.Text = "Batée en Bois"
-	toolLabel.Parent = toolBar
+		-- Tool icon
+		local icon = Instance.new("TextLabel")
+		icon.Name = "Icon"
+		icon.Size = UDim2.new(1, 0, 0.65, 0)
+		icon.Position = UDim2.new(0, 0, 0, 0)
+		icon.BackgroundTransparency = 1
+		icon.TextColor3 = COLORS.TextDim
+		icon.Font = FONTS.Header
+		icon.TextSize = isMobile and 22 or S(26)
+		icon.Text = TOOL_ICONS[toolName] or "?"
+		icon.Parent = slot
 
-	local toolLevel = Instance.new("TextLabel")
-	toolLevel.Name = "ToolLevel"
-	toolLevel.Size = UDim2.new(1, -(labelX + 4), 0, S(12))
-	toolLevel.Position = UDim2.new(0, labelX, 0, isMobile and S(20) or S(24))
-	toolLevel.BackgroundTransparency = 1
-	toolLevel.TextColor3 = COLORS.TextDim
-	toolLevel.Font = Enum.Font.Gotham
-	toolLevel.TextSize = isMobile and S(9) or S(11)
-	toolLevel.TextXAlignment = Enum.TextXAlignment.Left
-	toolLevel.Text = "Niveau 1"
-	toolLevel.Parent = toolBar
+		-- Keybind label (desktop only)
+		if not isMobile then
+			local kb = Instance.new("TextLabel")
+			kb.Name = "Keybind"
+			kb.Size = UDim2.new(0, 14, 0, 14)
+			kb.Position = UDim2.new(0, 3, 0, 3)
+			kb.BackgroundColor3 = COLORS.BgDark
+			kb.BackgroundTransparency = 0.3
+			kb.TextColor3 = COLORS.TextDim
+			kb.Font = FONTS.Small
+			kb.TextSize = 10
+			kb.Text = TOOL_KEYBINDS[i]
+			kb.ZIndex = 3
+			kb.Parent = slot
+			addCorner(kb, 3)
+		end
+
+		-- Lock icon (shown for unowned tools)
+		local lock = Instance.new("TextLabel")
+		lock.Name = "Lock"
+		lock.Size = UDim2.new(1, 0, 0.35, 0)
+		lock.Position = UDim2.new(0, 0, 0.65, 0)
+		lock.BackgroundTransparency = 1
+		lock.TextColor3 = COLORS.TextDim
+		lock.Font = FONTS.Small
+		lock.TextSize = isMobile and 13 or S(9)
+		lock.Text = "🔒"
+		lock.Visible = false
+		lock.Parent = slot
+
+		-- Level text (shown for owned tools)
+		local lvl = Instance.new("TextLabel")
+		lvl.Name = "Level"
+		lvl.Size = UDim2.new(1, 0, 0.3, 0)
+		lvl.Position = UDim2.new(0, 0, 0.7, 0)
+		lvl.BackgroundTransparency = 1
+		lvl.TextColor3 = COLORS.TextGray
+		lvl.Font = FONTS.Small
+		lvl.TextSize = isMobile and 12 or S(9)
+		lvl.Text = ""
+		lvl.Parent = slot
+
+		-- Click to equip
+		slot.MouseButton1Click:Connect(function()
+			local data = PlayerData
+			if not data or not data.Tools then return end
+			local toolInfo = data.Tools[toolName]
+			if toolInfo and toolInfo.Owned then
+				-- Equip this tool
+				local character = player.Character
+				if not character then return end
+				local humanoid = character:FindFirstChildOfClass("Humanoid")
+				if not humanoid then return end
+				local backpack = player.Backpack
+				local tool = backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
+				if tool and tool:IsA("Tool") then
+					humanoid:EquipTool(tool)
+					haptic(0.2)
+				end
+			end
+		end)
+	end
+
+	-- Right side: Level + XP bar + Buff (desktop only)
+	if not isMobile then
+		local infoX = slotsW + slotGap + S(16)
+
+		local levelLabel = Instance.new("TextLabel")
+		levelLabel.Name = "LevelLabel"
+		levelLabel.Size = UDim2.new(0, infoW, 0, S(18))
+		levelLabel.Position = UDim2.new(0, infoX, 0, slotsY)
+		levelLabel.BackgroundTransparency = 1
+		levelLabel.TextColor3 = COLORS.TextWhite
+		levelLabel.Font = FONTS.Header
+		levelLabel.TextSize = S(17)
+		levelLabel.TextXAlignment = Enum.TextXAlignment.Left
+		levelLabel.Text = "Niv. 1 — Amateur"
+		levelLabel.TextTruncate = Enum.TextTruncate.AtEnd
+		levelLabel.Parent = toolBar
+
+		local xpBarY = slotsY + S(20)
+		local xpBarBg = Instance.new("Frame")
+		xpBarBg.Name = "XPBarBg"
+		xpBarBg.Size = UDim2.new(0, infoW, 0, S(6))
+		xpBarBg.Position = UDim2.new(0, infoX, 0, xpBarY)
+		xpBarBg.BackgroundColor3 = Color3.fromRGB(12, 10, 8)
+		xpBarBg.Parent = toolBar
+		addCorner(xpBarBg, 3)
+
+		local xpBarFill = Instance.new("Frame")
+		xpBarFill.Name = "XPBarFill"
+		xpBarFill.Size = UDim2.new(0, 0, 1, 0)
+		xpBarFill.BackgroundColor3 = COLORS.GoldDark
+		xpBarFill.Parent = xpBarBg
+		addCorner(xpBarFill, 3)
+
+		local xpText = Instance.new("TextLabel")
+		xpText.Name = "XPText"
+		xpText.Size = UDim2.new(0, infoW, 0, S(12))
+		xpText.Position = UDim2.new(0, infoX, 0, xpBarY + S(8))
+		xpText.BackgroundTransparency = 1
+		xpText.TextColor3 = COLORS.TextDim
+		xpText.Font = FONTS.Small
+		xpText.TextSize = S(10)
+		xpText.TextXAlignment = Enum.TextXAlignment.Left
+		xpText.Text = "0 / 500 XP"
+		xpText.Parent = toolBar
+
+		local buffLabel = Instance.new("TextLabel")
+		buffLabel.Name = "BuffLabel"
+		buffLabel.Size = UDim2.new(0, infoW, 0, S(14))
+		buffLabel.Position = UDim2.new(0, infoX, 0, xpBarY + S(22))
+		buffLabel.BackgroundTransparency = 1
+		buffLabel.TextColor3 = COLORS.Gold
+		buffLabel.Font = FONTS.Small
+		buffLabel.TextSize = S(11)
+		buffLabel.TextXAlignment = Enum.TextXAlignment.Left
+		buffLabel.Text = ""
+		buffLabel.Visible = false
+		buffLabel.Parent = toolBar
+	end
+
+	-- Keybinds 1-2-3 to equip tools (desktop)
+	if not isMobile then
+		UserInputService.InputBegan:Connect(function(input, processed)
+			if processed then return end
+			local idx = nil
+			if input.KeyCode == Enum.KeyCode.One then idx = 1
+			elseif input.KeyCode == Enum.KeyCode.Two then idx = 2
+			elseif input.KeyCode == Enum.KeyCode.Three then idx = 3
+			end
+			if not idx then return end
+
+			local toolName = TOOL_ORDER[idx]
+			if not PlayerData or not PlayerData.Tools then return end
+			local toolInfo = PlayerData.Tools[toolName]
+			if not toolInfo or not toolInfo.Owned then return end
+
+			local character = player.Character
+			if not character then return end
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			if not humanoid then return end
+			local tool = player.Backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
+			if tool and tool:IsA("Tool") then
+				humanoid:EquipTool(tool)
+				haptic(0.2)
+			end
+		end)
+	end
 end
 
 -- ═══════════════════════════════════════════
 -- NOTIFICATION CONTAINER
 -- ═══════════════════════════════════════════
 function UIManager:CreateNotificationContainer(parent)
-	local notifW = isMobile and S(300) or S(360)
+	local notifW = isMobile and S(360) or S(450)
 
 	local container = Instance.new("Frame")
 	container.Name = "NotifContainer"
 	container.Size = UDim2.new(0, notifW, 0, 200)
 	container.AnchorPoint = Vector2.new(0.5, 0)
-	container.Position = UDim2.new(0.5, 0, 0, isMobile and 4 or 10)
+	container.Position = UDim2.new(0.5, 0, 0, isMobile and 130 or 10)
 	container.BackgroundTransparency = 1
 	container.Parent = parent
 
@@ -545,6 +787,212 @@ function UIManager:CreateNotificationContainer(parent)
 end
 
 -- ═══════════════════════════════════════════
+-- MINIMAP — Circular, western-styled
+-- ═══════════════════════════════════════════
+local MINIMAP_LOCATIONS = {
+	{name = "Dusthaven", x = 0, z = -200, color = Color3.fromRGB(195, 165, 85), size = 7, label = true},
+	{name = "Cabane", x = -450, z = -450, color = Color3.fromRGB(160, 140, 100), size = 5, label = true},
+	{name = "Z1", x = -100, z = -50, color = Color3.fromRGB(85, 170, 85), size = 6, label = true},
+	{name = "Z2", x = -350, z = 200, color = Color3.fromRGB(70, 130, 215), size = 6, label = true},
+	{name = "Z3", x = 300, z = 150, color = Color3.fromRGB(155, 70, 215), size = 6, label = true},
+	{name = "Pont", x = -190, z = -380, color = Color3.fromRGB(120, 100, 70), size = 4, label = false},
+}
+
+function UIManager:CreateMinimap(parent)
+	local RunService = game:GetService("RunService")
+	local mapSize = isMobile and 110 or 150
+	local mapRadius = mapSize / 2
+	local worldStud = 1200
+	local worldPx = mapSize * 1.6
+	local pxPerStud = worldPx / worldStud
+
+	-- Outer ring (decorative)
+	local outerRing = Instance.new("Frame")
+	outerRing.Name = "MinimapOuter"
+	outerRing.Size = UDim2.new(0, mapSize + 8, 0, mapSize + 8)
+	outerRing.Position = UDim2.new(0, 8, 0, 8)
+	outerRing.BackgroundTransparency = 1
+	outerRing.Parent = parent
+	addCorner(outerRing, (mapSize + 8) / 2)
+	addStroke(outerRing, COLORS.GoldDark, 1.5, 0.3)
+
+	-- Main container (circular, clips content)
+	local container = Instance.new("Frame")
+	container.Name = "Minimap"
+	container.Size = UDim2.new(0, mapSize, 0, mapSize)
+	container.Position = UDim2.new(0, 12, 0, 12)
+	container.BackgroundColor3 = Color3.fromRGB(12, 10, 8)
+	container.BackgroundTransparency = 0.1
+	container.ClipsDescendants = true
+	container.Parent = parent
+	addCorner(container, mapSize / 2)
+	addStroke(container, COLORS.Gold, 2, 0.15)
+
+	-- Subtle vignette (inner shadow ring)
+	local vignette = Instance.new("Frame")
+	vignette.Name = "Vignette"
+	vignette.Size = UDim2.new(1, 0, 1, 0)
+	vignette.BackgroundColor3 = Color3.new(0, 0, 0)
+	vignette.BackgroundTransparency = 0.85
+	vignette.ZIndex = 4
+	vignette.Parent = container
+	addCorner(vignette, mapSize / 2)
+
+	-- World frame (moves to track player)
+	local worldFrame = Instance.new("Frame")
+	worldFrame.Name = "World"
+	worldFrame.Size = UDim2.new(0, worldPx, 0, worldPx)
+	worldFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	worldFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	worldFrame.BackgroundTransparency = 1
+	worldFrame.Parent = container
+
+	-- Grid lines (subtle cross at center of world)
+	for i = 1, 2 do
+		local line = Instance.new("Frame")
+		line.Size = if i == 1
+			then UDim2.new(1, 0, 0, 1)
+			else UDim2.new(0, 1, 1, 0)
+		line.Position = UDim2.new(0.5, 0, 0.5, 0)
+		line.AnchorPoint = Vector2.new(0.5, 0.5)
+		line.BackgroundColor3 = COLORS.TextDim
+		line.BackgroundTransparency = 0.85
+		line.BorderSizePixel = 0
+		line.Parent = worldFrame
+	end
+
+	-- Location markers
+	for _, loc in ipairs(MINIMAP_LOCATIONS) do
+		local markerX = (loc.x + 600) / worldStud
+		local markerZ = (loc.z + 600) / worldStud
+
+		local marker = Instance.new("Frame")
+		marker.Name = `Marker_{loc.name}`
+		marker.Size = UDim2.new(0, loc.size, 0, loc.size)
+		marker.AnchorPoint = Vector2.new(0.5, 0.5)
+		marker.Position = UDim2.new(markerX, 0, markerZ, 0)
+		marker.BackgroundColor3 = loc.color
+		marker.BorderSizePixel = 0
+		marker.ZIndex = 3
+		marker.Parent = worldFrame
+		addCorner(marker, loc.size / 2)
+
+		if loc.label then
+			local label = Instance.new("TextLabel")
+			label.Size = UDim2.new(0, 50, 0, 10)
+			label.Position = UDim2.new(0.5, 0, 1, 2)
+			label.AnchorPoint = Vector2.new(0.5, 0)
+			label.BackgroundTransparency = 1
+			label.TextColor3 = loc.color
+			label.Font = FONTS.Small
+			label.TextSize = isMobile and 7 or 8
+			label.Text = loc.name
+			label.ZIndex = 3
+			label.Parent = marker
+		end
+	end
+
+	-- Player indicator (gold diamond, always at center)
+	local playerDot = Instance.new("Frame")
+	playerDot.Name = "PlayerDot"
+	playerDot.Size = UDim2.new(0, 8, 0, 8)
+	playerDot.AnchorPoint = Vector2.new(0.5, 0.5)
+	playerDot.Position = UDim2.new(0.5, 0, 0.5, 0)
+	playerDot.BackgroundColor3 = COLORS.Gold
+	playerDot.Rotation = 45
+	playerDot.BorderSizePixel = 0
+	playerDot.ZIndex = 5
+	playerDot.Parent = container
+
+	-- Player glow
+	local playerGlow = Instance.new("Frame")
+	playerGlow.Size = UDim2.new(0, 14, 0, 14)
+	playerGlow.AnchorPoint = Vector2.new(0.5, 0.5)
+	playerGlow.Position = UDim2.new(0.5, 0, 0.5, 0)
+	playerGlow.BackgroundColor3 = COLORS.Gold
+	playerGlow.BackgroundTransparency = 0.7
+	playerGlow.Rotation = 45
+	playerGlow.BorderSizePixel = 0
+	playerGlow.ZIndex = 4
+	playerGlow.Parent = container
+
+	-- Compass N
+	local compass = Instance.new("TextLabel")
+	compass.Name = "Compass"
+	compass.Size = UDim2.new(0, 16, 0, 12)
+	compass.Position = UDim2.new(0.5, -8, 0, 3)
+	compass.BackgroundTransparency = 1
+	compass.TextColor3 = COLORS.Gold
+	compass.Font = FONTS.Header
+	compass.TextSize = isMobile and 9 or 10
+	compass.Text = "N"
+	compass.ZIndex = 6
+	compass.Parent = container
+
+	-- Zone name display (below minimap)
+	local zoneName = Instance.new("TextLabel")
+	zoneName.Name = "ZoneName"
+	zoneName.Size = UDim2.new(0, mapSize + 8, 0, 16)
+	zoneName.Position = UDim2.new(0, 8, 0, mapSize + 22)
+	zoneName.BackgroundTransparency = 1
+	zoneName.TextColor3 = COLORS.TextGray
+	zoneName.Font = FONTS.Small
+	zoneName.TextSize = isMobile and 10 or 11
+	zoneName.TextXAlignment = Enum.TextXAlignment.Center
+	zoneName.Text = ""
+	zoneName.Parent = parent
+
+	-- Update loop
+	local frameCount = 0
+	RunService.Heartbeat:Connect(function()
+		frameCount += 1
+		if frameCount % 2 ~= 0 then return end -- update every other frame
+
+		local character = player.Character
+		if not character then return end
+		local hrp = character:FindFirstChild("HumanoidRootPart")
+		if not hrp then return end
+
+		local px = hrp.Position.X
+		local pz = hrp.Position.Z
+
+		-- Move world frame so player appears at center
+		local playerScaleX = (px + 600) / worldStud
+		local playerScaleZ = (pz + 600) / worldStud
+		worldFrame.Position = UDim2.new(
+			0.5 - playerScaleX + 0.5, 0,
+			0.5 - playerScaleZ + 0.5, 0
+		)
+
+		-- Rotate player dot to face camera direction
+		local cam = workspace.CurrentCamera
+		if cam then
+			local lookVector = cam.CFrame.LookVector
+			local angle = math.deg(math.atan2(lookVector.X, -lookVector.Z))
+			playerDot.Rotation = angle + 45
+		end
+
+		-- Update zone name (every ~30 frames)
+		if frameCount % 30 == 0 then
+			local closest = nil
+			local closestDist = 999999
+			for _, loc in ipairs(MINIMAP_LOCATIONS) do
+				local dist = math.sqrt((px - loc.x)^2 + (pz - loc.z)^2)
+				if dist < closestDist then
+					closestDist = dist
+					closest = loc
+				end
+			end
+			if closest and closestDist < 300 then
+				zoneName.Text = closest.name
+			else
+				zoneName.Text = ""
+			end
+		end
+	end)
+end
+
+-- ═══════════════════════════════════════════
 -- REFRESH HUD
 -- ═══════════════════════════════════════════
 function UIManager:RefreshHUD()
@@ -553,130 +1001,217 @@ function UIManager:RefreshHUD()
 	local mainHUD = playerGui:FindFirstChild("MainHUD")
 	if not mainHUD then return end
 
+	-- Cash (TopBar)
 	local topBar = mainHUD:FindFirstChild("TopBar")
 	if topBar then
-		local cashLabel = topBar.CashFrame:FindFirstChild("CashLabel")
+		local cashLabel = topBar:FindFirstChild("CashLabel")
 		if cashLabel then
 			local cash = PlayerData.Cash or 0
 			local formatted = tostring(cash)
-			if cash >= 1000 then
+			if cash >= 1000000 then
+				formatted = string.format("%d,%03d,%03d", math.floor(cash / 1000000), math.floor(cash / 1000) % 1000, cash % 1000)
+			elseif cash >= 1000 then
 				formatted = string.format("%d,%03d", math.floor(cash / 1000), cash % 1000)
 			end
 			cashLabel.Text = formatted
 		end
-
-		local levelFrame = topBar:FindFirstChild("LevelFrame")
-		if levelFrame then
-			local level = PlayerData.Level or 1
-			local xp = PlayerData.XP or 0
-
-			local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
-			local levelInfo = EconomyConfig.LevelThresholds[level]
-			local levelName = levelInfo and levelInfo.Name or "Amateur"
-			local maxXP = levelInfo and levelInfo.MaxXP or 500
-			local minXP = levelInfo and levelInfo.MinXP or 0
-
-			local levelLabel = levelFrame:FindFirstChild("LevelLabel")
-			if levelLabel then
-				levelLabel.Text = `Niv. {level} — {levelName}`
-			end
-
-			local xpBarBg = levelFrame:FindFirstChild("XPBarBg")
-			if xpBarBg then
-				local xpBarFill = xpBarBg:FindFirstChild("XPBarFill")
-				local xpText = xpBarBg:FindFirstChild("XPText")
-				local xpInLevel = xp - minXP
-				local xpNeeded = math.max(maxXP - minXP, 1)
-				local ratio = math.clamp(xpInLevel / xpNeeded, 0, 1)
-				if xpBarFill then
-					tweenProperty(xpBarFill, {Size = UDim2.new(ratio, 0, 1, 0)}, 0.5)
-				end
-				if xpText then
-					xpText.Text = `{xp} / {maxXP} XP`
-				end
-			end
-		end
 	end
 
-	self:RefreshInventory(mainHUD)
+	if inventoryOpen then
+		self:RefreshInventory(mainHUD)
+	end
 	self:RefreshToolBar(mainHUD)
 end
 
+-- ═══════════════════════════════════════════
+-- REFRESH INVENTORY — Grid
+-- ═══════════════════════════════════════════
 function UIManager:RefreshInventory(mainHUD)
 	if not PlayerData or not PlayerData.Inventory then return end
 
 	local invFrame = mainHUD:FindFirstChild("InventoryFrame")
 	if not invFrame then return end
 
-	local itemList = invFrame:FindFirstChild("ItemList")
-	if not itemList then return end
+	local listFrame = invFrame:FindFirstChild("ItemList")
+	if not listFrame then return end
 
-	for _, child in itemList:GetChildren() do
-		if child:IsA("Frame") then child:Destroy() end
+	for _, child in listFrame:GetChildren() do
+		if child:IsA("Frame") or child:IsA("TextButton") then child:Destroy() end
 	end
 
 	local order = {"Paillettes", "Pepites", "OrPur", "MineraiOr", "Lingots", "Quartz", "Amethyste", "Topaze", "Diamant"}
 	local layoutOrder = 0
-	local rowH = isMobile and S(32) or S(28)
+	local rowH = isMobile and 48 or S(36)
 
 	for _, key in ipairs(order) do
 		local qty = PlayerData.Inventory[key] or 0
 		if qty > 0 then
 			layoutOrder += 1
+
 			local row = Instance.new("Frame")
 			row.Name = key
 			row.Size = UDim2.new(1, -4, 0, rowH)
 			row.BackgroundColor3 = COLORS.BgRow
-			row.BackgroundTransparency = 0.4
+			row.BackgroundTransparency = 0.3
 			row.LayoutOrder = layoutOrder
-			row.Parent = itemList
-			addCorner(row, 6)
+			row.Parent = listFrame
+			addCorner(row, 5)
 
+			-- Rarity accent bar (left)
 			local accent = Instance.new("Frame")
-			accent.Size = UDim2.new(0, 3, 0.7, 0)
-			accent.Position = UDim2.new(0, 3, 0.15, 0)
+			accent.Size = UDim2.new(0, 3, 0.65, 0)
+			accent.Position = UDim2.new(0, 3, 0.175, 0)
 			accent.BackgroundColor3 = getRarityColor(key)
 			accent.BorderSizePixel = 0
 			accent.Parent = row
 			addCorner(accent, 2)
 
-			local icon = Instance.new("TextLabel")
-			icon.Size = UDim2.new(0, 22, 1, 0)
-			icon.Position = UDim2.new(0, 10, 0, 0)
-			icon.BackgroundTransparency = 1
-			icon.TextColor3 = getRarityColor(key)
-			icon.Font = Enum.Font.GothamBold
-			icon.TextSize = isMobile and S(12) or S(13)
-			icon.Text = ITEM_ICONS[key] or "•"
-			icon.Parent = row
-
+			-- Item name
 			local nameLabel = Instance.new("TextLabel")
-			nameLabel.Size = UDim2.new(0.55, -30, 1, 0)
-			nameLabel.Position = UDim2.new(0, 34, 0, 0)
+			nameLabel.Size = UDim2.new(0.65, -14, 1, 0)
+			nameLabel.Position = UDim2.new(0, 12, 0, 0)
 			nameLabel.BackgroundTransparency = 1
 			nameLabel.TextColor3 = COLORS.TextWhite
-			nameLabel.Font = Enum.Font.Gotham
-			nameLabel.TextSize = isMobile and S(11) or S(12)
+			nameLabel.Font = FONTS.Body
+			nameLabel.TextSize = isMobile and 16 or S(15)
 			nameLabel.TextXAlignment = Enum.TextXAlignment.Left
 			nameLabel.TextTruncate = Enum.TextTruncate.AtEnd
 			nameLabel.Text = ITEM_DISPLAY[key] or key
 			nameLabel.Parent = row
 
+			-- Quantity (right)
 			local qtyLabel = Instance.new("TextLabel")
-			qtyLabel.Size = UDim2.new(0.3, 0, 1, 0)
-			qtyLabel.Position = UDim2.new(0.7, 0, 0, 0)
+			qtyLabel.Size = UDim2.new(0.35, -8, 1, 0)
+			qtyLabel.Position = UDim2.new(0.65, 0, 0, 0)
 			qtyLabel.BackgroundTransparency = 1
 			qtyLabel.TextColor3 = getRarityColor(key)
-			qtyLabel.Font = Enum.Font.GothamBold
-			qtyLabel.TextSize = isMobile and S(12) or S(13)
+			qtyLabel.Font = FONTS.Number
+			qtyLabel.TextSize = isMobile and 16 or S(15)
 			qtyLabel.TextXAlignment = Enum.TextXAlignment.Right
 			qtyLabel.Text = `x{qty}`
 			qtyLabel.Parent = row
-			addPadding(qtyLabel, 0, 6, 0, 0)
+			addPadding(qtyLabel, 0, 8, 0, 0)
+
+			-- Hover
+			row.MouseEnter:Connect(function()
+				tweenProperty(row, {BackgroundTransparency = 0.1}, 0.1)
+			end)
+			row.MouseLeave:Connect(function()
+				tweenProperty(row, {BackgroundTransparency = 0.3}, 0.1)
+			end)
+
+			-- Right-click context menu (desktop)
+			if not isMobile then
+				local rowBtn = Instance.new("TextButton")
+				rowBtn.Size = UDim2.new(1, 0, 1, 0)
+				rowBtn.BackgroundTransparency = 1
+				rowBtn.Text = ""
+				rowBtn.AutoButtonColor = false
+				rowBtn.ZIndex = 3
+				rowBtn.Parent = row
+
+				rowBtn.MouseButton2Click:Connect(function()
+					self:ShowItemContextMenu(invFrame, row, key, qty)
+				end)
+			end
 		end
 	end
 end
 
+-- ═══════════════════════════════════════════
+-- ITEM CONTEXT MENU (right-click, desktop)
+-- ═══════════════════════════════════════════
+local activeContextMenu = nil
+
+function UIManager:ShowItemContextMenu(invFrame, cell, itemKey, qty)
+	-- Destroy any existing context menu
+	if activeContextMenu and activeContextMenu.Parent then
+		activeContextMenu:Destroy()
+	end
+
+	local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+	local prices = EconomyConfig.SellPrices.MarchandLocal
+	local price = prices[itemKey]
+
+	local menuW = 140
+	local menuH = price and 70 or 36
+	local menu = Instance.new("Frame")
+	menu.Name = "ContextMenu"
+	menu.Size = UDim2.new(0, menuW, 0, menuH)
+	menu.BackgroundColor3 = COLORS.BgPanel
+	menu.BackgroundTransparency = 0.05
+	menu.ZIndex = 20
+	menu.Parent = invFrame
+	addCorner(menu, 6)
+	addStroke(menu, COLORS.GoldDark, 1, 0.2)
+	activeContextMenu = menu
+
+	-- Position relative to cell
+	local relX = cell.AbsolutePosition.X - invFrame.AbsolutePosition.X + cell.AbsoluteSize.X + 4
+	local relY = cell.AbsolutePosition.Y - invFrame.AbsolutePosition.Y
+	menu.Position = UDim2.new(0, relX, 0, relY)
+
+	-- Item info row
+	local infoLabel = Instance.new("TextLabel")
+	infoLabel.Size = UDim2.new(1, -8, 0, 30)
+	infoLabel.Position = UDim2.new(0, 4, 0, 2)
+	infoLabel.BackgroundTransparency = 1
+	infoLabel.TextColor3 = getRarityColor(itemKey)
+	infoLabel.Font = FONTS.Header
+	infoLabel.TextSize = 14
+	infoLabel.TextXAlignment = Enum.TextXAlignment.Left
+	infoLabel.Text = `{ITEM_ICONS[itemKey] or "·"} {ITEM_DISPLAY[itemKey] or itemKey} x{qty}`
+	infoLabel.ZIndex = 21
+	infoLabel.Parent = menu
+
+	-- Sell button (if sellable)
+	if price then
+		local sellBtn = Instance.new("TextButton")
+		sellBtn.Size = UDim2.new(1, -8, 0, 28)
+		sellBtn.Position = UDim2.new(0, 4, 0, 34)
+		sellBtn.BackgroundColor3 = Color3.fromRGB(50, 110, 50)
+		sellBtn.TextColor3 = COLORS.TextWhite
+		sellBtn.Font = FONTS.Header
+		sellBtn.TextSize = 13
+		sellBtn.Text = `Vendre tout ({qty * price}$)`
+		sellBtn.AutoButtonColor = false
+		sellBtn.ZIndex = 21
+		sellBtn.Parent = menu
+		addCorner(sellBtn, 5)
+
+		sellBtn.MouseEnter:Connect(function()
+			tweenProperty(sellBtn, {BackgroundColor3 = Color3.fromRGB(65, 140, 65)}, 0.1)
+		end)
+		sellBtn.MouseLeave:Connect(function()
+			tweenProperty(sellBtn, {BackgroundColor3 = Color3.fromRGB(50, 110, 50)}, 0.1)
+		end)
+		sellBtn.MouseButton1Click:Connect(function()
+			Events.RequestSell:FireServer("MarchandLocal", itemKey, qty)
+			if activeContextMenu then activeContextMenu:Destroy() end
+		end)
+	end
+
+	-- Close on click outside (next frame)
+	task.defer(function()
+		local conn
+		conn = UserInputService.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.MouseButton2 then
+				task.defer(function()
+					if activeContextMenu and activeContextMenu.Parent then
+						activeContextMenu:Destroy()
+						activeContextMenu = nil
+					end
+					if conn then conn:Disconnect() end
+				end)
+			end
+		end)
+	end)
+end
+
+-- ═══════════════════════════════════════════
+-- REFRESH TOOLBAR
+-- ═══════════════════════════════════════════
 function UIManager:RefreshToolBar(mainHUD)
 	if not PlayerData then return end
 
@@ -684,40 +1219,105 @@ function UIManager:RefreshToolBar(mainHUD)
 	if not toolBar then return end
 
 	local ToolConfig = require(ReplicatedStorage.Modules.Config.ToolConfig)
-	local bestTool = "Batee"
-	local bestLevel = 1
-	local toolIcons = { Batee = "🥘", Tapis = "🧹", Pioche = "⛏" }
 
-	-- Pick highest-tier owned tool (Pioche > Tapis > Batee)
-	local toolPriority = { Pioche = 3, Tapis = 2, Batee = 1 }
-	local bestPrio = 0
-	if PlayerData.Tools then
-		for toolName, toolInfo in pairs(PlayerData.Tools) do
-			if toolInfo.Owned then
-				local prio = toolPriority[toolName] or 0
-				if prio > bestPrio then
-					bestPrio = prio
-					bestTool = toolName
-					bestLevel = toolInfo.Level or 1
-				end
+	-- Find currently equipped tool
+	local equippedTool = nil
+	local character = player.Character
+	if character then
+		local tool = character:FindFirstChildOfClass("Tool")
+		if tool then equippedTool = tool.Name end
+	end
+
+	-- Update each slot
+	for _, toolName in ipairs(TOOL_ORDER) do
+		local slot = toolBar:FindFirstChild(`Slot_{toolName}`)
+		if not slot then continue end
+
+		local toolInfo = PlayerData.Tools and PlayerData.Tools[toolName]
+		local owned = toolInfo and toolInfo.Owned
+		local level = toolInfo and toolInfo.Level or 0
+		local toolData = ToolConfig.Tools[toolName]
+		local maxLevel = toolData and #toolData.Levels or 3
+
+		local icon = slot:FindFirstChild("Icon")
+		local lock = slot:FindFirstChild("Lock")
+		local lvl = slot:FindFirstChild("Level")
+		local stroke = slot:FindFirstChildOfClass("UIStroke")
+
+		if owned then
+			-- Owned: show icon in color, level text
+			if icon then icon.TextColor3 = COLORS.TextWhite end
+			if lock then lock.Visible = false end
+			if lvl then
+				lvl.Text = `Niv.{level}/{maxLevel}`
+				lvl.Visible = true
 			end
+			-- Active highlight
+			if equippedTool == toolName then
+				if stroke then
+					stroke.Color = COLORS.Gold
+					stroke.Transparency = 0
+				end
+				slot.BackgroundTransparency = 0.1
+			else
+				if stroke then
+					stroke.Color = COLORS.GoldDark
+					stroke.Transparency = 0.5
+				end
+				slot.BackgroundTransparency = 0.3
+			end
+		else
+			-- Not owned: greyed out + lock
+			if icon then icon.TextColor3 = COLORS.TextDim end
+			if lock then lock.Visible = true end
+			if lvl then lvl.Visible = false end
+			if stroke then
+				stroke.Color = COLORS.TextDim
+				stroke.Transparency = 0.7
+			end
+			slot.BackgroundTransparency = 0.5
 		end
 	end
 
-	local toolData = ToolConfig.Tools[bestTool]
-	local levelData = toolData and toolData.Levels[bestLevel]
-	local displayName = levelData and levelData.Name or (toolData and toolData.DisplayName or bestTool)
+	-- Update level + XP
+	local level = PlayerData.Level or 1
+	local xp = PlayerData.XP or 0
+	local EconomyConfig = require(ReplicatedStorage.Modules.Config.EconomyConfig)
+	local levelInfo = EconomyConfig.LevelThresholds[level]
+	local levelName = levelInfo and levelInfo.Name or "Amateur"
+	local maxXP = levelInfo and levelInfo.MaxXP or 500
+	local minXP = levelInfo and levelInfo.MinXP or 0
 
-	local toolLabel = toolBar:FindFirstChild("ToolLabel")
-	if toolLabel then toolLabel.Text = displayName end
+	local levelLabel = toolBar:FindFirstChild("LevelLabel")
+	if levelLabel then levelLabel.Text = `Niv. {level} — {levelName}` end
 
-	local toolLevel = toolBar:FindFirstChild("ToolLevel")
-	if toolLevel then toolLevel.Text = `Niveau {bestLevel}` end
+	local xpBarBg = toolBar:FindFirstChild("XPBarBg")
+	if xpBarBg then
+		local xpBarFill = xpBarBg:FindFirstChild("XPBarFill")
+		local xpInLevel = xp - minXP
+		local xpNeeded = math.max(maxXP - minXP, 1)
+		local ratio = math.clamp(xpInLevel / xpNeeded, 0, 1)
+		if xpBarFill then
+			tweenProperty(xpBarFill, {Size = UDim2.new(ratio, 0, 1, 0)}, 0.5)
+		end
+	end
 
-	local slot = toolBar:FindFirstChild("ToolSlot")
-	if slot then
-		local toolIcon = slot:FindFirstChild("ToolIcon")
-		if toolIcon then toolIcon.Text = toolIcons[bestTool] or "⛏" end
+	local xpText = toolBar:FindFirstChild("XPText")
+	if xpText then xpText.Text = `{xp} / {maxXP} XP` end
+
+	-- Update buff display
+	local buffLabel = toolBar:FindFirstChild("BuffLabel")
+	if buffLabel and PlayerData.Saloon then
+		if PlayerData.Saloon.BuffActive and os.time() < (PlayerData.Saloon.BuffExpiry or 0) then
+			local remaining = PlayerData.Saloon.BuffExpiry - os.time()
+			local mins = math.floor(remaining / 60)
+			local secs = remaining % 60
+			local buffName = PlayerData.Saloon.BuffActive == "SpeedBoost" and "Vitesse" or "Chance"
+			buffLabel.Text = `⚡ {buffName} {mins}:{string.format("%02d", secs)}`
+			buffLabel.Visible = true
+		else
+			buffLabel.Visible = false
+		end
 	end
 end
 
@@ -729,23 +1329,25 @@ function UIManager:AnimateCashChange(delta)
 	if not mainHUD then return end
 	local topBar = mainHUD:FindFirstChild("TopBar")
 	if not topBar then return end
-	local cashDelta = topBar.CashFrame:FindFirstChild("CashDelta")
+	local cashDelta = topBar:FindFirstChild("CashDelta")
 	if not cashDelta then return end
 
 	local sign = delta > 0 and "+" or ""
 	cashDelta.Text = `{sign}{delta}$`
 	cashDelta.TextColor3 = delta > 0 and COLORS.Success or COLORS.Error
 	cashDelta.TextTransparency = 0
-	cashDelta.Position = UDim2.new(1, -90, 0, -2)
+
+	local startX = cashDelta.Position.X.Offset
+	cashDelta.Position = UDim2.new(0, startX, 0, -4)
 
 	tweenProperty(cashDelta, {
-		Position = UDim2.new(1, -90, 0, -18),
+		Position = UDim2.new(0, startX, 0, -18),
 		TextTransparency = 1,
 	}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 end
 
 -- ═══════════════════════════════════════════
--- NOTIFICATION (toast)
+-- NOTIFICATION
 -- ═══════════════════════════════════════════
 function UIManager:ShowNotification(message: string, notifType: string)
 	local mainHUD = playerGui:FindFirstChild("MainHUD")
@@ -757,58 +1359,46 @@ function UIManager:ShowNotification(message: string, notifType: string)
 		Info = COLORS.Info, Error = COLORS.Error,
 		Success = COLORS.Success, LevelUp = COLORS.LevelUp,
 	}
-	local iconMap = { Info = "ℹ", Error = "✗", Success = "✓", LevelUp = "★" }
 	local accentColor = colorMap[notifType] or COLORS.Info
-	local iconChar = iconMap[notifType] or "ℹ"
 
-	local notifH = isMobile and S(36) or S(38)
+	local notifH = isMobile and S(56) or S(46)
 	local notif = Instance.new("Frame")
 	notif.Name = "Notification"
 	notif.Size = UDim2.new(1, 0, 0, notifH)
 	notif.BackgroundColor3 = COLORS.BgDark
-	notif.BackgroundTransparency = 0.1
+	notif.BackgroundTransparency = 0.05
 	notif.LayoutOrder = os.clock() * 1000
 	notif.Parent = container
 	addCorner(notif, 8)
-	addStroke(notif, accentColor, 1.5, 0.3)
+	addStroke(notif, accentColor, 1, 0.4)
 
 	local accent = Instance.new("Frame")
-	accent.Size = UDim2.new(0, 3, 0.7, 0)
-	accent.Position = UDim2.new(0, 4, 0.15, 0)
+	accent.Size = UDim2.new(0, 4, 0.6, 0)
+	accent.Position = UDim2.new(0, 5, 0.2, 0)
 	accent.BackgroundColor3 = accentColor
 	accent.BorderSizePixel = 0
 	accent.Parent = notif
 	addCorner(accent, 2)
 
-	local iconLabel = Instance.new("TextLabel")
-	iconLabel.Size = UDim2.new(0, 24, 1, 0)
-	iconLabel.Position = UDim2.new(0, 12, 0, 0)
-	iconLabel.BackgroundTransparency = 1
-	iconLabel.TextColor3 = accentColor
-	iconLabel.Font = Enum.Font.GothamBold
-	iconLabel.TextSize = S(14)
-	iconLabel.Text = iconChar
-	iconLabel.Parent = notif
-
 	local msgLabel = Instance.new("TextLabel")
-	msgLabel.Size = UDim2.new(1, -44, 1, 0)
-	msgLabel.Position = UDim2.new(0, 38, 0, 0)
+	msgLabel.Size = UDim2.new(1, -24, 1, 0)
+	msgLabel.Position = UDim2.new(0, 18, 0, 0)
 	msgLabel.BackgroundTransparency = 1
 	msgLabel.TextColor3 = COLORS.TextWhite
-	msgLabel.Font = Enum.Font.Gotham
-	msgLabel.TextSize = isMobile and S(11) or S(13)
+	msgLabel.Font = FONTS.Header
+	msgLabel.TextSize = isMobile and S(17) or S(19)
 	msgLabel.TextXAlignment = Enum.TextXAlignment.Left
 	msgLabel.TextTruncate = Enum.TextTruncate.AtEnd
 	msgLabel.Text = message
 	msgLabel.Parent = notif
 
-	notif.Position = UDim2.new(0, 30, 0, 0)
+	notif.Position = UDim2.new(0, 20, 0, 0)
 	notif.BackgroundTransparency = 1
-	tweenProperty(notif, {Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 0.1}, 0.3)
+	tweenProperty(notif, {Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 0.08}, 0.25)
 
 	task.spawn(function()
 		task.wait(3.5)
-		tweenProperty(notif, {BackgroundTransparency = 1, Position = UDim2.new(0, -20, 0, 0)}, 0.4)
+		tweenProperty(notif, {BackgroundTransparency = 1, Position = UDim2.new(0, -15, 0, 0)}, 0.4)
 		tweenProperty(msgLabel, {TextTransparency = 1}, 0.4)
 		task.wait(0.5)
 		notif:Destroy()
@@ -816,68 +1406,38 @@ function UIManager:ShowNotification(message: string, notifType: string)
 end
 
 -- ═══════════════════════════════════════════
--- LEVEL UP CELEBRATION
+-- LEVEL UP — Subtle edge glow + notification
 -- ═══════════════════════════════════════════
 function UIManager:ShowLevelUp(level, levelName)
-	self:ShowNotification(`LEVEL UP ! Niveau {level} — {levelName}`, "LevelUp")
+	haptic(0.8)
+	self:ShowNotification(`Niveau {level} — {levelName}`, "LevelUp")
 
 	local mainHUD = playerGui:FindFirstChild("MainHUD")
 	if not mainHUD then return end
 
-	local flash = Instance.new("Frame")
-	flash.Name = "LevelFlash"
-	flash.Size = UDim2.new(1, 0, 1, 0)
-	flash.BackgroundColor3 = COLORS.Gold
-	flash.BackgroundTransparency = 0.7
-	flash.ZIndex = 10
-	flash.Parent = mainHUD
+	local glow = Instance.new("Frame")
+	glow.Name = "LevelGlow"
+	glow.Size = UDim2.new(1, 0, 1, 0)
+	glow.BackgroundColor3 = COLORS.Gold
+	glow.BackgroundTransparency = 0.7
+	glow.ZIndex = 10
+	glow.Parent = mainHUD
 
-	local bigText = Instance.new("TextLabel")
-	bigText.Size = UDim2.new(1, 0, 0, 80)
-	bigText.AnchorPoint = Vector2.new(0.5, 0.5)
-	bigText.Position = UDim2.new(0.5, 0, 0.4, 0)
-	bigText.BackgroundTransparency = 1
-	bigText.TextColor3 = COLORS.Gold
-	bigText.Font = Enum.Font.GothamBold
-	bigText.TextSize = isMobile and S(32) or S(42)
-	bigText.TextStrokeColor3 = Color3.fromRGB(80, 50, 0)
-	bigText.TextStrokeTransparency = 0.3
-	bigText.Text = `NIVEAU {level}`
-	bigText.ZIndex = 11
-	bigText.Parent = mainHUD
+	local gradient = Instance.new("UIGradient")
+	gradient.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0),
+		NumberSequenceKeypoint.new(0.12, 1),
+		NumberSequenceKeypoint.new(0.88, 1),
+		NumberSequenceKeypoint.new(1, 0),
+	})
+	gradient.Parent = glow
 
-	local subText = Instance.new("TextLabel")
-	subText.Size = UDim2.new(1, 0, 0, 30)
-	subText.AnchorPoint = Vector2.new(0.5, 0.5)
-	subText.Position = UDim2.new(0.5, 0, 0.4, isMobile and 35 or 45)
-	subText.BackgroundTransparency = 1
-	subText.TextColor3 = COLORS.TextWhite
-	subText.Font = Enum.Font.GothamBold
-	subText.TextSize = isMobile and S(16) or S(20)
-	subText.TextStrokeTransparency = 0.5
-	subText.Text = levelName or ""
-	subText.ZIndex = 11
-	subText.Parent = mainHUD
-
-	bigText.TextTransparency = 1
-	subText.TextTransparency = 1
-	tweenProperty(bigText, {TextTransparency = 0}, 0.3)
-	tweenProperty(subText, {TextTransparency = 0}, 0.4)
-
-	task.spawn(function()
-		task.wait(2)
-		tweenProperty(flash, {BackgroundTransparency = 1}, 0.6)
-		tweenProperty(bigText, {TextTransparency = 1, Position = UDim2.new(0.5, 0, 0.35, 0)}, 0.6)
-		tweenProperty(subText, {TextTransparency = 1}, 0.5)
-		task.wait(0.7)
-		flash:Destroy()
-		bigText:Destroy()
-		subText:Destroy()
-	end)
+	tweenProperty(glow, {BackgroundTransparency = 1}, 2, Enum.EasingStyle.Sine)
+	task.delay(2.2, function() glow:Destroy() end)
 end
 
 -- ═══════════════════════════════════════════
--- FLOATING TEXT (drops)
+-- FLOATING TEXT
 -- ═══════════════════════════════════════════
 function UIManager:ShowFloatingText(worldPos: Vector3, text: string, color: Color3)
 	local billboardGui = Instance.new("BillboardGui")
@@ -900,14 +1460,14 @@ function UIManager:ShowFloatingText(worldPos: Vector3, text: string, color: Colo
 	label.Size = UDim2.new(1, 0, 1, 0)
 	label.BackgroundTransparency = 1
 	label.TextColor3 = color or COLORS.Gold
-	label.Font = Enum.Font.GothamBold
+	label.Font = FONTS.Number
 	label.TextSize = 14
-	label.TextStrokeColor3 = Color3.fromRGB(30, 20, 0)
+	label.TextStrokeColor3 = Color3.fromRGB(20, 15, 8)
 	label.TextStrokeTransparency = 0.3
 	label.Text = text
 	label.Parent = billboardGui
 
-	tweenProperty(label, {TextSize = isMobile and 18 or 22}, 0.15, Enum.EasingStyle.Back)
+	tweenProperty(label, {TextSize = isMobile and 18 or 20}, 0.15, Enum.EasingStyle.Quad)
 
 	task.spawn(function()
 		for i = 1, 40 do
@@ -921,6 +1481,93 @@ function UIManager:ShowFloatingText(worldPos: Vector3, text: string, color: Colo
 		billboardGui:Destroy()
 		anchor:Destroy()
 	end)
+end
+
+-- ═══════════════════════════════════════════
+-- LOOT FEED
+-- ═══════════════════════════════════════════
+function UIManager:ShowLootFeed(drops, xpGained)
+	haptic(0.4)
+	local mainHUD = playerGui:FindFirstChild("MainHUD")
+	if not mainHUD then return end
+
+	-- WoW-style: each item floats up from center and fades out
+	local order = 0
+	local centerY = 0.35
+
+	if type(drops) == "table" then
+		for itemName, qty in pairs(drops) do
+			order += 1
+			local label = Instance.new("TextLabel")
+			label.Name = "LootItem"
+			label.Size = isMobile and UDim2.new(0.85, 0, 0, 40) or UDim2.new(0, 500, 0, 46)
+			label.AnchorPoint = Vector2.new(0.5, 0.5)
+			label.Position = UDim2.new(0.5, 0, centerY, 0)
+			label.BackgroundColor3 = Color3.new(0, 0, 0)
+			label.BackgroundTransparency = 0.55
+			label.TextColor3 = getRarityColor(itemName)
+			label.Font = FONTS.Title
+			label.TextSize = isMobile and 24 or 36
+			label.TextStrokeColor3 = Color3.new(0, 0, 0)
+			label.TextStrokeTransparency = 0.1
+			label.Text = `+{qty} {ITEM_DISPLAY[itemName] or itemName}`
+			label.TextTransparency = 1
+			label.ZIndex = 8
+			label.Parent = mainHUD
+			addCorner(label, 8)
+
+			-- Stagger each item
+			task.delay((order - 1) * 0.25, function()
+				if not label.Parent then return end
+				-- Pop in
+				tweenProperty(label, {TextTransparency = 0, BackgroundTransparency = 0.55}, 0.15)
+				-- Float up and fade over 2s
+				task.wait(1)
+				if not label.Parent then return end
+				tweenProperty(label, {
+					Position = UDim2.new(0.5, 0, centerY - 0.08, 0),
+					TextTransparency = 1,
+					TextStrokeTransparency = 1,
+					BackgroundTransparency = 1,
+				}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+				task.wait(1.3)
+				if label.Parent then label:Destroy() end
+			end)
+		end
+	end
+
+	if xpGained and xpGained > 0 then
+		order += 1
+		local xpLabel = Instance.new("TextLabel")
+		xpLabel.Name = "LootXP"
+		xpLabel.Size = isMobile and UDim2.new(0.7, 0, 0, 32) or UDim2.new(0, 400, 0, 36)
+		xpLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+		xpLabel.Position = UDim2.new(0.5, 0, centerY + 0.03, 0)
+		xpLabel.BackgroundTransparency = 1
+		xpLabel.TextColor3 = COLORS.Gold
+		xpLabel.Font = FONTS.Title
+		xpLabel.TextSize = isMobile and 26 or 30
+		xpLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+		xpLabel.TextStrokeTransparency = 0.1
+		xpLabel.Text = `+{xpGained} XP`
+		xpLabel.TextTransparency = 1
+		xpLabel.ZIndex = 8
+		xpLabel.Parent = mainHUD
+
+		task.delay(order * 0.25, function()
+			if not xpLabel.Parent then return end
+			tweenProperty(xpLabel, {TextTransparency = 0}, 0.15)
+			task.wait(1)
+			if not xpLabel.Parent then return end
+			tweenProperty(xpLabel, {
+				Position = UDim2.new(0.5, 0, centerY - 0.05, 0),
+				TextTransparency = 1,
+				TextStrokeTransparency = 1,
+			}, 1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+			task.wait(1.1)
+			if xpLabel.Parent then xpLabel:Destroy() end
+		end)
+	end
 end
 
 -- ═══════════════════════════════════════════
@@ -938,15 +1585,15 @@ function UIManager:PlayMineEffect(position: Vector3)
 	local emitter = Instance.new("ParticleEmitter")
 	emitter.Color = ColorSequence.new(COLORS.Gold)
 	emitter.Size = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 0.5),
+		NumberSequenceKeypoint.new(0, 0.4),
 		NumberSequenceKeypoint.new(1, 0),
 	})
 	emitter.Lifetime = NumberRange.new(0.5, 1)
-	emitter.Speed = NumberRange.new(5, 10)
+	emitter.Speed = NumberRange.new(4, 8)
 	emitter.SpreadAngle = Vector2.new(360, 360)
 	emitter.Rate = 0
 	emitter.Parent = part
-	emitter:Emit(20)
+	emitter:Emit(15)
 
 	task.delay(2, function() part:Destroy() end)
 end
@@ -967,108 +1614,13 @@ function UIManager:PlaySound(soundName: string)
 end
 
 -- ═══════════════════════════════════════════
--- LOOT FEED
+-- NPC DIALOGUE BUBBLE
 -- ═══════════════════════════════════════════
-function UIManager:ShowLootFeed(drops, xpGained)
-	local mainHUD = playerGui:FindFirstChild("MainHUD")
-	if not mainHUD then return end
-
-	local feedW = isMobile and S(160) or S(200)
-	local feedFrame = Instance.new("Frame")
-	feedFrame.Name = "LootFeed"
-	feedFrame.Size = UDim2.new(0, feedW, 0, 200)
-	feedFrame.AnchorPoint = Vector2.new(1, 0.5)
-	feedFrame.Position = UDim2.new(1, isMobile and -4 or -10, 0.5, 0)
-	feedFrame.BackgroundTransparency = 1
-	feedFrame.Parent = mainHUD
-
-	local layout = Instance.new("UIListLayout")
-	layout.SortOrder = Enum.SortOrder.LayoutOrder
-	layout.Padding = UDim.new(0, 3)
-	layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-	layout.Parent = feedFrame
-
-	local order = 0
-	local itemH = isMobile and S(22) or S(24)
-	local fontSize = isMobile and S(12) or S(14)
-
-	if type(drops) == "table" then
-		for itemName, qty in pairs(drops) do
-			order += 1
-			local label = Instance.new("TextLabel")
-			label.Size = UDim2.new(0, feedW - 10, 0, itemH)
-			label.BackgroundColor3 = COLORS.BgDark
-			label.BackgroundTransparency = 0.3
-			label.TextColor3 = getRarityColor(itemName)
-			label.Font = Enum.Font.GothamBold
-			label.TextSize = fontSize
-			label.TextXAlignment = Enum.TextXAlignment.Right
-			label.Text = `+{qty} {ITEM_DISPLAY[itemName] or itemName} {ITEM_ICONS[itemName] or ""}`
-			label.LayoutOrder = order
-			label.Parent = feedFrame
-			addCorner(label, 6)
-			addPadding(label, 6, 6, 0, 0)
-
-			label.Position = UDim2.new(0, 30, 0, 0)
-			label.TextTransparency = 1
-			label.BackgroundTransparency = 1
-			task.delay(order * 0.1, function()
-				tweenProperty(label, {Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0, BackgroundTransparency = 0.3}, 0.25, Enum.EasingStyle.Back)
-			end)
-		end
-	end
-
-	if xpGained and xpGained > 0 then
-		order += 1
-		local xpLabel = Instance.new("TextLabel")
-		xpLabel.Size = UDim2.new(0, feedW - 10, 0, S(20))
-		xpLabel.BackgroundTransparency = 1
-		xpLabel.TextColor3 = COLORS.GoldMuted
-		xpLabel.Font = Enum.Font.GothamBold
-		xpLabel.TextSize = isMobile and S(11) or S(13)
-		xpLabel.TextXAlignment = Enum.TextXAlignment.Right
-		xpLabel.Text = `+{xpGained} XP`
-		xpLabel.LayoutOrder = order
-		xpLabel.Parent = feedFrame
-
-		xpLabel.TextTransparency = 1
-		task.delay(order * 0.1, function()
-			tweenProperty(xpLabel, {TextTransparency = 0}, 0.25)
-		end)
-	end
-
-	task.spawn(function()
-		task.wait(2.5)
-		for _, child in feedFrame:GetChildren() do
-			if child:IsA("TextLabel") then
-				tweenProperty(child, {TextTransparency = 1, BackgroundTransparency = 1}, 0.4)
-			end
-		end
-		task.wait(0.5)
-		feedFrame:Destroy()
-	end)
-end
-
--- ═══════════════════════════════════════════
--- PUBLIC API
--- ═══════════════════════════════════════════
-function UIManager:GetPlayerData()
-	return PlayerData
-end
-
-function UIManager:IsMobile()
-	return isMobile
-end
-
--- ═══════════════════════════════════════════
--- NPC DIALOGUE BUBBLE (speech bubble above head)
--- ═══════════════════════════════════════════
-local activeBubbles = {} -- npcModel → billboard
+local activeBubbles = {}
 
 function UIManager:ShowNPCBubble(npcModel, text, duration)
 	duration = duration or 3
 
-	-- Destroy existing bubble on this NPC
 	if activeBubbles[npcModel] then
 		activeBubbles[npcModel]:Destroy()
 		activeBubbles[npcModel] = nil
@@ -1077,68 +1629,62 @@ function UIManager:ShowNPCBubble(npcModel, text, duration)
 	local head = npcModel:FindFirstChild("Head")
 	if not head then return end
 
-	-- Size bubble based on text length
-	local bubbleH = if #text > 40 then 85 else 70
+	local bubbleH = if #text > 40 then 78 else 62
 
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "DialogueBubble"
 	billboard.Adornee = head
-	billboard.Size = UDim2.new(0, 260, 0, bubbleH)
+	billboard.Size = UDim2.new(0, 240, 0, bubbleH)
 	billboard.StudsOffset = Vector3.new(0, 3, 0)
 	billboard.AlwaysOnTop = true
 	billboard.MaxDistance = 40
 	billboard.Parent = playerGui
 	activeBubbles[npcModel] = billboard
 
-	-- Bubble background
 	local bg = Instance.new("Frame")
 	bg.Name = "BubbleBG"
 	bg.Size = UDim2.new(1, 0, 1, 0)
-	bg.BackgroundColor3 = Color3.fromRGB(30, 25, 18)
-	bg.BackgroundTransparency = 0.15
+	bg.BackgroundColor3 = COLORS.BgDark
+	bg.BackgroundTransparency = 0.08
 	bg.Parent = billboard
-	addCorner(bg, 10)
-	addStroke(bg, Color3.fromRGB(180, 150, 80), 1.5, 0.3)
+	addCorner(bg, 8)
+	addStroke(bg, COLORS.GoldDark, 1, 0.3)
 
-	-- Tail (small triangle at bottom)
 	local tail = Instance.new("Frame")
-	tail.Size = UDim2.new(0, 12, 0, 8)
-	tail.Position = UDim2.new(0.5, -6, 1, -1)
+	tail.Size = UDim2.new(0, 10, 0, 7)
+	tail.Position = UDim2.new(0.5, -5, 1, -1)
 	tail.Rotation = 45
-	tail.BackgroundColor3 = Color3.fromRGB(30, 25, 18)
-	tail.BackgroundTransparency = 0.15
+	tail.BackgroundColor3 = COLORS.BgDark
+	tail.BackgroundTransparency = 0.08
 	tail.BorderSizePixel = 0
 	tail.Parent = bg
 
-	-- NPC name
 	local npcName = npcModel:FindFirstChild("HumanoidRootPart")
 		and npcModel.HumanoidRootPart:GetAttribute("NPCName") or npcModel.Name
 	local nameLabel = Instance.new("TextLabel")
-	nameLabel.Size = UDim2.new(1, -16, 0, 16)
-	nameLabel.Position = UDim2.new(0, 8, 0, 4)
+	nameLabel.Size = UDim2.new(1, -14, 0, 15)
+	nameLabel.Position = UDim2.new(0, 7, 0, 4)
 	nameLabel.BackgroundTransparency = 1
-	nameLabel.TextColor3 = Color3.fromRGB(255, 210, 100)
-	nameLabel.Font = Enum.Font.GothamBold
+	nameLabel.TextColor3 = COLORS.Gold
+	nameLabel.Font = FONTS.Header
 	nameLabel.TextSize = 11
 	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
 	nameLabel.Text = npcName
 	nameLabel.Parent = bg
 
-	-- Dialogue text (typewriter effect)
 	local textLabel = Instance.new("TextLabel")
-	textLabel.Size = UDim2.new(1, -16, 1, -22)
-	textLabel.Position = UDim2.new(0, 8, 0, 20)
+	textLabel.Size = UDim2.new(1, -14, 1, -20)
+	textLabel.Position = UDim2.new(0, 7, 0, 19)
 	textLabel.BackgroundTransparency = 1
-	textLabel.TextColor3 = Color3.fromRGB(240, 235, 220)
-	textLabel.Font = Enum.Font.Gotham
-	textLabel.TextSize = 13
+	textLabel.TextColor3 = COLORS.TextWhite
+	textLabel.Font = FONTS.Body
+	textLabel.TextSize = 12
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Top
 	textLabel.TextWrapped = true
 	textLabel.Text = ""
 	textLabel.Parent = bg
 
-	-- Typewriter effect
 	task.spawn(function()
 		for i = 1, #text do
 			if not billboard.Parent then return end
@@ -1147,20 +1693,18 @@ function UIManager:ShowNPCBubble(npcModel, text, duration)
 		end
 	end)
 
-	-- Animate in (scale up)
-	local targetSize = UDim2.new(0, 260, 0, bubbleH)
+	local targetSize = UDim2.new(0, 240, 0, bubbleH)
 	billboard.Size = UDim2.new(0, 20, 0, 10)
-	TweenService:Create(billboard, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+	TweenService:Create(billboard, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		Size = targetSize,
 	}):Play()
 
-	-- Auto-destroy after duration
 	task.delay(duration, function()
 		if billboard and billboard.Parent then
-			TweenService:Create(billboard, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+			TweenService:Create(billboard, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 				Size = UDim2.new(0, 20, 0, 10),
 			}):Play()
-			task.delay(0.25, function()
+			task.delay(0.2, function()
 				if billboard and billboard.Parent then
 					billboard:Destroy()
 				end
@@ -1181,7 +1725,22 @@ function UIManager:DismissAllBubbles()
 	end
 end
 
+-- ═══════════════════════════════════════════
+-- PUBLIC API
+-- ═══════════════════════════════════════════
+function UIManager:GetPlayerData()
+	return PlayerData
+end
+
+function UIManager:IsMobile()
+	return isMobile
+end
+
+-- ═══════════════════════════════════════════
+-- EXPORTS
+-- ═══════════════════════════════════════════
 UIManager.COLORS = COLORS
+UIManager.FONTS = FONTS
 UIManager.ITEM_DISPLAY = ITEM_DISPLAY
 UIManager.ITEM_ICONS = ITEM_ICONS
 UIManager.ITEM_RARITY = ITEM_RARITY
@@ -1191,5 +1750,205 @@ UIManager.addGradient = addGradient
 UIManager.addPadding = addPadding
 UIManager.tweenProperty = tweenProperty
 UIManager.getRarityColor = getRarityColor
+UIManager.haptic = haptic
+
+-- ═══════════════════════════════════════════
+-- QUEST TRACKER PERMANENT (style WoW)
+-- ═══════════════════════════════════════════
+local questTrackerFrame = nil
+local questTrackerEntries = {}
+
+function UIManager:CreateQuestTracker()
+	local mainHUD = playerGui:FindFirstChild("MainHUD")
+	if not mainHUD then return end
+	if questTrackerFrame then questTrackerFrame:Destroy() end
+
+	questTrackerFrame = Instance.new("Frame")
+	questTrackerFrame.Name = "QuestTracker"
+	questTrackerFrame.Size = UDim2.new(0, isMobile and 180 or S(260), 0, isMobile and 160 or S(200))
+	questTrackerFrame.AnchorPoint = Vector2.new(1, 0)
+	questTrackerFrame.Position = UDim2.new(1, -10, 0, isMobile and 200 or S(80))
+	questTrackerFrame.BackgroundColor3 = Color3.fromRGB(15, 10, 5)
+	questTrackerFrame.BackgroundTransparency = 0.3
+	questTrackerFrame.BorderSizePixel = 0
+	questTrackerFrame.Parent = mainHUD
+	addCorner(questTrackerFrame, 6)
+	addStroke(questTrackerFrame, Color3.fromRGB(100, 70, 30), 1)
+
+	-- Title
+	local title = Instance.new("TextLabel")
+	title.Name = "Title"
+	title.Size = UDim2.new(1, 0, 0, S(24))
+	title.BackgroundTransparency = 1
+	title.Text = "QUETES"
+	title.TextColor3 = Color3.fromRGB(232, 198, 90)
+	title.Font = FONTS.Header
+	title.TextSize = isMobile and 14 or S(13)
+	title.Parent = questTrackerFrame
+
+	-- Container for quest entries
+	local container = Instance.new("Frame")
+	container.Name = "Entries"
+	container.Size = UDim2.new(1, -10, 1, -S(28))
+	container.Position = UDim2.new(0, 5, 0, S(26))
+	container.BackgroundTransparency = 1
+	container.Parent = questTrackerFrame
+
+	local layout = Instance.new("UIListLayout")
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+	layout.Padding = UDim.new(0, 4)
+	layout.Parent = container
+
+	-- Request quest data from server
+	Events.RequestQuestData:FireServer()
+end
+
+function UIManager:UpdateQuestTracker(quests)
+	if not questTrackerFrame then return end
+	local container = questTrackerFrame:FindFirstChild("Entries")
+	if not container then return end
+
+	-- Clear old entries
+	for _, child in container:GetChildren() do
+		if child:IsA("Frame") then child:Destroy() end
+	end
+
+	if not quests or #quests == 0 then
+		local empty = Instance.new("TextLabel")
+		empty.Size = UDim2.new(1, 0, 0, S(20))
+		empty.BackgroundTransparency = 1
+		empty.Text = "Aucune quete active"
+		empty.TextColor3 = Color3.fromRGB(150, 130, 100)
+		empty.Font = FONTS.Body
+		empty.TextSize = isMobile and 14 or S(11)
+		empty.Parent = container
+		return
+	end
+
+	for i, quest in ipairs(quests) do
+		local entry = Instance.new("Frame")
+		entry.Name = "Quest_" .. i
+		entry.Size = UDim2.new(1, 0, 0, S(40))
+		entry.BackgroundTransparency = 1
+		entry.LayoutOrder = i
+		entry.Parent = container
+
+		-- Quest title
+		local titleLabel = Instance.new("TextLabel")
+		titleLabel.Size = UDim2.new(1, 0, 0, S(16))
+		titleLabel.BackgroundTransparency = 1
+		titleLabel.Text = quest.Title or "Quete"
+		titleLabel.TextColor3 = quest.Completed and Color3.fromRGB(100, 200, 100) or Color3.fromRGB(220, 200, 160)
+		titleLabel.Font = FONTS.Header
+		titleLabel.TextSize = isMobile and 14 or S(11)
+		titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+		titleLabel.Parent = entry
+
+		-- Progress bar
+		local barBg = Instance.new("Frame")
+		barBg.Size = UDim2.new(1, 0, 0, S(8))
+		barBg.Position = UDim2.new(0, 0, 0, S(17))
+		barBg.BackgroundColor3 = Color3.fromRGB(40, 30, 20)
+		barBg.Parent = entry
+		addCorner(barBg, 3)
+
+		local progress = (quest.Progress or 0) / math.max(quest.Goal or 1, 1)
+		local barFill = Instance.new("Frame")
+		barFill.Size = UDim2.new(math.min(progress, 1), 0, 1, 0)
+		barFill.BackgroundColor3 = quest.Completed and Color3.fromRGB(80, 180, 80) or Color3.fromRGB(232, 198, 90)
+		barFill.Parent = barBg
+		addCorner(barFill, 3)
+
+		-- Progress text
+		local progText = Instance.new("TextLabel")
+		progText.Size = UDim2.new(1, 0, 0, S(12))
+		progText.Position = UDim2.new(0, 0, 0, S(26))
+		progText.BackgroundTransparency = 1
+		progText.Text = quest.Completed and "Terminee !" or `{quest.Progress or 0}/{quest.Goal or "?"}`
+		progText.TextColor3 = Color3.fromRGB(150, 130, 100)
+		progText.Font = FONTS.Body
+		progText.TextSize = isMobile and 13 or S(10)
+		progText.TextXAlignment = Enum.TextXAlignment.Left
+		progText.Parent = entry
+	end
+end
+
+-- Connect quest events to tracker
+Events.QuestDataResponse.OnClientEvent:Connect(function(quests)
+	UIManager:UpdateQuestTracker(quests)
+end)
+
+Events.QuestCompleted.OnClientEvent:Connect(function()
+	-- Refresh tracker
+	Events.RequestQuestData:FireServer()
+end)
+
+Events.PlayerDataUpdated.OnClientEvent:Connect(function()
+	-- Refresh quests on any data change (mining, selling, crafting)
+	task.delay(0.5, function()
+		Events.RequestQuestData:FireServer()
+	end)
+end)
+
+-- ═══════════════════════════════════════════
+-- STORY QUEST (main quest objective)
+-- ═══════════════════════════════════════════
+local currentStoryStep = nil
+
+Events.StartTutorial.OnClientEvent:Connect(function(stepData)
+	if type(stepData) == "table" then
+		currentStoryStep = stepData
+		if stepData.message then
+			UIManager:ShowNotification(stepData.message, "Info")
+		end
+		UIManager:UpdateStoryInTracker()
+	end
+end)
+
+function UIManager:UpdateStoryInTracker()
+	if not questTrackerFrame then return end
+	local container = questTrackerFrame:FindFirstChild("Entries")
+	if not container then return end
+
+	local oldStory = container:FindFirstChild("StoryQuest")
+	if oldStory then oldStory:Destroy() end
+
+	if not currentStoryStep or currentStoryStep.isFinal then return end
+
+	local entry = Instance.new("Frame")
+	entry.Name = "StoryQuest"
+	entry.Size = UDim2.new(1, 0, 0, S(32))
+	entry.BackgroundColor3 = Color3.fromRGB(40, 25, 10)
+	entry.BackgroundTransparency = 0.3
+	entry.LayoutOrder = -1
+	entry.Parent = container
+	addCorner(entry, 4)
+
+	local icon = Instance.new("TextLabel")
+	icon.Size = UDim2.new(0, S(20), 1, 0)
+	icon.BackgroundTransparency = 1
+	icon.Text = ">"
+	icon.TextColor3 = Color3.fromRGB(255, 200, 50)
+	icon.Font = Enum.Font.GothamBold
+	icon.TextSize = S(14)
+	icon.Parent = entry
+
+	local objective = Instance.new("TextLabel")
+	objective.Size = UDim2.new(1, -S(24), 1, 0)
+	objective.Position = UDim2.new(0, S(20), 0, 0)
+	objective.BackgroundTransparency = 1
+	objective.Text = currentStoryStep.objective or ""
+	objective.TextColor3 = Color3.fromRGB(255, 220, 100)
+	objective.Font = Enum.Font.GothamBold
+	objective.TextSize = S(11)
+	objective.TextXAlignment = Enum.TextXAlignment.Left
+	objective.TextWrapped = true
+	objective.Parent = entry
+end
+
+-- Create tracker after HUD is built
+task.delay(2, function()
+	UIManager:CreateQuestTracker()
+end)
 
 return UIManager

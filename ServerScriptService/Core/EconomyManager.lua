@@ -71,9 +71,11 @@ function EconomyManager:HandleSell(player: Player, npcType: string, itemName: st
     DataManager:AddCash(player, totalCash)
     DataManager:AddXP(player, EconomyConfig.XPRewards.SellTransaction)
 
-    -- Notifier le QuestManager
+    -- Notifier le QuestManager + StoryManager
     local QuestManager = require(ServerScriptService.Systems.QuestManager)
+    local StoryManager = require(ServerScriptService.Systems.StoryManager)
     QuestManager:OnSellTransaction(player, itemName, quantity, totalCash)
+    StoryManager:OnSell(player)
 
     -- Résultat au client
     ReplicatedStorage.Events.RemoteEvents.SellResult:FireClient(
@@ -126,7 +128,9 @@ function EconomyManager:HandleBuyTool(player: Player, toolName: string)
     data.Tools[toolName] = { Owned = true, Level = 1 }
 
     local MiningSystem = require(ServerScriptService.Systems.MiningSystem)
+    local StoryManager = require(ServerScriptService.Systems.StoryManager)
     MiningSystem:GiveTool(player, toolName)
+    StoryManager:OnBuyTool(player)
 
     ReplicatedStorage.Events.RemoteEvents.ShopResult:FireClient(
         player, true, string.format("%s acheté pour %d$ !", toolData.DisplayName, price)

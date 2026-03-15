@@ -88,21 +88,8 @@ function DataManager:LoadProfile(player: Player)
 
     Profiles[player] = profile
 
-    -- Auto-save périodique
-    task.spawn(function()
-        while Profiles[player] do
-            task.wait(SAVE_INTERVAL)
-            if Profiles[player] and profile:IsActive() then
-                -- ProfileStore wrapper handles save on Release
-                -- For periodic save, we force a save
-                pcall(function()
-                    if profile._dataStore then
-                        profile._dataStore:SetAsync(profileKey, profile.Data, profile._userIds)
-                    end
-                end)
-            end
-        end
-    end)
+    -- ProfileStore gère l'auto-save en interne (~30s)
+    -- PAS de save manuel — ça bypass le session locking et risque la corruption
 
     print("[DataManager] Profil chargé pour", player.Name)
     return profile

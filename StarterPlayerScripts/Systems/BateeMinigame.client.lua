@@ -58,6 +58,7 @@ local function CreateMinigameUI()
     gui.Enabled = false
     gui.ResetOnSpawn = false
     gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    pcall(function() gui.ScreenInsets = Enum.ScreenInsets.CoreUISafeInsets end)
     gui.Parent = playerGui
 
     -- Overlay léger (on voit encore le jeu)
@@ -71,9 +72,12 @@ local function CreateMinigameUI()
     -- Container compact, en bas à droite (dégage le personnage)
     local container = Instance.new("Frame")
     container.Name = "Container"
-    container.Size = UDim2.new(0, 180, 0, 180)
+    local circleSize = if isMobile then 220 else 200
+    container.Size = UDim2.new(0, circleSize, 0, circleSize)
     container.AnchorPoint = Vector2.new(1, 1)
-    container.Position = UDim2.new(1, -30, 1, -100)
+    container.Position = if isMobile
+        then UDim2.new(1, -16, 1, -120)
+        else UDim2.new(1, -30, 1, -100)
     container.BackgroundTransparency = 1
     container.Parent = gui
 
@@ -231,7 +235,7 @@ local function CreateMinigameUI()
     instruction.Position = UDim2.new(1, -30, 1, -288)
     instruction.BackgroundTransparency = 1
     instruction.TextColor3 = Color3.fromRGB(255, 220, 130)
-    instruction.Font = Enum.Font.GothamBold
+    instruction.Font = Enum.Font.SourceSansBold
     instruction.TextSize = 14
     instruction.Text = isMobile and "Touche l'écran dans la zone dorée !" or "Appuie sur F dans la zone dorée !"
     instruction.TextStrokeTransparency = 0.5
@@ -246,7 +250,7 @@ local function CreateMinigameUI()
     scoreText.Position = UDim2.new(1, -30, 1, -320)
     scoreText.BackgroundTransparency = 1
     scoreText.TextColor3 = Color3.fromRGB(255, 215, 0)
-    scoreText.Font = Enum.Font.GothamBold
+    scoreText.Font = Enum.Font.SourceSansBold
     scoreText.TextSize = 22
     scoreText.Text = ""
     scoreText.TextStrokeTransparency = 0.5
